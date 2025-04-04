@@ -11,7 +11,8 @@ from PyQt6.QtWidgets import (
     QFrame,
 )
 
-class QFoodPanel(QFrame) :
+class QStatsPanel(QFrame) :
     def __init__(self):
         super().__init__()
-
+        self.stats_layout = QVBoxLayout(self)
+        self.stats_layout.addWidget(QLabel("admin stats panel"))

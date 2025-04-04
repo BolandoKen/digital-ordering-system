@@ -14,4 +14,6 @@ from PyQt6.QtWidgets import (
 class QOrderHPanel(QFrame) :
     def __init__(self):
         super().__init__()
+        self.order_layout = QVBoxLayout(self)
+        self.order_layout.addWidget(QLabel("admin order panel"))
 

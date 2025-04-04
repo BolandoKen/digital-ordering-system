@@ -11,8 +11,8 @@ from PyQt6.QtWidgets import (
     QFrame,
 )
 from PyQt6.QtGui import QShortcut, QKeySequence
-from pages.AdminPage import QAdminPage
-from pages.CustomerPage import QCustomerPage
+from src.pages.AdminPage import QAdminPage
+from src.pages.CustomerPage import QCustomerPage
 
 class QWindow(QMainWindow) :
     def __init__(self):
@@ -20,20 +20,19 @@ class QWindow(QMainWindow) :
         self.setWindowTitle("digimon system")
         self.setGeometry(0,0,800,500)
 
-        self.StackedPages = QStackedWidget()
-
+        self.stackedPages = QStackedWidget()
         self.CustomerPage = QCustomerPage()
         self.AdminPage = QAdminPage()
 
-        self.StackedPages.addWidget(self.CustomerPage)
-        self.StackedPages.addWidget(self.AdminPage)
+        self.stackedPages.addWidget(self.CustomerPage)
+        self.stackedPages.addWidget(self.AdminPage)
 
         self.switchBtn = QPushButton("switch")
         self.switchBtn.clicked.connect(self.switchPage)
 
         centralWidget = QWidget()
         main_layout = QVBoxLayout(centralWidget)
-        main_layout.addWidget(self.StackedPages)
+        main_layout.addWidget(self.stackedPages)
         main_layout.addWidget(self.switchBtn)
         self.setCentralWidget(centralWidget)
 
@@ -41,8 +40,8 @@ class QWindow(QMainWindow) :
         exit_shortcut.activated.connect(self.close)
 
     def switchPage(self) :
-        curr = self.StackedPages.currentIndex()
-        self.StackedPages.setCurrentIndex( (curr+1) %2)
+        curr = self.stackedPages.currentIndex()
+        self.stackedPages.setCurrentIndex( (curr+1) %2)
 
 if __name__ == "__main__" :
     app = QApplication([])
