@@ -12,6 +12,7 @@ from PyQt6.QtWidgets import (
 )
 
 from src.panels.foodPanel.CategoryCard import QCategoryCard
+from src.database.queries import fetchCatList
 
 class QCategoryList(QFrame) : 
     # fetch all categories and list them all as btns
@@ -22,19 +23,23 @@ class QCategoryList(QFrame) :
         self.update_listContent = update_listContent # get update func from foodlist
         self.stackedLists = stackedLists # access parents stackedlists 
         self.catList_layout = QVBoxLayout(self)
-        self.mockCatArr = ["Seafood", "Beverage"]
         self.catList_layout.addWidget(QLabel("Categories"))
+
+        self.init_catList()
+
+        self.setStyleSheet("border: 1px solid black")
+
+    def init_catList(self) :
         if self.pageName == "admin" :
             self.init_adminCatList()
         elif self.pageName == "customer" :
             self.init_customerCatList()
 
-        self.setStyleSheet("border: 1px solid black")
-
     def init_customerCatList(self) :
-        for cat in self.mockCatArr :
-            adminMockBtn = QCategoryCard(cat, self.pageName, self.update_listContent, self.stackedLists)
-            self.catList_layout.addWidget(adminMockBtn)
+        self.catList = fetchCatList()
+        for catTuple in self.catList :
+            catCard = QCategoryCard(catTuple, self.pageName, self.update_listContent, self.stackedLists)
+            self.catList_layout.addWidget(catCard)
         # no plus sign
 
     def init_adminCatList(self) :
@@ -47,6 +52,20 @@ class QCategoryList(QFrame) :
     
     def addCategory(self) :
         print("will add category")
+
+    def update_categoryList(self) :
+        self.clear_layout(self.catList_layout)
+        self.init_catList()
+
+    def clear_layout(layout): 
+        if layout is not None:
+            for i in reversed(range(layout.count())): # reverse, because deletion fills gaps
+                item = layout.takeAt(i) 
+                if item.widget(): 
+                    item.widget().deleteLater()
+                elif item.spacerItem():  
+                    layout.removeItem(item)   
+    
 
 
 

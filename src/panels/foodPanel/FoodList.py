@@ -12,6 +12,7 @@ from PyQt6.QtWidgets import (
 )
 import time
 from src.panels.foodPanel.FoodCard import QFoodItemCard
+from src.database.queries import fetchFoodUnderCatList
 from PyQt6.QtGui import QPixmap
 
 class QFoodList(QFrame) :
@@ -22,32 +23,12 @@ class QFoodList(QFrame) :
         self.pageName = pageName
         self.stackedLists = stackedLists
         self.foodList_layout = QVBoxLayout(self)
-        self.mockFoodlist = {
-            "Seafood" : ["salamander", "shrimp", "tuna", "egg"],
-            "Beverage" : ["coke", "water", "sprite"]
-        }
-        simulate_preloads() #delete this later
 
-    def update_listContent(self, category) :
-        clear_layout(self.foodList_layout) 
-        self.headTitle = QLabel("")
-        self.backBtn = QPushButton("<- back to cat list") 
-        self.backBtn.clicked.connect(self.backToCat)
-        self.foodList_layout.addWidget(self.headTitle)
-        self.foodList_layout.addWidget(self.backBtn)
-        self.category = category
-        if self.pageName == "admin" :
-            self.init_adminFoodList()
-        elif self.pageName == "customer" :
-            self.init_customerFoodList()
-
-        self.headTitle.setText(self.category)
-        # updates the list content
 
     def init_customerFoodList(self) :
-        foodlist = self.mockFoodlist[self.category]
-        for item in foodlist :
-            foodCard = QFoodItemCard(item, self.pageName)
+        foodlist = fetchFoodUnderCatList(self.category_id)
+        for foodTuple in foodlist :
+            foodCard = QFoodItemCard(foodTuple, self.pageName)
             self.foodList_layout.addWidget(foodCard)
         # no plus sign, unable to add
 
@@ -59,24 +40,36 @@ class QFoodList(QFrame) :
         self.init_customerFoodList()
         # plus sign to add food under category
     
+    def update_listContent(self, category_id, catname) :
+        self.clear_layout(self.foodList_layout) 
+        self.headTitle = QLabel("")
+        self.backBtn = QPushButton("<- back to cat list") 
+        self.backBtn.clicked.connect(self.backToCat)
+        self.foodList_layout.addWidget(self.headTitle)
+        self.foodList_layout.addWidget(self.backBtn)
+        self.category_id = category_id
+        self.catname = catname
+        if self.pageName == "admin" :
+            self.init_adminFoodList()
+        elif self.pageName == "customer" :
+            self.init_customerFoodList()
+
+        self.headTitle.setText(self.catname)
+        # updates the list content
+
     def addFoodItem(self) :
-        print(f"will add food under {self.category}")
+        print(f"will add food under {self.catname}")
 
     def backToCat(self) :
         self.stackedLists.setCurrentIndex(0)
 
-def clear_layout(layout): 
-    if layout is not None:
-        for i in reversed(range(layout.count())): # reverse, because deletion fills gaps
-            item = layout.takeAt(i) 
-            if item.widget(): 
-                item.widget().deleteLater()
-            elif item.spacerItem():  
-                layout.removeItem(item) 
+    def clear_layout(self, layout): 
+        if layout is not None:
+            for i in reversed(range(layout.count())): # reverse, because deletion fills gaps
+                item = layout.takeAt(i) 
+                if item.widget(): 
+                    item.widget().deleteLater()
+                elif item.spacerItem():  
+                    layout.removeItem(item)     
 
-def simulate_preloads() :
-    start_time = time.time()
-    for i in range(1000) :
-        path = os.path.join(os.path.abspath("assets/foodimg"), "icecream.png")
-        pixmap = QPixmap(path)
-    print("--- %s seconds ---" % (time.time() - start_time))
+

@@ -15,10 +15,10 @@ from PyQt6.QtGui import QPixmap
 
 class QCategoryCard(QFrame) : # at the mean time make it a QPushBtn for simplicity
     # card for each category, display name
-    def __init__(self, text, pageName, update_listContent, stackedLists) :
+    def __init__(self, catTuple, pageName, update_listContent, stackedLists) :
         super().__init__()
         self.pageName = pageName
-        self.text = text
+        self.category_id, self.catname, self.imgfile = catTuple
         self.update_listContent = update_listContent
         self.stackedLists = stackedLists
         self.catCard_layout = QVBoxLayout(self)
@@ -32,9 +32,9 @@ class QCategoryCard(QFrame) : # at the mean time make it a QPushBtn for simplici
 
 
     def init_customerCategoryCard(self) :
-        self.catLabel = QLabel(self.text)
+        self.catLabel = QLabel(self.catname)
         self.catimg = QLabel()
-        self.setPixMapOf(self.catimg, "icecream.png")
+        self.setPixMapOf(self.catimg, self.imgfile)
       
         self.catCard_layout.addWidget(self.catLabel)
         self.catCard_layout.addWidget(self.catimg)
@@ -47,7 +47,9 @@ class QCategoryCard(QFrame) : # at the mean time make it a QPushBtn for simplici
         # has edit/del btns , edit/trash icons in the card
 
     def setPixMapOf(self, label, imgFileName) :
-        path = os.path.join(os.path.abspath("assets/foodimg"), imgFileName) # pls do refactor later
+        if imgFileName is None:
+            imgFileName = "icecream.png"
+        path = os.path.join(os.path.abspath("assets/foodimg"), imgFileName) 
         pixmap = QPixmap(path)
         label.setPixmap(pixmap)
         label.setFixedSize(50,50)
@@ -58,6 +60,5 @@ class QCategoryCard(QFrame) : # at the mean time make it a QPushBtn for simplici
             self.catCardClicked()
 
     def catCardClicked(self) :
-        category = self.text
-        self.update_listContent(category)
+        self.update_listContent(self.category_id, self.catname)
         self.stackedLists.setCurrentIndex(1)

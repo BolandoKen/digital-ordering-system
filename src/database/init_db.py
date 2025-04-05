@@ -10,7 +10,6 @@ db.autocommit = True
 
 mycursor = db.cursor()
 
-
 def create_Database() :
     mycursor.execute("CREATE DATABASE IF NOT EXISTS orderoo_db")
     db.database = "orderoo_db"
