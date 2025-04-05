@@ -1,7 +1,4 @@
-import sys
-import os
-sys.path.append(os.path.abspath("src"))
-from panels.foodPanel.FoodPanel import QFoodPanel
+from src.panels.foodPanel.FoodPanel import QFoodPanel
 from PyQt6.QtWidgets import (
     QApplication,
     QVBoxLayout,

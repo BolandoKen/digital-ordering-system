@@ -1,10 +1,8 @@
 import sys
-import os
-sys.path.append(os.path.abspath("src"))
 
-from panels.foodPanel.FoodPanel import QFoodPanel
-from panels.orderHPanel.OrderHPanel import QOrderHPanel
-from panels.statsPanel.StatsPanel import QStatsPanel
+from src.panels.foodPanel.FoodPanel import QFoodPanel
+from src.panels.orderHPanel.OrderHPanel import QOrderHPanel
+from src.panels.statsPanel.StatsPanel import QStatsPanel
 
 from PyQt6.QtWidgets import (
     QApplication,
