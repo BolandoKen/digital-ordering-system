@@ -69,5 +69,6 @@ class QSimpleCartItem(QFrame) :
         self.foodid = foodid
         self.cartItem_layout = QVBoxLayout(self)
         self.quantityBox = QSpinBox()
+        self.quantityBox.setValue(1)
         self.cartItem_layout.addWidget(QLabel(foodname))
         self.cartItem_layout.addWidget(self.quantityBox)
