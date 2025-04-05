@@ -9,7 +9,8 @@ from PyQt6.QtWidgets import (
     QStackedWidget,
     QLabel,
     QFrame,
-    QLineEdit
+    QLineEdit,
+    QSpinBox
 )
 
 from PyQt6.QtCore import Qt
@@ -27,6 +28,8 @@ class QFoodItemCard(QFrame) : # at the mean time make it a QPushBtn for simplici
             self.init_adminFoodItemCard()
         elif self.pageName == "customer" :
             self.init_customerFoodItemCard()
+        elif self.pageName == "sideBar" :
+            print('hmmm')
 
         self.setStyleSheet("background-color: white; color: black")
 
@@ -34,7 +37,7 @@ class QFoodItemCard(QFrame) : # at the mean time make it a QPushBtn for simplici
         self.foodLabel = QLabel(self.foodname)
         self.foodimg = QLabel()
         self.setPixMapOf(self.foodimg, self.imgfile)
-        self.priceLabel = QLabel(str(self.price))
+        self.priceLabel = QLabel(str(self.price))        
 
         self.foodCard_layout.addWidget(self.foodLabel)   
         self.foodCard_layout.addWidget(self.foodimg) 
@@ -45,7 +48,6 @@ class QFoodItemCard(QFrame) : # at the mean time make it a QPushBtn for simplici
         self.init_customerFoodItemCard()
         self.foodCard_layout.addWidget(QPushButton("edit"))
         self.foodCard_layout.addWidget(QPushButton("delete"))
-
         # has edit/del btns , edit/trash icons in the card
 
     def setPixMapOf(self, label, imgFileName) :
@@ -59,7 +61,8 @@ class QFoodItemCard(QFrame) : # at the mean time make it a QPushBtn for simplici
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
-            self.addToCart()
+            self.handleAddToCart(self.fooditem_id, self.foodname)
 
-    def addToCart(self) :
-        print(f"add to order cart {self.foodname}")
+    def handleAddToCart(self, fooditem_id, foodname) :
+        # can do self.parent() now yay
+        self.parent().parent().parent().parent().sideBar.handleFoodAddToCart(fooditem_id, foodname)

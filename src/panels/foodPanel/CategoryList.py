@@ -44,13 +44,13 @@ class QCategoryList(QFrame) :
 
     def init_adminCatList(self) :
         addCatBtn = QPushButton("+ add Category")
-        addCatBtn.clicked.connect(self.addCategory)
+        addCatBtn.clicked.connect(self.handleAddCategory)
         self.catList_layout.addWidget(addCatBtn)
 
         self.init_customerCatList()
         # has plus sign to add categories
     
-    def addCategory(self) :
+    def handleAddCategory(self) :
         print("will add category")
 
     def update_categoryList(self) :

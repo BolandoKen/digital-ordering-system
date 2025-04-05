@@ -30,7 +30,6 @@ class QCategoryCard(QFrame) : # at the mean time make it a QPushBtn for simplici
 
         self.setStyleSheet("background-color: white; color: black")
 
-
     def init_customerCategoryCard(self) :
         self.catLabel = QLabel(self.catname)
         self.catimg = QLabel()
@@ -57,8 +56,8 @@ class QCategoryCard(QFrame) : # at the mean time make it a QPushBtn for simplici
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
-            self.catCardClicked()
+            self.handleCatCardClicked()
 
-    def catCardClicked(self) :
+    def handleCatCardClicked(self) :
         self.update_listContent(self.category_id, self.catname)
         self.stackedLists.setCurrentIndex(1)
