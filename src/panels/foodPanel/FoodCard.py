@@ -20,32 +20,40 @@ class QFoodItemCard(QFrame) : # at the mean time make it a QPushBtn for simplici
     def __init__(self, text, pageName) : 
         super().__init__()
         self.pageName = pageName
-        self.foodCard_layout = QVBoxLayout(self)
         self.text = text
-        self.foodLabel = QLabel(self.text)
-        self.foodimg = QLabel()
+        self.foodCard_layout = QVBoxLayout(self)
 
-        path = os.path.join(os.path.abspath("assets/foodimg"), "icecream.jpg") # pls do refactor later
-        pixmap = QPixmap(path)
-        self.foodimg.setPixmap(pixmap)
-        self.foodimg.setFixedSize(100,100)
-        self.foodimg.setScaledContents(True)
-        self.setStyleSheet("background-color: white; color: black")
-        
+
         if self.pageName == "admin" :
             self.init_adminFoodItemCard()
         elif self.pageName == "customer" :
             self.init_customerFoodItemCard()
-        self.foodCard_layout.addWidget(self.foodLabel)   
-        self.foodCard_layout.addWidget(self.foodimg) 
+
+        self.setStyleSheet("background-color: white; color: black")
 
     def init_customerFoodItemCard(self) :
-        self.foodLabel.setText(self.text) # do nothing
+        self.foodLabel = QLabel(self.text)
+        self.foodimg = QLabel()
+        self.setPixMapOf(self.foodimg, "icecream.png")
+
+        self.foodCard_layout.addWidget(self.foodLabel)   
+        self.foodCard_layout.addWidget(self.foodimg) 
         # no edit/del btns
 
     def init_adminFoodItemCard(self) :
-        self.foodLabel.setText(self.text + "  edit/del btns")
+        self.init_customerFoodItemCard()
+        self.foodCard_layout.addWidget(QPushButton("edit"))
+        self.foodCard_layout.addWidget(QPushButton("delete"))
+
         # has edit/del btns , edit/trash icons in the card
+
+    def setPixMapOf(self, label, imgFileName) :
+        path = os.path.join(os.path.abspath("assets/foodimg"), imgFileName) # pls do refactor later
+        pixmap = QPixmap(path)
+        label.setPixmap(pixmap)
+        label.setFixedSize(50,50)
+        label.setScaledContents(True)
+
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
             self.addToCart()

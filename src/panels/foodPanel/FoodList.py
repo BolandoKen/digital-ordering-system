@@ -26,9 +26,8 @@ class QFoodList(QFrame) :
             "Seafood" : ["salamander", "shrimp", "tuna", "egg"],
             "Beverage" : ["coke", "water", "sprite"]
         }
-        simulate_preloads() # preloading is just impossible, very slow..
-    # optimize... pixmap is rly expensive, must preload all qfoodcards?
-    # no, just cache them.. make own caching system ...  
+        simulate_preloads() #delete this later
+
     def update_listContent(self, category) :
         clear_layout(self.foodList_layout) 
         self.headTitle = QLabel("")
@@ -42,7 +41,7 @@ class QFoodList(QFrame) :
         elif self.pageName == "customer" :
             self.init_customerFoodList()
 
-        self.headTitle.setText(f"imagine list of fooditems under {self.category}")
+        self.headTitle.setText(self.category)
         # updates the list content
 
     def init_customerFoodList(self) :
@@ -77,7 +76,7 @@ def clear_layout(layout):
 
 def simulate_preloads() :
     start_time = time.time()
-    for i in range(50) :
-        path = os.path.join(os.path.abspath("assets/foodimg"), "icecream.jpg")
+    for i in range(1000) :
+        path = os.path.join(os.path.abspath("assets/foodimg"), "icecream.png")
         pixmap = QPixmap(path)
     print("--- %s seconds ---" % (time.time() - start_time))

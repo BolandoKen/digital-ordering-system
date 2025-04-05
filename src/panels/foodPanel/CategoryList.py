@@ -23,16 +23,17 @@ class QCategoryList(QFrame) :
         self.stackedLists = stackedLists # access parents stackedlists 
         self.catList_layout = QVBoxLayout(self)
         self.mockCatArr = ["Seafood", "Beverage"]
-        self.catList_layout.addWidget(QLabel("imagine list of categories btn"))
+        self.catList_layout.addWidget(QLabel("Categories"))
         if self.pageName == "admin" :
             self.init_adminCatList()
         elif self.pageName == "customer" :
             self.init_customerCatList()
 
+        self.setStyleSheet("border: 1px solid black")
+
     def init_customerCatList(self) :
         for cat in self.mockCatArr :
-            adminMockBtn = QCategoryCard(cat, self.pageName)
-            adminMockBtn.clicked.connect(self.cardClicked) # put cardClicked in this class to avoid deeper passes
+            adminMockBtn = QCategoryCard(cat, self.pageName, self.update_listContent, self.stackedLists)
             self.catList_layout.addWidget(adminMockBtn)
         # no plus sign
 
@@ -47,10 +48,6 @@ class QCategoryList(QFrame) :
     def addCategory(self) :
         print("will add category")
 
-    def cardClicked(self) :
-        category = self.sender().text()
-        self.update_listContent(category)
-        self.stackedLists.setCurrentIndex(1)
 
 
 

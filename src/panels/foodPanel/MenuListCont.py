@@ -19,6 +19,7 @@ class QMenuListContainer(QFrame) :
     def __init__(self, pageName) :
         super().__init__()
         self.listCont_layout = QVBoxLayout(self)
+        self.setStyleSheet("border: 1px solid black")
         self.stackedLists = QStackedWidget()
         self.foodList = QFoodList(pageName, self.stackedLists)
         update_listContent = self.foodList.update_listContent
@@ -27,6 +28,5 @@ class QMenuListContainer(QFrame) :
         self.stackedLists.addWidget(self.categoryList)
         self.stackedLists.addWidget(self.foodList)
         
-        self.listCont_layout.addWidget(QLabel("imagine a container of the menu"))
         self.listCont_layout.addWidget(self.stackedLists)
 
