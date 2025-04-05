@@ -6,6 +6,7 @@ db = mysql.connector.connect(
     password="root",
     database="orderoo_db" # delete this pls, will have to refactor later
 )
+db.autocommit = True
 
 mycursor = db.cursor()
 
@@ -28,13 +29,13 @@ def create_FoodItemsTable() :
 def create_CategoriesTable() :
     mycursor.execute("""CREATE TABLE IF NOT EXISTS Categories(
                      category_id SMALLINT AUTO_INCREMENT PRIMARY KEY,
-                     name VARCHAR(128) NOT NULL
+                     name VARCHAR(128) NOT NULL,
+                     imgfile VARCHAR(128) NULL
                      )""")
 
 def create_OrdersTable() :
     mycursor.execute("""CREATE TABLE IF NOT EXISTS Orders(
                      order_id SMALLINT AUTO_INCREMENT PRIMARY KEY,
-                     total_cost DECIMAL(10,2) NOT NULL,
                      order_datetime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
                      )""")
 
@@ -42,7 +43,6 @@ def create_OrderItemsTable() :
     mycursor.execute("""CREATE TABLE IF NOT EXISTS OrderItems(
                      orderitem_id SMALLINT AUTO_INCREMENT PRIMARY KEY,
                      quantity SMALLINT NOT NULL DEFAULT 1,
-                     subtotal DECIMAL(10,2) NOT NULL,
                      fooditem_id SMALLINT NOT NULL,
                      order_id SMALLINT NOT NULL,
                      FOREIGN KEY(fooditem_id) REFERENCES FoodItems(fooditem_id),
