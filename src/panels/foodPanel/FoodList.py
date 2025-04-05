@@ -12,6 +12,7 @@ from PyQt6.QtWidgets import (
 )
 import time
 from src.panels.foodPanel.FoodCard import QFoodItemCard
+from src.components.Dialogs import QaddDialog
 from src.database.queries import fetchFoodUnderCatList
 from PyQt6.QtGui import QPixmap
 
@@ -23,6 +24,8 @@ class QFoodList(QFrame) :
         self.pageName = pageName
         self.stackedLists = stackedLists
         self.foodList_layout = QVBoxLayout(self)
+        self.addFoodDialog = QaddDialog("food")
+
 
 
     def init_customerFoodList(self) :
@@ -60,7 +63,7 @@ class QFoodList(QFrame) :
         # updates the list content
 
     def addFoodItem(self) :
-        print(f"will add food under {self.catname}")
+        self.addFoodDialog.exec()
 
     def backToCat(self) :
         self.stackedLists.setCurrentIndex(0)

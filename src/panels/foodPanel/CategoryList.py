@@ -13,6 +13,7 @@ from PyQt6.QtWidgets import (
 
 from src.panels.foodPanel.CategoryCard import QCategoryCard
 from src.database.queries import fetchCatList
+from src.components.Dialogs import QaddDialog
 
 class QCategoryList(QFrame) : 
     # fetch all categories and list them all as btns
@@ -23,6 +24,7 @@ class QCategoryList(QFrame) :
         self.update_listContent = update_listContent # get update func from foodlist
         self.stackedLists = stackedLists # access parents stackedlists 
         self.catList_layout = QVBoxLayout(self)
+        self.addCatDialog = QaddDialog("category")
         headerLabel = QLabel("Categories")
         headerLabel.setFixedHeight(50)
         self.catList_layout.addWidget(headerLabel)
@@ -54,7 +56,7 @@ class QCategoryList(QFrame) :
         # has plus sign to add categories
     
     def handleAddCategory(self) :
-        print("will add category")
+        self.addCatDialog.exec()
 
     def update_categoryList(self) :
         self.clear_layout(self.catList_layout)
