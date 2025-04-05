@@ -14,11 +14,12 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QShortcut, QKeySequence
 from src.pages.AdminPage import QAdminPage
 from src.pages.CustomerPage import QCustomerPage
+from src.database.init_db import init_db
 
 class QWindow(QMainWindow) :
     def __init__(self):
-        super().__init__()
-        self.setWindowTitle("digimon system")
+        super().__init__()  
+        self.setWindowTitle("Orderoo")
         self.setGeometry(0,0,800,500)
 
         self.stackedPages = QStackedWidget()
@@ -28,7 +29,7 @@ class QWindow(QMainWindow) :
         self.stackedPages.addWidget(self.CustomerPage)
         self.stackedPages.addWidget(self.AdminPage)
 
-        self.switchBtn = QPushButton("switch")
+        self.switchBtn = QPushButton("login")
         self.switchBtn.clicked.connect(self.switchPage)
 
         centralWidget = QWidget()
@@ -43,9 +44,15 @@ class QWindow(QMainWindow) :
     def switchPage(self) :
         curr = self.stackedPages.currentIndex()
         self.stackedPages.setCurrentIndex( (curr+1) %2)
+        if self.stackedPages.currentIndex() == 0 :
+            self.switchBtn.setText("login")
+        else :
+            self.switchBtn.setText("logout")
 
 if __name__ == "__main__" :
     app = QApplication([])
     main_window = QWindow()
+    init_db()
     main_window.show()
+
     sys.exit(app.exec())
