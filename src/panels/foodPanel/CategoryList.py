@@ -23,7 +23,9 @@ class QCategoryList(QFrame) :
         self.update_listContent = update_listContent # get update func from foodlist
         self.stackedLists = stackedLists # access parents stackedlists 
         self.catList_layout = QVBoxLayout(self)
-        self.catList_layout.addWidget(QLabel("Categories"))
+        headerLabel = QLabel("Categories")
+        headerLabel.setFixedHeight(50)
+        self.catList_layout.addWidget(headerLabel)
 
         self.init_catList()
 
@@ -40,6 +42,7 @@ class QCategoryList(QFrame) :
         for catTuple in self.catList :
             catCard = QCategoryCard(catTuple, self.pageName, self.update_listContent, self.stackedLists)
             self.catList_layout.addWidget(catCard)
+        self.catList_layout.addStretch()
         # no plus sign
 
     def init_adminCatList(self) :

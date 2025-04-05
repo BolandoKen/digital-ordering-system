@@ -30,6 +30,7 @@ class QFoodList(QFrame) :
         for foodTuple in foodlist :
             foodCard = QFoodItemCard(foodTuple, self.pageName)
             self.foodList_layout.addWidget(foodCard)
+        self.foodList_layout.addStretch()
         # no plus sign, unable to add
 
     def init_adminFoodList(self) :
@@ -43,6 +44,7 @@ class QFoodList(QFrame) :
     def update_listContent(self, category_id, catname) :
         self.clear_layout(self.foodList_layout) 
         self.headTitle = QLabel("")
+        self.headTitle.setFixedHeight(50)
         self.backBtn = QPushButton("<- back to cat list") 
         self.backBtn.clicked.connect(self.backToCat)
         self.foodList_layout.addWidget(self.headTitle)
@@ -53,7 +55,7 @@ class QFoodList(QFrame) :
             self.init_adminFoodList()
         elif self.pageName == "customer" :
             self.init_customerFoodList()
-
+        
         self.headTitle.setText(self.catname)
         # updates the list content
 
