@@ -23,7 +23,6 @@ class QFoodItemCard(QFrame) : # at the mean time make it a QPushBtn for simplici
         super().__init__()
         self.pageName = pageName
         self.fooditem_id, self.foodname, self.price, self.imgfile, self.category_id = foodTuple
-        print(foodTuple)
         self.editFoodDialog = QeditDialog("food", foodTuple)
         self.foodCard_layout = QVBoxLayout(self)
 

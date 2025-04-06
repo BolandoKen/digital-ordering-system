@@ -3,6 +3,7 @@ import sys
 from src.panels.foodPanel.FoodPanel import QFoodPanel
 from src.panels.orderHPanel.OrderHPanel import QOrderHPanel
 from src.panels.statsPanel.StatsPanel import QStatsPanel
+from src.panels.profilePanel.ProfilePanel import QProfilePanel
 
 from PyQt6.QtWidgets import (
     QApplication,
@@ -26,6 +27,7 @@ class QAdminPage(QFrame) :
         self.foodPanel = QFoodPanel(self.objectName)
         self.orderPanel = QOrderHPanel()
         self.statsPanel = QStatsPanel()
+        self.profilePanel = QProfilePanel()
         
         self.adminStackedPanels = QStackedWidget()
         self.sideBar = QSideBar(self.objectName, self.switchPage)
@@ -33,6 +35,7 @@ class QAdminPage(QFrame) :
         self.adminStackedPanels.addWidget(self.foodPanel)
         self.adminStackedPanels.addWidget(self.orderPanel)
         self.adminStackedPanels.addWidget(self.statsPanel)
+        self.adminStackedPanels.addWidget(self.profilePanel)
 
         self.admin_layout = QGridLayout(self)
         self.admin_layout.addWidget(self.adminStackedPanels, 0, 0)
@@ -41,4 +44,4 @@ class QAdminPage(QFrame) :
 
     def switchPage(self) :
         curr = self.adminStackedPanels.currentIndex()
-        self.adminStackedPanels.setCurrentIndex( (curr+1) %3)
+        self.adminStackedPanels.setCurrentIndex( (curr+1) %4)
