@@ -8,7 +8,8 @@ from PyQt6.QtWidgets import (
     QLabel,
     QFrame,
     QDialog,
-    QLineEdit
+    QLineEdit,
+    QFileDialog
 )
 
 class QaddDialog(QDialog) :
@@ -50,7 +51,17 @@ class QaddDialog(QDialog) :
         self.dialog_layout.addWidget(self.imgfile)
         self.submitBtn = QPushButton("add food item")
         self.dialog_layout.addWidget(self.submitBtn)
+        # self.label = QLabel("No file selected")
+        # self.button = QPushButton("Open File")
+        # self.button.clicked.connect(self.open_file)
+        # self.dialog_layout.addWidget(self.label)
+        # self.dialog_layout.addWidget(self.button)
 
+
+    def open_file(self):
+        file_path, _ = QFileDialog.getOpenFileName(self, "Open File", "", "Images (*.png *.jpg *.jpeg *.bmp);;All Files (*)")
+        if file_path:
+            self.label.setText(f"Selected: {file_path}")
 
 class QeditDialog(QDialog) :
     def __init__(self, panelName):

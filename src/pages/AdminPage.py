@@ -13,7 +13,10 @@ from PyQt6.QtWidgets import (
     QStackedWidget,
     QLabel,
     QFrame,
+    QGridLayout,
 )
+
+from src.components.SideBar import QSideBar
 
 class QAdminPage(QFrame) :
     def __init__(self):
@@ -25,18 +28,17 @@ class QAdminPage(QFrame) :
         self.statsPanel = QStatsPanel()
         
         self.adminStackedPanels = QStackedWidget()
+        self.sideBar = QSideBar(self.objectName, self.switchPage)
 
         self.adminStackedPanels.addWidget(self.foodPanel)
         self.adminStackedPanels.addWidget(self.orderPanel)
         self.adminStackedPanels.addWidget(self.statsPanel)
 
-        self.switchBtn = QPushButton("switch admin panel")
-        self.switchBtn.clicked.connect(self.switchPage)
+        self.admin_layout = QGridLayout(self)
+        self.admin_layout.addWidget(self.adminStackedPanels, 0, 0)
+        self.admin_layout.addWidget(self.sideBar, 0, 1, 2, 1)
 
-        self.admin_layout = QVBoxLayout(self)
-        self.admin_layout.addWidget(self.adminStackedPanels)
-        self.admin_layout.addWidget(self.switchBtn)
-    
+
     def switchPage(self) :
         curr = self.adminStackedPanels.currentIndex()
         self.adminStackedPanels.setCurrentIndex( (curr+1) %3)

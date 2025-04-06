@@ -16,7 +16,7 @@ from PyQt6.QtGui import QPixmap
 
 
 class QSideBar(QFrame) :
-    def __init__(self, pageName) :
+    def __init__(self, pageName, switchPage = None) :
         super().__init__()
         self.pageName = pageName
         self.setFixedWidth(300)
@@ -25,6 +25,7 @@ class QSideBar(QFrame) :
         self.cartItems_amount = []
         self.sidebar_layout = QVBoxLayout(self)
         if self.pageName == "admin" :
+            self.switchPage = switchPage
             self.init_adminSideBar()
         elif self.pageName == "customer" :
             self.init_customerSideBar()
@@ -48,6 +49,9 @@ class QSideBar(QFrame) :
     
     def init_adminSideBar(self) :
         print('adminSidebar')
+        self.switchBtn = QPushButton("switch admin panel")
+        self.switchBtn.clicked.connect(self.switchPage)
+        self.sidebar_layout.addWidget(self.switchBtn)
 
     def foodquantity(self):
         quantities = {}
