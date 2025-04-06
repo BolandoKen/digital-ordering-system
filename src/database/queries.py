@@ -8,6 +8,6 @@ def fetchCatList() :
     return results
 
 def fetchFoodUnderCatList(category_id) :
-    cursor.execute(f"SELECT fooditem_id, name, price, imgfile FROM FoodItems WHERE category_id = {category_id} ")
+    cursor.execute(f"SELECT fooditem_id, name, price, imgfile, category_id FROM FoodItems WHERE category_id = {category_id} ")
     results = cursor.fetchall()
     return results

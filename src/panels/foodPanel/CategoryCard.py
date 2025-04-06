@@ -11,6 +11,7 @@ from PyQt6.QtWidgets import (
     QFrame,
 )
 from src.utils.PubSub import pubsub
+from src.components.Dialogs import QeditDialog
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 
@@ -20,6 +21,7 @@ class QCategoryCard(QFrame) : # at the mean time make it a QPushBtn for simplici
         super().__init__()
         self.pageName = pageName
         self.category_id, self.catname, self.imgfile = catTuple
+        self.editCatDialog = QeditDialog("category", catTuple)
         self.stackedLists = stackedLists
         self.catCard_layout = QVBoxLayout(self)
 
@@ -41,7 +43,9 @@ class QCategoryCard(QFrame) : # at the mean time make it a QPushBtn for simplici
 
     def init_adminCategoryCard(self) :
         self.init_customerCategoryCard()
-        self.catCard_layout.addWidget(QPushButton("edit"))
+        self.editBtn = QPushButton("edit")
+        self.editBtn.clicked.connect(self.editCatDialog.exec)
+        self.catCard_layout.addWidget(self.editBtn)
         self.catCard_layout.addWidget(QPushButton("delete"))
         # has edit/del btns , edit/trash icons in the card
 

@@ -27,7 +27,7 @@ class QFoodList(QFrame) :
         self.foodList_layout = QVBoxLayout(self)
         self.addFoodDialog = QaddDialog("food")
         pubsub.subscribe("catCardClicked", self.update_listContent)
-        pubsub.subscribe("addedFoodItem", self.update_listContent)
+        pubsub.subscribe("updateFoodItem", self.update_listContent)
 
     def init_customerFoodList(self) :
         foodlist = fetchFoodUnderCatList(self.category_id)

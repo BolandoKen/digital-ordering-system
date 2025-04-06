@@ -27,7 +27,7 @@ class QCategoryList(QFrame) :
         headerLabel = QLabel("Categories")
         headerLabel.setFixedHeight(50)
         self.catList_layout.addWidget(headerLabel)
-        pubsub.subscribe("addedCategory", self.update_categoryList)
+        pubsub.subscribe("updateCategory", self.update_categoryList)
         self.init_catList()
 
         self.setStyleSheet("border: 1px solid black")

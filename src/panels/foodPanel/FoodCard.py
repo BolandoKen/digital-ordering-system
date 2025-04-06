@@ -12,6 +12,7 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QSpinBox
 )
+from src.components.Dialogs import QeditDialog
 from src.utils.PubSub import pubsub
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
@@ -21,7 +22,9 @@ class QFoodItemCard(QFrame) : # at the mean time make it a QPushBtn for simplici
     def __init__(self, foodTuple, pageName) : 
         super().__init__()
         self.pageName = pageName
-        self.fooditem_id, self.foodname, self.price, self.imgfile = foodTuple
+        self.fooditem_id, self.foodname, self.price, self.imgfile, self.category_id = foodTuple
+        print(foodTuple)
+        self.editFoodDialog = QeditDialog("food", foodTuple)
         self.foodCard_layout = QVBoxLayout(self)
 
         if self.pageName == "admin" :
@@ -46,9 +49,12 @@ class QFoodItemCard(QFrame) : # at the mean time make it a QPushBtn for simplici
 
     def init_adminFoodItemCard(self) :
         self.init_customerFoodItemCard()
-        self.foodCard_layout.addWidget(QPushButton("edit"))
+        self.editBtn = QPushButton("edit")
+        self.editBtn.clicked.connect(self.editFoodDialog.exec)
+        self.foodCard_layout.addWidget(self.editBtn)
         self.foodCard_layout.addWidget(QPushButton("delete"))
         # has edit/del btns , edit/trash icons in the card
+
 
     def setPixMapOf(self, label, imgFileName) :
         if imgFileName is None :
