@@ -18,13 +18,12 @@ from src.components.Dialogs import QaddDialog
 class QCategoryList(QFrame) : 
     # fetch all categories and list them all as btns
     # cat btns will just set stackedLists to foodlist, and update content of foodList
-    def __init__(self, pageName, update_listContent, stackedLists) :
+    def __init__(self, pageName,stackedLists) :
         super().__init__()
         self.pageName = pageName
-        self.update_listContent = update_listContent # get update func from foodlist
         self.stackedLists = stackedLists # access parents stackedlists 
         self.catList_layout = QVBoxLayout(self)
-        self.addCatDialog = QaddDialog("category")
+        self.addCatDialog = QaddDialog("category", self.update_categoryList)
         headerLabel = QLabel("Categories")
         headerLabel.setFixedHeight(50)
         self.catList_layout.addWidget(headerLabel)
@@ -42,7 +41,7 @@ class QCategoryList(QFrame) :
     def init_customerCatList(self) :
         self.catList = fetchCatList()
         for catTuple in self.catList :
-            catCard = QCategoryCard(catTuple, self.pageName, self.update_listContent, self.stackedLists)
+            catCard = QCategoryCard(catTuple, self.pageName, self.stackedLists)
             self.catList_layout.addWidget(catCard)
         self.catList_layout.addStretch()
         # no plus sign
@@ -62,7 +61,7 @@ class QCategoryList(QFrame) :
         self.clear_layout(self.catList_layout)
         self.init_catList()
 
-    def clear_layout(layout): 
+    def clear_layout(self, layout): 
         if layout is not None:
             for i in reversed(range(layout.count())): # reverse, because deletion fills gaps
                 item = layout.takeAt(i) 

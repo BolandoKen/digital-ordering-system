@@ -11,6 +11,7 @@ from PyQt6.QtWidgets import (
     QFrame,
 )
 import time
+from src.utils.PubSub import pubsub
 from src.panels.foodPanel.FoodCard import QFoodItemCard
 from src.components.Dialogs import QaddDialog
 from src.database.queries import fetchFoodUnderCatList
@@ -24,9 +25,8 @@ class QFoodList(QFrame) :
         self.pageName = pageName
         self.stackedLists = stackedLists
         self.foodList_layout = QVBoxLayout(self)
-        self.addFoodDialog = QaddDialog("food")
-
-
+        self.addFoodDialog = QaddDialog("food", self.update_listContent)
+        pubsub.sub("catCardClicked", self.update_listContent)
 
     def init_customerFoodList(self) :
         foodlist = fetchFoodUnderCatList(self.category_id)
@@ -44,7 +44,8 @@ class QFoodList(QFrame) :
         self.init_customerFoodList()
         # plus sign to add food under category
     
-    def update_listContent(self, category_id, catname) :
+    def update_listContent(self, catTuple) :
+        category_id, catname = catTuple
         self.clear_layout(self.foodList_layout) 
         self.headTitle = QLabel("")
         self.headTitle.setFixedHeight(50)
@@ -63,6 +64,7 @@ class QFoodList(QFrame) :
         # updates the list content
 
     def addFoodItem(self) :
+        self.addFoodDialog.category_id = self.category_id
         self.addFoodDialog.exec()
 
     def backToCat(self) :

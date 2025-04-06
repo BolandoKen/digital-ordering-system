@@ -10,16 +10,16 @@ from PyQt6.QtWidgets import (
     QLabel,
     QFrame,
 )
+from src.utils.PubSub import pubsub
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 
 class QCategoryCard(QFrame) : # at the mean time make it a QPushBtn for simplicity
     # card for each category, display name
-    def __init__(self, catTuple, pageName, update_listContent, stackedLists) :
+    def __init__(self, catTuple, pageName, stackedLists) :
         super().__init__()
         self.pageName = pageName
         self.category_id, self.catname, self.imgfile = catTuple
-        self.update_listContent = update_listContent
         self.stackedLists = stackedLists
         self.catCard_layout = QVBoxLayout(self)
 
@@ -59,6 +59,7 @@ class QCategoryCard(QFrame) : # at the mean time make it a QPushBtn for simplici
             self.handleCatCardClicked()
 
     def handleCatCardClicked(self) :
-        self.update_listContent(self.category_id, self.catname)
+        pubsub.pub("catCardClicked", (self.category_id, self.catname))
+        # self.update_listContent(self.category_id, self.catname)
         self.stackedLists.setCurrentIndex(1)
     

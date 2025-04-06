@@ -22,8 +22,7 @@ class QMenuListContainer(QFrame) :
         self.setStyleSheet("border: 1px solid black")
         self.stackedLists = QStackedWidget()
         self.foodList = QFoodList(pageName, self.stackedLists)
-        update_listContent = self.foodList.update_listContent
-        self.categoryList = QCategoryList(pageName,update_listContent, self.stackedLists)
+        self.categoryList = QCategoryList(pageName,self.stackedLists)
 
         self.stackedLists.addWidget(self.categoryList)
         self.stackedLists.addWidget(self.foodList)

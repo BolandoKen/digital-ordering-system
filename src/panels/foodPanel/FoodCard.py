@@ -12,7 +12,7 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QSpinBox
 )
-
+from src.utils.PubSub import pubsub
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 
@@ -60,9 +60,13 @@ class QFoodItemCard(QFrame) : # at the mean time make it a QPushBtn for simplici
         label.setScaledContents(True)
 
     def mousePressEvent(self, event):
+        if self.pageName == "admin" : 
+            return
         if event.button() == Qt.MouseButton.LeftButton:
             self.handleAddToCart(self.fooditem_id, self.foodname)
 
     def handleAddToCart(self, fooditem_id, foodname) :
         # can do self.parent() now yay
-        self.parent().parent().parent().parent().parent().sideBar.handleFoodAddToCart(fooditem_id, foodname)
+        # publish to pubsub
+        pubsub.pub("addToCart", (fooditem_id, foodname))
+        # self.parent().parent().parent().parent().parent().sideBar.handleFoodAddToCart(fooditem_id, foodname)

@@ -11,6 +11,7 @@ from PyQt6.QtWidgets import (
     QFrame,
     QSpinBox
 )
+from src.utils.PubSub import pubsub
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 
@@ -46,6 +47,7 @@ class QSideBar(QFrame) :
         self.submitBtn.clicked.connect(self.handleSubmitOrderClicked)
         self.sidebar_layout.addWidget(self.submitBtn)
         self.submitBtn.setEnabled(len(self.cartItems) > 0)
+        pubsub.sub("addToCart", self.handleFoodAddToCart)
     
     def init_adminSideBar(self) :
         print('adminSidebar')
@@ -79,7 +81,8 @@ class QSideBar(QFrame) :
         self.cartItems = [] #reset the cart
         self.init_customerSideBar()
 
-    def handleFoodAddToCart(self, fooditem_id, foodname) :
+    def handleFoodAddToCart(self, foodTuple) :
+        fooditem_id, foodname = foodTuple
         if any(item[0] == fooditem_id for item in self.cartItems):
             print(fooditem_id,foodname," is a duplicate")
             return
