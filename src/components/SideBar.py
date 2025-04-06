@@ -47,22 +47,19 @@ class QSideBar(QFrame) :
         self.submitBtn.clicked.connect(self.handleSubmitOrderClicked)
         self.sidebar_layout.addWidget(self.submitBtn)
         self.submitBtn.setEnabled(len(self.cartItems) > 0)
-        pubsub.sub("addToCart", self.handleFoodAddToCart)
+        pubsub.subscribe("addToCart", self.handleFoodAddToCart)
     
     def init_adminSideBar(self) :
         print('adminSidebar')
         self.switchBtn = QPushButton("switch admin panel")
         self.switchBtn.clicked.connect(self.switchPage)
         self.sidebar_layout.addWidget(self.switchBtn)
-
-    def foodquantity(self):
-        quantities = {}
     
     def handleSubmitOrderClicked(self) :
         if not self.cartItems:
             print("Cart is empty")
             return
-       
+    
        #
         item_counts = {}    #gave up and used chatgpt cuz always 1 quantity ra mu print sa akoa code huhu (1 shrimp, 1 squid balag 3 shrimp, 2 squid sa Spinbox)
         for i in range(1, self.sidebar_layout.count()):

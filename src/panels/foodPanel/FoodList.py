@@ -25,8 +25,9 @@ class QFoodList(QFrame) :
         self.pageName = pageName
         self.stackedLists = stackedLists
         self.foodList_layout = QVBoxLayout(self)
-        self.addFoodDialog = QaddDialog("food", self.update_listContent)
-        pubsub.sub("catCardClicked", self.update_listContent)
+        self.addFoodDialog = QaddDialog("food")
+        pubsub.subscribe("catCardClicked", self.update_listContent)
+        pubsub.subscribe("addedFoodItem", self.update_listContent)
 
     def init_customerFoodList(self) :
         foodlist = fetchFoodUnderCatList(self.category_id)
@@ -43,9 +44,13 @@ class QFoodList(QFrame) :
 
         self.init_customerFoodList()
         # plus sign to add food under category
+
     
-    def update_listContent(self, catTuple) :
-        category_id, catname = catTuple
+    def update_listContent(self, catTuple = None) :
+        if catTuple is not None :
+            category_id, catname = catTuple
+            self.category_id = category_id
+            self.catname = catname
         self.clear_layout(self.foodList_layout) 
         self.headTitle = QLabel("")
         self.headTitle.setFixedHeight(50)
@@ -53,8 +58,7 @@ class QFoodList(QFrame) :
         self.backBtn.clicked.connect(self.backToCat)
         self.foodList_layout.addWidget(self.headTitle)
         self.foodList_layout.addWidget(self.backBtn)
-        self.category_id = category_id
-        self.catname = catname
+
         if self.pageName == "admin" :
             self.init_adminFoodList()
         elif self.pageName == "customer" :

@@ -3,13 +3,13 @@ class Pubsub(object) :
     def __init__(self):
         self.events = {}
 
-    def sub(self, eventName, callback) :
+    def subscribe(self, eventName, callback) :
         if eventName not in self.events : 
             self.events[eventName] = [callback]
         else :
             self.events[eventName].append(callback)
 
-    def pub(self, eventName, params) :
+    def publish(self, eventName, params = None) :
         if eventName in self.events :
             for callback in self.events[eventName] :
                 callback(params)

@@ -10,7 +10,7 @@ from PyQt6.QtWidgets import (
     QLabel,
     QFrame,
 )
-
+from src.utils.PubSub import pubsub
 from src.panels.foodPanel.CategoryCard import QCategoryCard
 from src.database.queries import fetchCatList
 from src.components.Dialogs import QaddDialog
@@ -23,11 +23,11 @@ class QCategoryList(QFrame) :
         self.pageName = pageName
         self.stackedLists = stackedLists # access parents stackedlists 
         self.catList_layout = QVBoxLayout(self)
-        self.addCatDialog = QaddDialog("category", self.update_categoryList)
+        self.addCatDialog = QaddDialog("category")
         headerLabel = QLabel("Categories")
         headerLabel.setFixedHeight(50)
         self.catList_layout.addWidget(headerLabel)
-
+        pubsub.subscribe("addedCategory", self.update_categoryList)
         self.init_catList()
 
         self.setStyleSheet("border: 1px solid black")
@@ -57,7 +57,7 @@ class QCategoryList(QFrame) :
     def handleAddCategory(self) :
         self.addCatDialog.exec()
 
-    def update_categoryList(self) :
+    def update_categoryList(self, e = None) :
         self.clear_layout(self.catList_layout)
         self.init_catList()
 

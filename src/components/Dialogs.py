@@ -12,15 +12,15 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QFileDialog
 )
+from src.utils.PubSub import pubsub
 from src.database.Categories import addCategory, editCategory
 from src.database.FoodItems import addFoodItem, editFoodItem
 
 class QaddDialog(QDialog) :
-    def __init__(self, panelName, rerenderListFn):
+    def __init__(self, panelName):
         super().__init__()
         self.panelName = panelName
         self.dialog_layout = QVBoxLayout(self)
-        self.rerenderList = rerenderListFn
 
         if panelName == "category" :
             self.init_addCategory()
@@ -71,12 +71,13 @@ class QaddDialog(QDialog) :
             # catTuple = (self.catname.text(), self.imgfileLabel.text())
             catTuple = (self.catname.text(), None)
             addCategory(catTuple)
+            pubsub.publish("addedCategory")
             print("added category : ", catTuple)
         elif self.panelName == "food" :
-            foodTuple = (self.foodname.text(), self.foodpriceLabel.text(), None, self.category_id)
+            foodTuple = (self.foodname.text(), self.foodprice.text(), None, self.category_id)
             addFoodItem(foodTuple)
+            pubsub.publish("addedFoodItem")
             print("added food item : ", foodTuple)
-        self.rerenderList()
         self.close()
 
 

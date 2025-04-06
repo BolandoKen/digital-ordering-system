@@ -59,7 +59,7 @@ class QCategoryCard(QFrame) : # at the mean time make it a QPushBtn for simplici
             self.handleCatCardClicked()
 
     def handleCatCardClicked(self) :
-        pubsub.pub("catCardClicked", (self.category_id, self.catname))
+        pubsub.publish("catCardClicked", (self.category_id, self.catname))
         # self.update_listContent(self.category_id, self.catname)
         self.stackedLists.setCurrentIndex(1)
     
