@@ -1,7 +1,6 @@
 import sys
 
 from src.panels.foodPanel.FoodPanel import QFoodPanel
-from src.panels.orderHPanel.OrderHPanel import QOrderHPanel
 from src.panels.statsPanel.StatsPanel import QStatsPanel
 from src.panels.profilePanel.ProfilePanel import QProfilePanel
 
@@ -25,7 +24,6 @@ class QAdminPage(QFrame) :
         self.objectName = "admin"
         # will have floating footer for switch btns to panels? that possible?
         self.foodPanel = QFoodPanel(self.objectName)
-        self.orderPanel = QOrderHPanel()
         self.statsPanel = QStatsPanel()
         self.profilePanel = QProfilePanel()
         
@@ -33,7 +31,6 @@ class QAdminPage(QFrame) :
         self.sideBar = QSideBar(self.objectName, self.switchPage)
 
         self.adminStackedPanels.addWidget(self.foodPanel)
-        self.adminStackedPanels.addWidget(self.orderPanel)
         self.adminStackedPanels.addWidget(self.statsPanel)
         self.adminStackedPanels.addWidget(self.profilePanel)
 
@@ -44,4 +41,4 @@ class QAdminPage(QFrame) :
 
     def switchPage(self) :
         curr = self.adminStackedPanels.currentIndex()
-        self.adminStackedPanels.setCurrentIndex( (curr+1) %4)
+        self.adminStackedPanels.setCurrentIndex( (curr+1) %3)

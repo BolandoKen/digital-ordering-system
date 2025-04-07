@@ -14,7 +14,7 @@ from PyQt6.QtWidgets import (
 from src.utils.PubSub import pubsub
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
-
+import traceback
 
 class QSideBar(QFrame) :
     def __init__(self, pageName, switchPage = None) :
@@ -30,6 +30,8 @@ class QSideBar(QFrame) :
             self.init_adminSideBar()
         elif self.pageName == "customer" :
             self.init_customerSideBar()
+            pubsub.subscribe("addToCart", self.handleFoodAddToCart)
+
 
     def init_customerSideBar(self) :
         self.clear_layout(self.sidebar_layout)
@@ -47,7 +49,6 @@ class QSideBar(QFrame) :
         self.submitBtn.clicked.connect(self.handleSubmitOrderClicked)
         self.sidebar_layout.addWidget(self.submitBtn)
         self.submitBtn.setEnabled(len(self.cartItems) > 0)
-        pubsub.subscribe("addToCart", self.handleFoodAddToCart)
     
     def init_adminSideBar(self) :
         print('adminSidebar')
@@ -79,6 +80,7 @@ class QSideBar(QFrame) :
         self.init_customerSideBar()
 
     def handleFoodAddToCart(self, foodTuple) :
+        # traceback.print_stack()
         fooditem_id, foodname = foodTuple
         if any(item[0] == fooditem_id for item in self.cartItems):
             print(fooditem_id,foodname," is a duplicate")

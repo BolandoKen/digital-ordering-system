@@ -1,11 +1,6 @@
 import sys
 import os
-from pathlib import Path
-
-current_dir = Path(__file__).parent #chatgpt'd, idk how to do relative file path
-panels_dir = current_dir.parent     
-sys.path.append(str(panels_dir))
-from orderHPanel.OrderHPanel import QOrderHPanel
+from src.panels.orderHPanel.OrderHPanel import QOrderHPanel
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
