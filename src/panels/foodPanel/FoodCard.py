@@ -13,6 +13,7 @@ from PyQt6.QtWidgets import (
     QSpinBox
 )
 from src.components.Dialogs import QeditDialog
+from src.database.FoodItems import deleteFoodItem
 from src.utils.PubSub import pubsub
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
@@ -51,7 +52,9 @@ class QFoodItemCard(QFrame) : # at the mean time make it a QPushBtn for simplici
         self.editBtn = QPushButton("edit")
         self.editBtn.clicked.connect(self.editFoodDialog.exec)
         self.foodCard_layout.addWidget(self.editBtn)
-        self.foodCard_layout.addWidget(QPushButton("delete"))
+        self.delBtn = QPushButton("delete")
+        self.delBtn.clicked.connect(self.handleFoodDel)
+        self.foodCard_layout.addWidget(self.delBtn)
         # has edit/del btns , edit/trash icons in the card
 
 
@@ -63,6 +66,10 @@ class QFoodItemCard(QFrame) : # at the mean time make it a QPushBtn for simplici
         label.setPixmap(pixmap)
         label.setFixedSize(50,50)
         label.setScaledContents(True)
+
+    def handleFoodDel(self) :
+        deleteFoodItem(self.fooditem_id)
+        pubsub.publish("updateFoodItem")
 
     def mousePressEvent(self, event):
         if self.pageName == "admin" : 

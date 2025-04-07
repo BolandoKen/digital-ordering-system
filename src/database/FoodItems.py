@@ -1,4 +1,5 @@
 from src.database.init_db import get_dbCursor
+from src.database.queries import checkFoodHasBeenOrdered
 
 cursor = get_dbCursor()
 
@@ -17,7 +18,12 @@ def editFoodItem(foodTuple) :
                    WHERE fooditem_id = %s
                    """, foodTuple)
 
-def deleteFoodItem(cat) :
-    print('wait') 
-    # do later
- 
+def deleteFoodItem(foodid) :
+    if checkFoodHasBeenOrdered(foodid) :
+        cursor.execute("UPDATE FoodItems SET is_available = %s WHERE fooditem_id = %s",( False, foodid))
+        print('food has previously been ordered, will soft delete!')
+    else : 
+        print('deleted', foodid)
+        cursor.execute(f"DELETE FROM FoodItems WHERE fooditem_id = {foodid}")
+        
+    # to do: listing for unavailable items

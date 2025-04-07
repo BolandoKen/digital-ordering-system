@@ -11,6 +11,7 @@ from PyQt6.QtWidgets import (
     QFrame,
 )
 from src.utils.PubSub import pubsub
+from src.database.Categories import deleteCategory
 from src.components.Dialogs import QeditDialog
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
@@ -46,7 +47,9 @@ class QCategoryCard(QFrame) : # at the mean time make it a QPushBtn for simplici
         self.editBtn = QPushButton("edit")
         self.editBtn.clicked.connect(self.editCatDialog.exec)
         self.catCard_layout.addWidget(self.editBtn)
-        self.catCard_layout.addWidget(QPushButton("delete"))
+        self.delBtn = QPushButton("delete")
+        self.delBtn.clicked.connect(self.handleCatDelete)
+        self.catCard_layout.addWidget(self.delBtn)
         # has edit/del btns , edit/trash icons in the card
 
     def setPixMapOf(self, label, imgFileName) :
@@ -57,6 +60,10 @@ class QCategoryCard(QFrame) : # at the mean time make it a QPushBtn for simplici
         label.setPixmap(pixmap)
         label.setFixedSize(50,50)
         label.setScaledContents(True)
+
+    def handleCatDelete(self) :
+        deleteCategory(self.category_id)
+        pubsub.publish("updateCategory")
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:

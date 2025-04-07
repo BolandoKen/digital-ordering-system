@@ -12,3 +12,9 @@ def fetchFoodUnderCatList(category_id) :
     results = cursor.fetchall()
     return results
 
+
+def checkFoodHasBeenOrdered(foodid) :
+    cursor.execute(f"SELECT COUNT(*) FROM OrderItems WHERE fooditem_id = {foodid}")
+    results = cursor.fetchone()[0]
+    
+    return results > 0
