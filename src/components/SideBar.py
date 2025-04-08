@@ -69,25 +69,24 @@ class QSideBar(QFrame) :
     def handleSubmitOrderClicked(self) :
         if not self.cartItems:
             print("Cart is empty")
-            return
-    
-       # need to refactor this......
-        item_counts = {}    #gave up and used chatgpt cuz always 1 quantity ra mu print sa akoa code huhu (1 shrimp, 1 squid balag 3 shrimp, 2 squid sa Spinbox)
-        for i in range(0, self.sidebar_layout.getLayout().count()):
-            item = self.sidebar_layout.getLayout().itemAt(i)
+            return []
+
+        item_counts = {}
+        for i in range(1, self.sidebar_layout.count()):
+            item = self.sidebar_layout.itemAt(i)
             if item and (widget := item.widget()) and isinstance(widget, QSimpleCartItem):
-                foodname = widget.foodname
+                food_id = widget.fooditem_id 
                 quantity = widget.getQuantity()
-                if foodname in item_counts:
-                    item_counts[foodname] += quantity
+                if food_id in item_counts:
+                    item_counts[food_id] += quantity
                 else:
-                    item_counts[foodname] = quantity      
-        receipt_lines = [(count, name) for name, count in item_counts.items()]
-        #
-        print(receipt_lines)
-        # addOrder(receipt_lines)
-        self.cartItems = [] #reset the cart
+                    item_counts[food_id] = quantity
+
+        self.cartItems = []
         self.init_customerSideBar()
+        orderitem_info = [(food_id, quantity) for food_id, quantity in item_counts.items()] #should return a list of tuples based on whats inside the dict
+        
+        return orderitem_info
 
     def handleFoodAddToCart(self, foodTuple) :
         # traceback.print_stack()
