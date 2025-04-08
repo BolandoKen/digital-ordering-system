@@ -22,7 +22,6 @@ class QFoodPanel(QFrame) :
         
         self.food_layout = QVBoxLayout(self) # 
         self.food_layout.setContentsMargins(0,0,0,0)
-        # will have stuff
         
         self.food_layout.addWidget(QFoodPanelHeader(pageName))
         self.food_layout.addWidget(self.menuListCont) 

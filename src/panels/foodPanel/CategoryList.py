@@ -16,6 +16,7 @@ from src.panels.foodPanel.CategoryCard import QCategoryCard
 from src.database.queries import fetchCatList
 from src.components.Dialogs import QaddDialog
 from PyQt6.QtCore import Qt
+from src.components.ScrollArea import QScrollAreaLayout
 
 class QCategoryList(QFrame) : 
     # fetch all categories and list them all as btns
@@ -25,16 +26,11 @@ class QCategoryList(QFrame) :
         self.pageName = pageName
         self.stackedLists = stackedLists # access parents stackedlists 
         self.scroll_layout = QVBoxLayout(self)
-        self.scrollWidget = QScrollArea()
-        self.scroll_layout.addWidget(self.scrollWidget)
-        self.scrollWidget.setWidgetResizable(True)
-        self.scrollContainer = QWidget()
-        self.scrollWidget.setWidget(self.scrollContainer)
-        self.catList_layout = QVBoxLayout(self.scrollContainer)
+
+        self.catList_Layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout)
+
         self.addCatDialog = QaddDialog("category")
-        # headerLabel = QLabel("Categories")
-        # headerLabel.setFixedHeight(50)
-        # self.catList_layout.addWidget(headerLabel)
+
         pubsub.subscribe("updateCategory", self.update_categoryList)
         self.init_catList()
 
@@ -50,14 +46,14 @@ class QCategoryList(QFrame) :
         self.catList = fetchCatList()
         for catTuple in self.catList :
             catCard = QCategoryCard(catTuple, self.pageName, self.stackedLists)
-            self.catList_layout.addWidget(catCard)
-        self.catList_layout.addStretch()
+            self.catList_Layout.addWidget(catCard)
+        self.catList_Layout.addStretch()
         # no plus sign
 
     def init_adminCatList(self) :
         addCatBtn = QPushButton("+ add Category")
         addCatBtn.clicked.connect(self.handleAddCategory)
-        self.catList_layout.addWidget(addCatBtn)
+        self.catList_Layout.addWidget(addCatBtn)
 
         self.init_customerCatList()
         # has plus sign to add categories
@@ -66,7 +62,7 @@ class QCategoryList(QFrame) :
         self.addCatDialog.exec()
 
     def update_categoryList(self, e = None) :
-        self.clear_layout(self.catList_layout)
+        self.clear_layout(self.catList_Layout.getLayout())
         self.init_catList()
 
     def clear_layout(self, layout): 

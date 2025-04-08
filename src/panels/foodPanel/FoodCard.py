@@ -31,8 +31,6 @@ class QFoodItemCard(QFrame) : # at the mean time make it a QPushBtn for simplici
             self.init_adminFoodItemCard()
         elif self.pageName == "customer" :
             self.init_customerFoodItemCard()
-        elif self.pageName == "sideBar" :
-            print('hmmm reuse?')
 
         self.setStyleSheet("background-color: white; color: black")
 

@@ -16,6 +16,7 @@ from src.panels.foodPanel.FoodCard import QFoodItemCard
 from src.components.Dialogs import QaddDialog
 from src.database.queries import fetchFoodUnderCatList
 from PyQt6.QtGui import QPixmap
+from src.components.ScrollArea import QScrollAreaLayout
 
 class QFoodList(QFrame) :
     # fetch all food items under the category, and list them all as btns
@@ -24,13 +25,15 @@ class QFoodList(QFrame) :
         super().__init__()
         self.pageName = pageName
         self.stackedLists = stackedLists
-        self.foodList_layout = QVBoxLayout(self)
+        self.scroll_layout = QVBoxLayout(self)
+
+        self.foodList_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout)
+
+        # self.foodList_layout = QVBoxLayout(self)
+
         self.showUnavailable = False
         self.addFoodDialog = QaddDialog("food")
-        if self.pageName == "admin" :
-            pubsub.subscribe("admin_catCardClicked", self.update_listContent)
-        elif self.pageName == "customer" :
-            pubsub.subscribe("customer_catCardClicked", self.update_listContent)
+        pubsub.subscribe(f"{self.pageName}_catCardClicked", self.update_listContent)
         pubsub.subscribe("updateFoodItem", self.update_listContent)
 
     def init_customerFoodList(self) :
@@ -45,11 +48,11 @@ class QFoodList(QFrame) :
         addFoodBtn = QPushButton("+ add food item")
         self.showUnBtn = QPushButton()
         if self.showUnavailable :
-            self.showUnBtn.setText("hide unavailable items") # his doesnt work why?
+            self.showUnBtn.setText("hide unavailable items") 
         else :
             self.showUnBtn.setText("show unavailable items")
         self.showUnBtn.clicked.connect(self.toggleShowUnavailable)
-        addFoodBtn.clicked.connect(self.addFoodItem)
+        addFoodBtn.clicked.connect(self.handleAddFoodItem)
         self.foodList_layout.addWidget(addFoodBtn)
         self.foodList_layout.addWidget(self.showUnBtn)
 
@@ -62,29 +65,18 @@ class QFoodList(QFrame) :
             category_id, catname = catTuple
             self.category_id = category_id
             self.catname = catname
-        self.clear_layout(self.foodList_layout) 
-        # self.headTitle = QLabel("")
-        # self.headTitle.setFixedHeight(50)
-        # self.backBtn = QPushButton("<- back to cat list") 
-        # self.backBtn.clicked.connect(self.backToCat)
-
-        # self.foodList_layout.addWidget(self.headTitle)
-        # self.foodList_layout.addWidget(self.backBtn)
+        self.clear_layout(self.foodList_layout.getLayout()) 
 
         if self.pageName == "admin" :
             self.init_adminFoodList()
         elif self.pageName == "customer" :
             self.init_customerFoodList()
         
-        # self.headTitle.setText(self.catname)
         # updates the list content
 
-    def addFoodItem(self) :
+    def handleAddFoodItem(self) :
         self.addFoodDialog.category_id = self.category_id
         self.addFoodDialog.exec()
-
-    # def backToCat(self) :
-    #     self.stackedLists.setCurrentIndex(0)
     
     def toggleShowUnavailable(self) :
         self.showUnavailable = not self.showUnavailable
