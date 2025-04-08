@@ -78,7 +78,7 @@ class QSideBar(QFrame) :
             return []
 
         item_counts = {}
-        for i in range(1, self.sidebar_layout.getLayout().count()):
+        for i in range(0, self.sidebar_layout.getLayout().count()):
             item = self.sidebar_layout.getLayout().itemAt(i)
             if item and (widget := item.widget()) and isinstance(widget, QSimpleCartItem):
                 food_id = widget.foodid 
@@ -88,9 +88,6 @@ class QSideBar(QFrame) :
                 if food_id in item_counts:
                     item_counts[food_id] += quantity
                 else:
-                    item_counts[food_id] = quantity
-
-        self.cartItems = []
                     item_counts[food_id] = quantity
 
         self.cartItems = []
