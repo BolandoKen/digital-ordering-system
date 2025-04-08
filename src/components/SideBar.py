@@ -85,7 +85,12 @@ class QSideBar(QFrame) :
                 quantity = widget.getQuantity()
                 if food_id in item_counts:
                     item_counts[food_id] += quantity
+                if food_id in item_counts:
+                    item_counts[food_id] += quantity
                 else:
+                    item_counts[food_id] = quantity
+
+        self.cartItems = []
                     item_counts[food_id] = quantity
 
         self.cartItems = []
