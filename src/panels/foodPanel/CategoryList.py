@@ -27,7 +27,7 @@ class QCategoryList(QFrame) :
         self.pageName = pageName
         self.stackedLists = stackedLists # access parents stackedlists 
         self.scroll_layout = QVBoxLayout(self)
-
+        self.scroll_layout.setContentsMargins(0,0,0,0)
         self.catList_Layout = QScrollAreaLayout(QFlowLayout, self.scroll_layout)
     
         self.addCatDialog = QaddDialog("category")

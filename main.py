@@ -35,6 +35,8 @@ class QWindow(QMainWindow) :
 
         centralWidget = QWidget()
         main_layout = QVBoxLayout(centralWidget)
+        main_layout.setContentsMargins(0,0,0,0)
+        main_layout.setSpacing(0)
         main_layout.addWidget(self.stackedPages)
         # main_layout.addWidget(self.switchBtn)
         self.setCentralWidget(centralWidget)

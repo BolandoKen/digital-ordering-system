@@ -35,6 +35,7 @@ class QFoodList(QFrame) :
         self.showUnavailable = False
         self.addFoodDialog = QaddDialog("food")
         pubsub.subscribe(f"{self.pageName}_catCardClicked", self.update_listContent)
+        pubsub.subscribe(f"admin_toggleShowUnavailable", self.toggleShowUnavailable)
         pubsub.subscribe("updateFoodItem", self.update_listContent)
 
     def init_customerFoodList(self) :
@@ -47,15 +48,8 @@ class QFoodList(QFrame) :
 
     def init_adminFoodList(self) :
         addFoodBtn = QPushButton("+ add food item")
-        self.showUnBtn = QPushButton()
-        if self.showUnavailable :
-            self.showUnBtn.setText("hide unavailable items") 
-        else :
-            self.showUnBtn.setText("show unavailable items")
-        self.showUnBtn.clicked.connect(self.toggleShowUnavailable)
         addFoodBtn.clicked.connect(self.handleAddFoodItem)
         self.foodList_layout.addWidget(addFoodBtn)
-        self.foodList_layout.addWidget(self.showUnBtn)
 
         self.init_customerFoodList()
         # plus sign to add food under category
@@ -79,7 +73,7 @@ class QFoodList(QFrame) :
         self.addFoodDialog.category_id = self.category_id
         self.addFoodDialog.exec()
     
-    def toggleShowUnavailable(self) :
+    def toggleShowUnavailable(self, e = None) :
         self.showUnavailable = not self.showUnavailable
         self.update_listContent()
 

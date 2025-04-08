@@ -15,6 +15,7 @@ from src.utils.PubSub import pubsub
 from src.database.Orders import addOrder
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
+from src.components.ScrollArea import QScrollAreaLayout
 import traceback
 
 class QSideBar(QFrame) :
@@ -25,7 +26,19 @@ class QSideBar(QFrame) :
         self.setStyleSheet("background-color: white; color: black")
         self.cartItems = []
         self.cartItems_amount = []
-        self.sidebar_layout = QVBoxLayout(self)
+        self.scroll_layout = QVBoxLayout(self)
+        title = QLabel("Your Cart")
+        self.scroll_layout.addWidget(title)
+        title.setStyleSheet("""
+                font-size: 16px;
+                font-weight: bold;
+                padding-bottom: 10px;
+                qproperty-alignment: AlignCenter;
+            """)
+        self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout)
+        self.submitBtn = QPushButton("SubmitBtn")
+        self.scroll_layout.addWidget(self.submitBtn)
+        self.submitBtn.clicked.connect(self.handleSubmitOrderClicked)
         if self.pageName == "admin" :
             self.switchPage = switchPage
             self.init_adminSideBar()
@@ -35,20 +48,10 @@ class QSideBar(QFrame) :
 
 
     def init_customerSideBar(self) :
-        self.clear_layout(self.sidebar_layout)
-        title = QLabel("Your Cart")
-        title.setStyleSheet("""
-            font-size: 16px;
-            font-weight: bold;
-            padding-bottom: 10px;
-            qproperty-alignment: AlignCenter;
-        """)
-        self.sidebar_layout.addWidget(title)
+        self.clear_layout(self.sidebar_layout.getLayout())
         self.renderCartItems()
         self.sidebar_layout.addStretch()
-        self.submitBtn = QPushButton("SubmitBtn")
-        self.submitBtn.clicked.connect(self.handleSubmitOrderClicked)
-        self.sidebar_layout.addWidget(self.submitBtn)
+
         self.submitBtn.setEnabled(len(self.cartItems) > 0)
     
     def init_adminSideBar(self) :
@@ -70,8 +73,8 @@ class QSideBar(QFrame) :
     
        # need to refactor this......
         item_counts = {}    #gave up and used chatgpt cuz always 1 quantity ra mu print sa akoa code huhu (1 shrimp, 1 squid balag 3 shrimp, 2 squid sa Spinbox)
-        for i in range(1, self.sidebar_layout.count()):
-            item = self.sidebar_layout.itemAt(i)
+        for i in range(0, self.sidebar_layout.getLayout().count()):
+            item = self.sidebar_layout.getLayout().itemAt(i)
             if item and (widget := item.widget()) and isinstance(widget, QSimpleCartItem):
                 foodname = widget.foodname
                 quantity = widget.getQuantity()
