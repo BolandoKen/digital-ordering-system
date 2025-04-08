@@ -12,6 +12,7 @@ from PyQt6.QtWidgets import (
     QSpinBox
 )
 from src.utils.PubSub import pubsub
+from src.database.Orders import addOrder
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 import traceback
@@ -61,7 +62,7 @@ class QSideBar(QFrame) :
             print("Cart is empty")
             return
     
-       #
+       # need to refactor this......
         item_counts = {}    #gave up and used chatgpt cuz always 1 quantity ra mu print sa akoa code huhu (1 shrimp, 1 squid balag 3 shrimp, 2 squid sa Spinbox)
         for i in range(1, self.sidebar_layout.count()):
             item = self.sidebar_layout.itemAt(i)
@@ -72,10 +73,10 @@ class QSideBar(QFrame) :
                     item_counts[foodname] += quantity
                 else:
                     item_counts[foodname] = quantity      
-        receipt_lines = [f"{count} {name}" for name, count in item_counts.items()]
+        receipt_lines = [(count, name) for name, count in item_counts.items()]
         #
-
-        print(", ".join(receipt_lines))
+        print(receipt_lines)
+        # addOrder(receipt_lines)
         self.cartItems = [] #reset the cart
         self.init_customerSideBar()
 

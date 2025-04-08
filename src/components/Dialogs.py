@@ -13,6 +13,7 @@ from PyQt6.QtWidgets import (
     QFileDialog
 )
 from src.utils.PubSub import pubsub
+from src.utils.FormValid import formValidated
 from src.database.Categories import addCategory, editCategory
 from src.database.FoodItems import addFoodItem, editFoodItem
 
@@ -70,14 +71,16 @@ class QaddDialog(QDialog) :
         if self.panelName == "category" :
             # catTuple = (self.catname.text(), self.imgfileLabel.text())
             catTuple = (self.catname.text(), None)
-            addCategory(catTuple)
-            pubsub.publish("updateCategory")
-            print("added category : ", catTuple)
+            if formValidated(catTuple, self.panelName) :
+                addCategory(catTuple)
+                pubsub.publish("updateCategory")
+                print("added category : ", catTuple)
         elif self.panelName == "food" :
             foodTuple = (self.foodname.text(), self.foodprice.text(), None, self.category_id)
-            addFoodItem(foodTuple)
-            pubsub.publish("updateFoodItem")
-            print("added food item : ", foodTuple)
+            if formValidated(foodTuple, self.panelName) :
+                addFoodItem(foodTuple)
+                pubsub.publish("updateFoodItem")
+                print("added food item : ", foodTuple)
         self.close()
 
 
@@ -144,12 +147,14 @@ class QeditDialog(QDialog) :
         if self.panelName == "category" :
             # catTuple = (self.catname.text(), self.imgfileLabel.text())
             catTuple = (self.catnameLineEdit.text(), None, self.category_id)
-            editCategory(catTuple)
-            pubsub.publish("updateCategory")
-            print("edit category : ", catTuple)
+            if formValidated(catTuple, self.panelName) :
+                editCategory(catTuple)
+                pubsub.publish("updateCategory")
+                print("edit category : ", catTuple)
         elif self.panelName == "food" :
             foodTuple = (self.foodnameLineEdit.text(), self.foodpriceLineEdit.text(), None, self.categoryidLineEdit.text(), self.fooditem_id)
-            editFoodItem(foodTuple)
-            pubsub.publish("updateFoodItem")
-            print("edit food item : ", foodTuple)
+            if formValidated(catTuple, self.panelName) :
+                editFoodItem(foodTuple)
+                pubsub.publish("updateFoodItem")
+                print("edit food item : ", foodTuple)
         self.close()
