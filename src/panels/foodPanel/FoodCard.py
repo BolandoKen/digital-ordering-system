@@ -17,6 +17,7 @@ from src.database.FoodItems import deleteFoodItem
 from src.utils.PubSub import pubsub
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
+from src.utils.PixMap import setPixMapOf
 
 class QFoodItemCard(QFrame) : # at the mean time make it a QPushBtn for simplicity
     # card for each food item, display name, img, price
@@ -37,7 +38,7 @@ class QFoodItemCard(QFrame) : # at the mean time make it a QPushBtn for simplici
     def init_customerFoodItemCard(self) :
         self.foodLabel = QLabel(self.foodname)
         self.foodimg = QLabel()
-        self.setPixMapOf(self.foodimg, self.imgfile)
+        setPixMapOf(self.foodimg, self.imgfile)
         self.priceLabel = QLabel(str(self.price))        
 
         self.foodCard_layout.addWidget(self.foodLabel)   
@@ -57,14 +58,6 @@ class QFoodItemCard(QFrame) : # at the mean time make it a QPushBtn for simplici
         # has edit/del btns , edit/trash icons in the card
 
 
-    def setPixMapOf(self, label, imgFileName) :
-        if imgFileName is None :
-            imgFileName = "icecream.png"
-        path = os.path.join(os.path.abspath("assets/foodimg"), imgFileName) # pls do refactor later
-        pixmap = QPixmap(path)
-        label.setPixmap(pixmap)
-        label.setFixedSize(50,50)
-        label.setScaledContents(True)
 
     def handleFoodDel(self) :
         deleteFoodItem(self.fooditem_id)

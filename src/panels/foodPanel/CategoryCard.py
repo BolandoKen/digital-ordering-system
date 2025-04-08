@@ -15,6 +15,7 @@ from src.database.Categories import deleteCategory
 from src.components.Dialogs import QeditDialog
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
+from src.utils.PixMap import setPixMapOf
 
 class QCategoryCard(QFrame) : # at the mean time make it a QPushBtn for simplicity
     # card for each category, display name
@@ -38,7 +39,7 @@ class QCategoryCard(QFrame) : # at the mean time make it a QPushBtn for simplici
     def init_customerCategoryCard(self) :
         self.catLabel = QLabel(self.catname)
         self.catimg = QLabel()
-        self.setPixMapOf(self.catimg, self.imgfile)
+        setPixMapOf(self.catimg, self.imgfile)
       
         self.catCard_layout.addWidget(self.catLabel)
         self.catCard_layout.addWidget(self.catimg)
@@ -54,14 +55,6 @@ class QCategoryCard(QFrame) : # at the mean time make it a QPushBtn for simplici
         self.catCard_layout.addWidget(self.delBtn)
         # has edit/del btns , edit/trash icons in the card
 
-    def setPixMapOf(self, label, imgFileName) :
-        if imgFileName is None:
-            imgFileName = "icecream.png"
-        path = os.path.join(os.path.abspath("assets/foodimg"), imgFileName) 
-        pixmap = QPixmap(path)
-        label.setPixmap(pixmap)
-        label.setFixedSize(50,50)
-        label.setScaledContents(True)
 
     def handleCatDelete(self) :
         deleteCategory(self.category_id)

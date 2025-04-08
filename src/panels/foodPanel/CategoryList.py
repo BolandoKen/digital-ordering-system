@@ -17,6 +17,7 @@ from src.database.queries import fetchCatList
 from src.components.Dialogs import QaddDialog
 from PyQt6.QtCore import Qt
 from src.components.ScrollArea import QScrollAreaLayout
+from src.components.FlowLayout import QFlowLayout
 
 class QCategoryList(QFrame) : 
     # fetch all categories and list them all as btns
@@ -27,8 +28,8 @@ class QCategoryList(QFrame) :
         self.stackedLists = stackedLists # access parents stackedlists 
         self.scroll_layout = QVBoxLayout(self)
 
-        self.catList_Layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout)
-
+        self.catList_Layout = QScrollAreaLayout(QFlowLayout, self.scroll_layout)
+    
         self.addCatDialog = QaddDialog("category")
 
         pubsub.subscribe("updateCategory", self.update_categoryList)
@@ -47,7 +48,7 @@ class QCategoryList(QFrame) :
         for catTuple in self.catList :
             catCard = QCategoryCard(catTuple, self.pageName, self.stackedLists)
             self.catList_Layout.addWidget(catCard)
-        self.catList_Layout.addStretch()
+        # self.catList_Layout.addStretch()
         # no plus sign
 
     def init_adminCatList(self) :

@@ -17,6 +17,7 @@ from src.components.Dialogs import QaddDialog
 from src.database.queries import fetchFoodUnderCatList
 from PyQt6.QtGui import QPixmap
 from src.components.ScrollArea import QScrollAreaLayout
+from src.components.FlowLayout import QFlowLayout
 
 class QFoodList(QFrame) :
     # fetch all food items under the category, and list them all as btns
@@ -27,7 +28,7 @@ class QFoodList(QFrame) :
         self.stackedLists = stackedLists
         self.scroll_layout = QVBoxLayout(self)
 
-        self.foodList_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout)
+        self.foodList_layout = QScrollAreaLayout(QFlowLayout, self.scroll_layout)
 
         # self.foodList_layout = QVBoxLayout(self)
 
@@ -41,7 +42,7 @@ class QFoodList(QFrame) :
         for foodTuple in foodlist :
             foodCard = QFoodItemCard(foodTuple, self.pageName)
             self.foodList_layout.addWidget(foodCard)
-        self.foodList_layout.addStretch()
+        # self.foodList_layout.addStretch()
         # no plus sign, unable to add
 
     def init_adminFoodList(self) :

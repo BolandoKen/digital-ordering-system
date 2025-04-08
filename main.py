@@ -15,6 +15,7 @@ from PyQt6.QtGui import QShortcut, QKeySequence
 from src.pages.AdminPage import QAdminPage
 from src.pages.CustomerPage import QCustomerPage
 from src.database.init_db import init_db
+from src.utils.PubSub import pubsub
 
 class QWindow(QMainWindow) :
     def __init__(self):
@@ -35,13 +36,15 @@ class QWindow(QMainWindow) :
         centralWidget = QWidget()
         main_layout = QVBoxLayout(centralWidget)
         main_layout.addWidget(self.stackedPages)
-        main_layout.addWidget(self.switchBtn)
+        # main_layout.addWidget(self.switchBtn)
         self.setCentralWidget(centralWidget)
 
+        pubsub.subscribe("login_Event", self.switchPage)
+        pubsub.subscribe("logout_Event", self.switchPage)
         exit_shortcut = QShortcut(QKeySequence('esc'), self)
         exit_shortcut.activated.connect(self.close)
 
-    def switchPage(self) :
+    def switchPage(self, e = None) :
         curr = self.stackedPages.currentIndex()
         self.stackedPages.setCurrentIndex( (curr+1) %2)
         if self.stackedPages.currentIndex() == 0 :

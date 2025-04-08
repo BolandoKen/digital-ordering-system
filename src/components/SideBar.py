@@ -56,7 +56,13 @@ class QSideBar(QFrame) :
         self.switchBtn = QPushButton("switch admin panel")
         self.switchBtn.clicked.connect(self.switchPage)
         self.sidebar_layout.addWidget(self.switchBtn)
+        self.logoutBtn = QPushButton("Log out")
+        self.logoutBtn.clicked.connect(self.handleLogoutClicked)
+        self.sidebar_layout.addWidget(self.logoutBtn)
     
+    def handleLogoutClicked(self) :
+        pubsub.publish("logout_Event", None)
+
     def handleSubmitOrderClicked(self) :
         if not self.cartItems:
             print("Cart is empty")

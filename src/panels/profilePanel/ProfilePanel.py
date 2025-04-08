@@ -16,13 +16,14 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QScrollArea
 )
+from src.utils.PixMap import setPixMapOf
 
 class QProfilePanel(QFrame) :
     def __init__(self):
         super().__init__()
         self.order_layout = QVBoxLayout(self)
         self.image_label = QLabel()
-        self.setPixMapOf(self.image_label, "icecream.png")        
+        setPixMapOf(self.image_label, "icecream.png")        
         name_label = QLabel("M's Kitchen")
         name_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         edit_button = QPushButton("Edit")
@@ -37,13 +38,4 @@ class QProfilePanel(QFrame) :
         self.order_layout.addWidget(edit_button, alignment=Qt.AlignmentFlag.AlignCenter)
         self.order_layout.addWidget(history_label)
         self.order_layout.addWidget(scroll_area)
-
-    def setPixMapOf(self, label, imgFileName): #from FoodCard.py
-        if imgFileName is None :
-            imgFileName = "icecream.png"
-        path = os.path.join(os.path.abspath("assets/foodimg"), imgFileName) 
-        pixmap = QPixmap(path)
-        label.setPixmap(pixmap)
-        label.setFixedSize(150,150)
-        label.setScaledContents(True)
 
