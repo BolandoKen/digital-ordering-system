@@ -63,28 +63,28 @@ class QFoodList(QFrame) :
             self.category_id = category_id
             self.catname = catname
         self.clear_layout(self.foodList_layout) 
-        self.headTitle = QLabel("")
-        self.headTitle.setFixedHeight(50)
-        self.backBtn = QPushButton("<- back to cat list") 
-        self.backBtn.clicked.connect(self.backToCat)
+        # self.headTitle = QLabel("")
+        # self.headTitle.setFixedHeight(50)
+        # self.backBtn = QPushButton("<- back to cat list") 
+        # self.backBtn.clicked.connect(self.backToCat)
 
-        self.foodList_layout.addWidget(self.headTitle)
-        self.foodList_layout.addWidget(self.backBtn)
+        # self.foodList_layout.addWidget(self.headTitle)
+        # self.foodList_layout.addWidget(self.backBtn)
 
         if self.pageName == "admin" :
             self.init_adminFoodList()
         elif self.pageName == "customer" :
             self.init_customerFoodList()
         
-        self.headTitle.setText(self.catname)
+        # self.headTitle.setText(self.catname)
         # updates the list content
 
     def addFoodItem(self) :
         self.addFoodDialog.category_id = self.category_id
         self.addFoodDialog.exec()
 
-    def backToCat(self) :
-        self.stackedLists.setCurrentIndex(0)
+    # def backToCat(self) :
+    #     self.stackedLists.setCurrentIndex(0)
     
     def toggleShowUnavailable(self) :
         self.showUnavailable = not self.showUnavailable

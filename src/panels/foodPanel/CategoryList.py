@@ -9,11 +9,13 @@ from PyQt6.QtWidgets import (
     QStackedWidget,
     QLabel,
     QFrame,
+    QScrollArea
 )
 from src.utils.PubSub import pubsub
 from src.panels.foodPanel.CategoryCard import QCategoryCard
 from src.database.queries import fetchCatList
 from src.components.Dialogs import QaddDialog
+from PyQt6.QtCore import Qt
 
 class QCategoryList(QFrame) : 
     # fetch all categories and list them all as btns
@@ -22,11 +24,17 @@ class QCategoryList(QFrame) :
         super().__init__()
         self.pageName = pageName
         self.stackedLists = stackedLists # access parents stackedlists 
-        self.catList_layout = QVBoxLayout(self)
+        self.scroll_layout = QVBoxLayout(self)
+        self.scrollWidget = QScrollArea()
+        self.scroll_layout.addWidget(self.scrollWidget)
+        self.scrollWidget.setWidgetResizable(True)
+        self.scrollContainer = QWidget()
+        self.scrollWidget.setWidget(self.scrollContainer)
+        self.catList_layout = QVBoxLayout(self.scrollContainer)
         self.addCatDialog = QaddDialog("category")
-        headerLabel = QLabel("Categories")
-        headerLabel.setFixedHeight(50)
-        self.catList_layout.addWidget(headerLabel)
+        # headerLabel = QLabel("Categories")
+        # headerLabel.setFixedHeight(50)
+        # self.catList_layout.addWidget(headerLabel)
         pubsub.subscribe("updateCategory", self.update_categoryList)
         self.init_catList()
 
