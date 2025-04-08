@@ -27,24 +27,30 @@ class QSideBar(QFrame) :
         self.cartItems = []
         self.cartItems_amount = []
         self.scroll_layout = QVBoxLayout(self)
-        title = QLabel("Your Cart")
-        self.scroll_layout.addWidget(title)
-        title.setStyleSheet("""
-                font-size: 16px;
-                font-weight: bold;
-                padding-bottom: 10px;
-                qproperty-alignment: AlignCenter;
-            """)
-        self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout)
-        self.submitBtn = QPushButton("SubmitBtn")
-        self.scroll_layout.addWidget(self.submitBtn)
-        self.submitBtn.clicked.connect(self.handleSubmitOrderClicked)
+
+
         if self.pageName == "admin" :
+            self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout)
+
             self.switchPage = switchPage
+            self.logoutBtn = QPushButton("Log out")
+            self.scroll_layout.addWidget(self.logoutBtn)
             self.init_adminSideBar()
         elif self.pageName == "customer" :
-            self.init_customerSideBar()
+            title = QLabel("Your Cart")
+            self.scroll_layout.addWidget(title)
+            title.setStyleSheet("""
+                    font-size: 16px;
+                    font-weight: bold;
+                    padding-bottom: 10px;
+                    qproperty-alignment: AlignCenter;
+                """)
+            self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout)
+            self.submitBtn = QPushButton("SubmitBtn")
+            self.scroll_layout.addWidget(self.submitBtn)
+            self.submitBtn.clicked.connect(self.handleSubmitOrderClicked)
             pubsub.subscribe("addToCart", self.handleFoodAddToCart)
+            self.init_customerSideBar()
 
 
     def init_customerSideBar(self) :
@@ -59,9 +65,9 @@ class QSideBar(QFrame) :
         self.switchBtn = QPushButton("switch admin panel")
         self.switchBtn.clicked.connect(self.switchPage)
         self.sidebar_layout.addWidget(self.switchBtn)
-        self.logoutBtn = QPushButton("Log out")
         self.logoutBtn.clicked.connect(self.handleLogoutClicked)
-        self.sidebar_layout.addWidget(self.logoutBtn)
+        self.sidebar_layout.addStretch()
+
     
     def handleLogoutClicked(self) :
         pubsub.publish("logout_Event", None)
@@ -69,42 +75,42 @@ class QSideBar(QFrame) :
     def handleSubmitOrderClicked(self) :
         if not self.cartItems:
             print("Cart is empty")
-            return
-    
-       # need to refactor this......
-        item_counts = {}    #gave up and used chatgpt cuz always 1 quantity ra mu print sa akoa code huhu (1 shrimp, 1 squid balag 3 shrimp, 2 squid sa Spinbox)
-        for i in range(0, self.sidebar_layout.getLayout().count()):
+            return []
+
+        item_counts = {}
+        for i in range(1, self.sidebar_layout.getLayout().count()):
             item = self.sidebar_layout.getLayout().itemAt(i)
             if item and (widget := item.widget()) and isinstance(widget, QSimpleCartItem):
-                foodname = widget.foodname
+                food_id = widget.foodid 
                 quantity = widget.getQuantity()
-                if foodname in item_counts:
-                    item_counts[foodname] += quantity
+                if food_id in item_counts:
+                    item_counts[food_id] += quantity
                 else:
-                    item_counts[foodname] = quantity      
-        receipt_lines = [(count, name) for name, count in item_counts.items()]
-        #
-        print(receipt_lines)
-        # addOrder(receipt_lines)
-        self.cartItems = [] #reset the cart
+                    item_counts[food_id] = quantity
+
+        self.cartItems = []
         self.init_customerSideBar()
+        orderitem_info = [(quantity,food_id) for food_id, quantity in item_counts.items()] #should return a list of tuples based on whats inside the dict
+
+        print(orderitem_info)
+        confirmation = True # placeholder for confirmation dialog
+        if confirmation :
+            addOrder(orderitem_info)
 
     def handleFoodAddToCart(self, foodTuple) :
-        # traceback.print_stack()
         fooditem_id, foodname = foodTuple
         if any(item[0] == fooditem_id for item in self.cartItems):
             print(fooditem_id,foodname," is a duplicate")
             return
         self.cartItems.append((fooditem_id, foodname))
         self.init_customerSideBar()
-        # handle when same fooditem is clicked twice, instead of cartItems as arr maybe make it a dict 
         print(fooditem_id,foodname, " added to cart")
     
     def renderCartItems(self) :
         if not self.cartItems :
             return
         for foodid, foodname in self.cartItems :
-            self.sidebar_layout.addWidget(QSimpleCartItem(foodid, foodname, "icecream.png")) # instead of a qlabe
+            self.sidebar_layout.addWidget(QSimpleCartItem(foodid, foodname, "icecream.png")) 
 
     def clear_layout(self, layout): 
         if layout is not None:

@@ -15,7 +15,6 @@ class QScrollAreaLayout(QScrollArea) :
     def __init__(self, QLayout, parentWidget):
         super().__init__()
         self.setWidgetResizable(True)
-
         self.container = QWidget()
         self.setWidget(self.container)
 

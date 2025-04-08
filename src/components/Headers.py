@@ -26,15 +26,18 @@ class QFoodPanelHeader(QFrame) :
             self.logo.clicked.connect(self.handleLogoClicked)
         self.main_layout.addWidget(self.logo)
         self.main_layout.addLayout(self.header_layout)
+        
         self.backBtn = QPushButton("<-")
         self.showUnBtn = QPushButton("show unavailable items")
-        self.showUnBtn.clicked.connect(self.handleToggleUnBtn)
-        self.backBtn.clicked.connect(self.handleBackBtn)
+ 
         self.header = QLabel()
         self.header_layout.addWidget(self.backBtn)
         self.header_layout.addWidget(self.header)
         self.header_layout.addStretch()
         self.header_layout.addWidget(self.showUnBtn)
+
+        self.showUnBtn.clicked.connect(self.handleToggleUnBtn)
+        self.backBtn.clicked.connect(self.handleBackBtn)
         self.init_category()
 
     def init_category(self) :

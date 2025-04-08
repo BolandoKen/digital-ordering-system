@@ -22,7 +22,6 @@ class QAdminPage(QFrame) :
     def __init__(self):
         super().__init__()
         self.objectName = "admin"
-        # will have floating footer for switch btns to panels? that possible?
         self.foodPanel = QFoodPanel(self.objectName)
         self.statsPanel = QStatsPanel()
         self.profilePanel = QProfilePanel()

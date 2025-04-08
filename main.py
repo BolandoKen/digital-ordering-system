@@ -38,7 +38,6 @@ class QWindow(QMainWindow) :
         main_layout.setContentsMargins(0,0,0,0)
         main_layout.setSpacing(0)
         main_layout.addWidget(self.stackedPages)
-        # main_layout.addWidget(self.switchBtn)
         self.setCentralWidget(centralWidget)
 
         pubsub.subscribe("login_Event", self.switchPage)

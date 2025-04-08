@@ -20,17 +20,14 @@ from src.components.ScrollArea import QScrollAreaLayout
 from src.components.FlowLayout import QFlowLayout
 
 class QFoodList(QFrame) :
-    # fetch all food items under the category, and list them all as btns
-    # food btns on click will add to order cart
+
     def __init__(self, pageName, stackedLists) :
         super().__init__()
         self.pageName = pageName
         self.stackedLists = stackedLists
         self.scroll_layout = QVBoxLayout(self)
-
+        self.scroll_layout.setContentsMargins(0,0,0,0)
         self.foodList_layout = QScrollAreaLayout(QFlowLayout, self.scroll_layout)
-
-        # self.foodList_layout = QVBoxLayout(self)
 
         self.showUnavailable = False
         self.addFoodDialog = QaddDialog("food")
@@ -43,7 +40,6 @@ class QFoodList(QFrame) :
         for foodTuple in foodlist :
             foodCard = QFoodItemCard(foodTuple, self.pageName)
             self.foodList_layout.addWidget(foodCard)
-        # self.foodList_layout.addStretch()
         # no plus sign, unable to add
 
     def init_adminFoodList(self) :

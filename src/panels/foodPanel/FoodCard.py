@@ -18,9 +18,9 @@ from src.utils.PubSub import pubsub
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 from src.utils.PixMap import setPixMapOf
+from src.components.MenuCards import QMenuCard
 
-class QFoodItemCard(QFrame) : # at the mean time make it a QPushBtn for simplicity
-    # card for each food item, display name, img, price
+class QFoodItemCard(QMenuCard) : 
     def __init__(self, foodTuple, pageName) : 
         super().__init__()
         self.pageName = pageName
@@ -48,29 +48,21 @@ class QFoodItemCard(QFrame) : # at the mean time make it a QPushBtn for simplici
 
     def init_adminFoodItemCard(self) :
         self.init_customerFoodItemCard()
-        self.editBtn = QPushButton("edit")
-        self.editBtn.clicked.connect(self.editFoodDialog.exec)
-        self.foodCard_layout.addWidget(self.editBtn)
         self.delBtn = QPushButton("delete")
         self.delBtn.clicked.connect(self.handleFoodDel)
         self.foodCard_layout.addWidget(self.delBtn)
-
         # has edit/del btns , edit/trash icons in the card
-
-
 
     def handleFoodDel(self) :
         deleteFoodItem(self.fooditem_id)
         pubsub.publish("updateFoodItem")
 
     def mousePressEvent(self, event):
-        if self.pageName == "admin" : 
-            return
         if event.button() == Qt.MouseButton.LeftButton:
-            self.handleAddToCart(self.fooditem_id, self.foodname)
+            if self.pageName == "customer" :
+                self.handleAddToCart(self.fooditem_id, self.foodname)
+            elif self.pageName == "admin" :
+                self.editFoodDialog.exec()
 
     def handleAddToCart(self, fooditem_id, foodname) :
-        # can do self.parent() now yay
-        # publish to pubsub
         pubsub.publish("addToCart", (fooditem_id, foodname))
-        # self.parent().parent().parent().parent().parent().sideBar.handleFoodAddToCart(fooditem_id, foodname)

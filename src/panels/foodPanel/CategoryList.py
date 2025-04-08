@@ -20,8 +20,6 @@ from src.components.ScrollArea import QScrollAreaLayout
 from src.components.FlowLayout import QFlowLayout
 
 class QCategoryList(QFrame) : 
-    # fetch all categories and list them all as btns
-    # cat btns will just set stackedLists to foodlist, and update content of foodList
     def __init__(self, pageName,stackedLists) :
         super().__init__()
         self.pageName = pageName
@@ -48,7 +46,6 @@ class QCategoryList(QFrame) :
         for catTuple in self.catList :
             catCard = QCategoryCard(catTuple, self.pageName, self.stackedLists)
             self.catList_Layout.addWidget(catCard)
-        # self.catList_Layout.addStretch()
         # no plus sign
 
     def init_adminCatList(self) :
@@ -63,6 +60,7 @@ class QCategoryList(QFrame) :
         self.addCatDialog.exec()
 
     def update_categoryList(self, e = None) :
+        print("updated")
         self.clear_layout(self.catList_Layout.getLayout())
         self.init_catList()
 

@@ -16,9 +16,9 @@ from src.components.Dialogs import QeditDialog
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 from src.utils.PixMap import setPixMapOf
+from src.components.MenuCards import QMenuCard
 
-class QCategoryCard(QFrame) : # at the mean time make it a QPushBtn for simplicity
-    # card for each category, display name
+class QCategoryCard(QMenuCard) :
     def __init__(self, catTuple, pageName, stackedLists) :
         super().__init__()
         self.pageName = pageName
@@ -34,18 +34,18 @@ class QCategoryCard(QFrame) : # at the mean time make it a QPushBtn for simplici
             self.publishClickedEvent = "customer_catCardClicked"
             self.init_customerCategoryCard()
 
-        self.setStyleSheet("background-color: white; color: black")
 
     def init_customerCategoryCard(self) :
+        # no edit/del btns
         self.catLabel = QLabel(self.catname)
         self.catimg = QLabel()
         setPixMapOf(self.catimg, self.imgfile)
-      
+    
         self.catCard_layout.addWidget(self.catLabel)
         self.catCard_layout.addWidget(self.catimg)
-        # no edit/del btns
 
     def init_adminCategoryCard(self) :
+        # has edit/del btns , edit/trash icons in the card
         self.init_customerCategoryCard()
         self.editBtn = QPushButton("edit")
         self.editBtn.clicked.connect(self.editCatDialog.exec)
@@ -53,8 +53,6 @@ class QCategoryCard(QFrame) : # at the mean time make it a QPushBtn for simplici
         self.delBtn = QPushButton("delete")
         self.delBtn.clicked.connect(self.handleCatDelete)
         self.catCard_layout.addWidget(self.delBtn)
-        # has edit/del btns , edit/trash icons in the card
-
 
     def handleCatDelete(self) :
         deleteCategory(self.category_id)
