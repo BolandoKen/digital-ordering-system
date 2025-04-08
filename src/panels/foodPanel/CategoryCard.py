@@ -27,8 +27,10 @@ class QCategoryCard(QFrame) : # at the mean time make it a QPushBtn for simplici
         self.catCard_layout = QVBoxLayout(self)
 
         if self.pageName == "admin" :
+            self.publishClickedEvent = "admin_catCardClicked"
             self.init_adminCategoryCard()
         elif self.pageName == "customer" :
+            self.publishClickedEvent = "customer_catCardClicked"
             self.init_customerCategoryCard()
 
         self.setStyleSheet("background-color: white; color: black")
@@ -70,7 +72,7 @@ class QCategoryCard(QFrame) : # at the mean time make it a QPushBtn for simplici
             self.handleCatCardClicked()
 
     def handleCatCardClicked(self) :
-        pubsub.publish("catCardClicked", (self.category_id, self.catname))
+        pubsub.publish(self.publishClickedEvent, (self.category_id, self.catname))
         # self.update_listContent(self.category_id, self.catname)
         self.stackedLists.setCurrentIndex(1)
     

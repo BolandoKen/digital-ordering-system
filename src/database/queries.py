@@ -1,4 +1,5 @@
 from src.database.init_db import get_dbCursor
+import traceback
 
 cursor = get_dbCursor()
 
@@ -7,8 +8,12 @@ def fetchCatList() :
     results = cursor.fetchall()
     return results
 
-def fetchFoodUnderCatList(category_id) :
-    cursor.execute(f"SELECT fooditem_id, name, price, imgfile, category_id FROM FoodItems WHERE category_id = {category_id} ")
+def fetchFoodUnderCatList(category_id, showUnavailable = False) :
+    if showUnavailable :
+        cursor.execute(f"SELECT fooditem_id, name, price, imgfile, category_id FROM FoodItems WHERE category_id = {category_id}")
+    else :
+        print('fetching only available')
+        cursor.execute(f"SELECT fooditem_id, name, price, imgfile, category_id FROM FoodItems WHERE category_id = {category_id} AND is_available = {not showUnavailable} ") 
     results = cursor.fetchall()
     return results
 
@@ -18,3 +23,15 @@ def checkFoodHasBeenOrdered(foodid) :
     results = cursor.fetchone()[0]
     
     return results > 0
+
+def fetchStatistics(order='DESC') :
+    #chatgpt gikan ang pagkuha sa times ordered, nangutana langko unsaon pagkuha sa sum sa tanan quantity gikan sa orderitems
+    cursor.execute(f"""SELECT f.name AS Food, c.name AS Category, IFNULL(SUM(o.quantity),0) AS Times_Ordered
+                   FROM FoodItems f
+                   LEFT JOIN Categories c ON f.category_id = c.category_id
+                   LEFT JOIN OrderItems o ON f.fooditem_id = o.fooditem_id
+                   GROUP BY f.fooditem_id, f.name, c.name
+                   ORDER BY Times_Ordered {order}
+                   """)
+    results = cursor.fetchall()
+    return results

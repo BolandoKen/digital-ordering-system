@@ -55,6 +55,7 @@ class QFoodItemCard(QFrame) : # at the mean time make it a QPushBtn for simplici
         self.delBtn = QPushButton("delete")
         self.delBtn.clicked.connect(self.handleFoodDel)
         self.foodCard_layout.addWidget(self.delBtn)
+
         # has edit/del btns , edit/trash icons in the card
 
 

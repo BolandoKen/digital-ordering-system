@@ -25,12 +25,16 @@ class QFoodList(QFrame) :
         self.pageName = pageName
         self.stackedLists = stackedLists
         self.foodList_layout = QVBoxLayout(self)
+        self.showUnavailable = False
         self.addFoodDialog = QaddDialog("food")
-        pubsub.subscribe("catCardClicked", self.update_listContent)
+        if self.pageName == "admin" :
+            pubsub.subscribe("admin_catCardClicked", self.update_listContent)
+        elif self.pageName == "customer" :
+            pubsub.subscribe("customer_catCardClicked", self.update_listContent)
         pubsub.subscribe("updateFoodItem", self.update_listContent)
 
     def init_customerFoodList(self) :
-        foodlist = fetchFoodUnderCatList(self.category_id)
+        foodlist = fetchFoodUnderCatList(self.category_id, self.showUnavailable)
         for foodTuple in foodlist :
             foodCard = QFoodItemCard(foodTuple, self.pageName)
             self.foodList_layout.addWidget(foodCard)
@@ -39,8 +43,15 @@ class QFoodList(QFrame) :
 
     def init_adminFoodList(self) :
         addFoodBtn = QPushButton("+ add food item")
+        self.showUnBtn = QPushButton()
+        if self.showUnavailable :
+            self.showUnBtn.setText("hide unavailable items") # his doesnt work why?
+        else :
+            self.showUnBtn.setText("show unavailable items")
+        self.showUnBtn.clicked.connect(self.toggleShowUnavailable)
         addFoodBtn.clicked.connect(self.addFoodItem)
         self.foodList_layout.addWidget(addFoodBtn)
+        self.foodList_layout.addWidget(self.showUnBtn)
 
         self.init_customerFoodList()
         # plus sign to add food under category
@@ -56,6 +67,7 @@ class QFoodList(QFrame) :
         self.headTitle.setFixedHeight(50)
         self.backBtn = QPushButton("<- back to cat list") 
         self.backBtn.clicked.connect(self.backToCat)
+
         self.foodList_layout.addWidget(self.headTitle)
         self.foodList_layout.addWidget(self.backBtn)
 
@@ -73,6 +85,10 @@ class QFoodList(QFrame) :
 
     def backToCat(self) :
         self.stackedLists.setCurrentIndex(0)
+    
+    def toggleShowUnavailable(self) :
+        self.showUnavailable = not self.showUnavailable
+        self.update_listContent()
 
     def clear_layout(self, layout): 
         if layout is not None:
