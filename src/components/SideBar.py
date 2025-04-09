@@ -95,6 +95,7 @@ class QSideBar(QFrame) :
         orderitem_info = [(quantity,food_id) for food_id, quantity in item_counts.items()] #should return a list of tuples based on whats inside the dict
 
         print(orderitem_info)
+
         confirmation = True # placeholder for confirmation dialog
         if confirmation :
             addOrder(orderitem_info)
@@ -123,7 +124,7 @@ class QSideBar(QFrame) :
                 elif item.spacerItem():  
                     layout.removeItem(item)   
     
-class QSimpleCartItem(QFrame) :
+class QSimpleCartItem(QFrame) : # refactor this later
     def __init__(self, foodid, foodname, imgfile):
         super().__init__()
         self.setStyleSheet("background-color: white; color: black")

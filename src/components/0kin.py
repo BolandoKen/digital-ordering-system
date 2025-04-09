@@ -16,7 +16,7 @@ class QWindow(QMainWindow):
         self.setWindowTitle("QGridLayout Example")
         main_layout = QVBoxLayout()
 
-        main_layout.addWidget(QButton1("hello"))
+        main_layout.addWidget(QButton1("hello",100,50,"white","red"))
 
         main_centralwidget = QWidget()
         main_centralwidget.setStyleSheet("background")

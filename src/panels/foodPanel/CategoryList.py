@@ -42,7 +42,7 @@ class QCategoryList(QFrame) :
             self.init_customerCatList()
 
     def init_customerCatList(self) :
-        self.catList = fetchCatList()
+        self.catList = fetchCatList(self.pageName)
         for catTuple in self.catList :
             catCard = QCategoryCard(catTuple, self.pageName, self.stackedLists)
             self.catList_Layout.addWidget(catCard)

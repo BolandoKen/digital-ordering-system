@@ -3,10 +3,29 @@ import traceback
 
 cursor = get_dbCursor()
 
-def fetchCatList() :
-    cursor.execute("SELECT category_id, name, imgfile FROM Categories")
+def fetchCatList(pageName) :
+    if pageName == "admin" :
+        cursor.execute("SELECT category_id, name, imgfile FROM Categories")
+    elif pageName == "customer" :
+        cursor.execute("""SELECT c.category_id, c.name, c.imgfile
+                    FROM Categories AS c
+                    LEFT JOIN FoodItems AS f
+                    ON c.category_id = f.category_id
+                    GROUP BY c.category_id
+                    HAVING COUNT(f.fooditem_id)!= 0
+                    """)
     results = cursor.fetchall()
     return results
+
+def fetchCategoryItemCount() :
+    cursor.execute("""SELECT COUNT(f.fooditem_id)
+                   FROM Categories AS c 
+                   LEFT JOIN FoodItems AS f 
+                   ON c.category_id = f.category_id 
+                   GROUP BY c.category_id
+                   """)
+    pass
+
 
 def fetchFoodUnderCatList(category_id, showUnavailable = False) :
     if showUnavailable :
