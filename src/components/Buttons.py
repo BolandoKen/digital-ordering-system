@@ -13,6 +13,7 @@ from PyQt6.QtWidgets import (
     QFileDialog
 )
 from PyQt6.QtGui import QIcon
+from PyQt6.QtCore import Qt
 
 class QButton1(QPushButton) :
     def __init__(self, text, width, height, color, text_color, icon=None, font_style="Regular", font_size=20):
