@@ -39,7 +39,7 @@ class QCategoryCard(QMenuCard) :
         # no edit/del btns
         self.catLabel = QLabel(self.catname)
         self.catimg = QLabel()
-        setPixMapOf(self.catimg, self.imgfile)
+        setPixMapOf(self.catimg, self.imgfile, "category") #change this!!
     
         self.catCard_layout.addWidget(self.catLabel)
         self.catCard_layout.addWidget(self.catimg)

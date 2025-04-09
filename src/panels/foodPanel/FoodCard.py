@@ -38,7 +38,7 @@ class QFoodItemCard(QMenuCard) :
     def init_customerFoodItemCard(self) :
         self.foodLabel = QLabel(self.foodname)
         self.foodimg = QLabel()
-        setPixMapOf(self.foodimg, self.imgfile)
+        setPixMapOf(self.foodimg, self.imgfile, "food")
         self.priceLabel = QLabel(str(self.price))        
 
         self.foodCard_layout.addWidget(self.foodLabel)   

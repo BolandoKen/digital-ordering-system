@@ -3,11 +3,18 @@ from src.database.queries import fetchFoodUnderCatList
 
 cursor = get_dbCursor()
 
-def addCategory(catTuple) :
+def addCategory(catTuple, hasImg) :
+    _,imgfile = catTuple
     cursor.execute("""INSERT INTO Categories 
                    (name, imgfile)
                    VALUES (%s, %s)
                    """, catTuple)
+    if hasImg is False :
+        return None
+    lastrowid = cursor.lastrowid
+    imgfileName = f"{lastrowid}.png"
+    cursor.execute("UPDATE Categories SET imgfile = %s WHERE category_id = %s", (imgfileName,lastrowid))
+    return imgfileName
 
 def editCategory(catTuple) :
     cursor.execute("""UPDATE Categories

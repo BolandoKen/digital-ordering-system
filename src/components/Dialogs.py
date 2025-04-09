@@ -16,12 +16,18 @@ from src.utils.PubSub import pubsub
 from src.utils.FormValid import formValidated
 from src.database.Categories import addCategory, editCategory
 from src.database.FoodItems import addFoodItem, editFoodItem
+from src.utils.PixMap import checkImgSize, saveImageToLocalTemp, setPixMapOf, moveImageToAssets
+from src.components.Buttons import QImageButton
+from src.components.ImageCard import QSelectImageCard
+from PyQt6.QtGui import QPixmap
+
 
 class QaddDialog(QDialog) :
     def __init__(self, panelName):
         super().__init__()
         self.panelName = panelName
         self.dialog_layout = QVBoxLayout(self)
+        self.tempImagePath = None
 
         if panelName == "category" :
             self.init_addCategory()
@@ -31,15 +37,14 @@ class QaddDialog(QDialog) :
     def init_addCategory(self) :
         self.catnameLabel = QLabel("category name : ")
         self.catname = QLineEdit()
-        self.imgfileLabel = QLabel("img file: ")
-        self.imgfile = QPushButton("select img file")
-        self.imgfile.clicked.connect(self.open_file)
+        self.selectImgCard = QSelectImageCard()
+        self.selectImgCard.connectTo(self.open_file)
         self.submitBtn = QPushButton("add category")
         self.submitBtn.clicked.connect(self.handleSubmitBtn)
         self.dialog_layout.addWidget(self.catnameLabel)
         self.dialog_layout.addWidget(self.catname)
-        self.dialog_layout.addWidget(self.imgfileLabel)
-        self.dialog_layout.addWidget(self.imgfile)
+        self.dialog_layout.addWidget(self.selectImgCard)
+        self.dialog_layout.addStretch()
         self.dialog_layout.addWidget(self.submitBtn)
 
     def init_addFood(self) :
@@ -48,31 +53,34 @@ class QaddDialog(QDialog) :
         self.foodname = QLineEdit()
         self.foodpriceLabel = QLabel("food price : ")
         self.foodprice = QLineEdit()
-        self.imgfileLabel = QLabel("img file: ")
-        self.imgfile = QPushButton("select img file")
-        self.imgfile.clicked.connect(self.open_file)
+        self.selectImgCard = QSelectImageCard()
+        self.selectImgCard.connectTo(self.open_file)
         self.submitBtn = QPushButton("add food item")
         self.submitBtn.clicked.connect(self.handleSubmitBtn)
         self.dialog_layout.addWidget(self.foodnameLabel)
         self.dialog_layout.addWidget(self.foodname)
         self.dialog_layout.addWidget(self.foodpriceLabel)
         self.dialog_layout.addWidget(self.foodprice)
-        self.dialog_layout.addWidget(self.imgfileLabel)
-        self.dialog_layout.addWidget(self.imgfile)
+        self.dialog_layout.addWidget(self.selectImgCard)
+        self.dialog_layout.addStretch()
         self.dialog_layout.addWidget(self.submitBtn)
         
     def open_file(self):
         home_dir = os.path.expanduser("~")
         file_path, _ = QFileDialog.getOpenFileName(self, "Open File", home_dir, "Images (*.png *.jpg *.jpeg *.bmp);;All Files (*)")
         if file_path:
-            self.imgfileLabel.setText(f"Selected: {file_path}")
+            print(checkImgSize(file_path)) #check for filesize bfore compress
+            self.tempImagePath = saveImageToLocalTemp(file_path, "temp.png")
+            setPixMapOf(self.selectImgCard.getLabel(), "temp.png", "temp")            
         
     def handleSubmitBtn(self) :
         if self.panelName == "category" :
-            # catTuple = (self.catname.text(), self.imgfileLabel.text())
+            hasImg = self.tempImagePath is not None # checks if an img is appended
             catTuple = (self.catname.text(), None)
             if formValidated(catTuple, self.panelName) :
-                addCategory(catTuple)
+                imgfileName = addCategory(catTuple, hasImg)
+                if hasImg:
+                    moveImageToAssets(self.tempImagePath, self.panelName, imgfileName)
                 pubsub.publish("updateCategory")
                 print("added category : ", catTuple)
         elif self.panelName == "food" :
@@ -82,7 +90,8 @@ class QaddDialog(QDialog) :
                 pubsub.publish("updateFoodItem")
                 print("added food item : ", foodTuple)
         self.close()
-
+        self.selectImgCard.clearImg()
+        self.tempImagePath = None
 
 class QeditDialog(QDialog) :
     def __init__(self, panelName, Tuple):
@@ -145,7 +154,6 @@ class QeditDialog(QDialog) :
         
     def handleSubmitBtn(self) :
         if self.panelName == "category" :
-            # catTuple = (self.catname.text(), self.imgfileLabel.text())
             catTuple = (self.catnameLineEdit.text(), None, self.category_id)
             if formValidated(catTuple, self.panelName) :
                 editCategory(catTuple)
