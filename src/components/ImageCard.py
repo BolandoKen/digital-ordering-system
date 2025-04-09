@@ -15,8 +15,9 @@ from src.components.Buttons import QImageButton
 from PyQt6.QtGui import QPixmap
 
 class QSelectImageCard(QFrame) :
-    def __init__(self):
+    def __init__(self, handleClearBtnCallback):
         super().__init__()
+        self.callback = handleClearBtnCallback
         self.imageCard_layout = QVBoxLayout(self)
         self.clearButton = QPushButton("X")
         self.clearButton.clicked.connect(self.clearImg)
@@ -30,6 +31,8 @@ class QSelectImageCard(QFrame) :
     def clearImg(self) :
         self.imageButton.setPixmap(QPixmap()) # set to default pixmap
         self.imageButton.setText("+")
+        self.callback()
+
 
     def getLabel(self) :
         return self.imageButton

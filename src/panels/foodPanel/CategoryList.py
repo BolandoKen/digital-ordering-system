@@ -60,7 +60,7 @@ class QCategoryList(QFrame) :
         self.addCatDialog.exec()
 
     def update_categoryList(self, e = None) :
-        print("updated")
+        print("updated",self.pageName)
         self.clear_layout(self.catList_Layout.getLayout())
         self.init_catList()
 

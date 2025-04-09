@@ -39,7 +39,7 @@ class QCategoryCard(QMenuCard) :
         # no edit/del btns
         self.catLabel = QLabel(self.catname)
         self.catimg = QLabel()
-        setPixMapOf(self.catimg, self.imgfile, "category") #change this!!
+        setPixMapOf(self.catimg, self.imgfile, "category") 
     
         self.catCard_layout.addWidget(self.catLabel)
         self.catCard_layout.addWidget(self.catimg)
@@ -56,7 +56,6 @@ class QCategoryCard(QMenuCard) :
 
     def handleCatDelete(self) :
         deleteCategory(self.category_id)
-        pubsub.publish("updateCategory")
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:

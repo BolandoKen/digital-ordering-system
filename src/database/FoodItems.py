@@ -3,13 +3,20 @@ from src.database.queries import checkFoodHasBeenOrdered
 
 cursor = get_dbCursor()
 
-def addFoodItem(foodTuple) :
+def addFoodItem(foodTuple, hasImg) :
     cursor.execute("""INSERT INTO FoodItems
                    ( name, price, imgfile, category_id)
                    VALUES (%s,  %s, %s, %s)
                    """, foodTuple)
+    if hasImg is False :
+        return None
+    lastrowid = cursor.lastrowid
+    imgfileName = f"{lastrowid}.png"
+    cursor.execute("UPDATE FoodItems SET imgfile=%s WHERE fooditem_id = %s", (imgfileName, lastrowid))
+    return imgfileName
 
-def editFoodItem(foodTuple) :
+def editFoodItem(foodTuple, hasImg) :
+    _,_,_,_,fooditem_id = foodTuple
     cursor.execute("""UPDATE FoodItems
                    SET name = %s, 
                    price = %s,
@@ -17,6 +24,11 @@ def editFoodItem(foodTuple) :
                    category_id = %s
                    WHERE fooditem_id = %s
                    """, foodTuple)
+    if hasImg is False :
+        return None
+    imgfileName = f"{fooditem_id}.png"
+    cursor.execute("UPDATE FoodItems SET imgfile=%s WHERE fooditem_id = %s", (imgfileName, fooditem_id))
+    return imgfileName
 
 def deleteFoodItem(foodid) :
     if checkFoodHasBeenOrdered(foodid) :

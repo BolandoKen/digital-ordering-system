@@ -5,7 +5,8 @@ import shutil
 
 def setPixMapOf(label, imgFileName, folder) :
     if imgFileName is None:
-        imgFileName = "icecream.png"
+        return 0
+        # imgFileName = "icecream.png"
     if folder == "temp" :
         destFolder = "temp"
     else :
@@ -15,6 +16,8 @@ def setPixMapOf(label, imgFileName, folder) :
     label.setPixmap(pixmap)
     label.setFixedSize(50,50)
     label.setScaledContents(True)
+
+    return path
 
 def checkImgSize(imgFilePath) :
     filesize = os.path.getsize(imgFilePath)
