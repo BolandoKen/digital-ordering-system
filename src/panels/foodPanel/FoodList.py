@@ -63,7 +63,6 @@ class QFoodList(QFrame) :
             category_id, catname = catTuple
             self.category_id = category_id
             self.catname = catname
-            print('set self.category_id to ', self.category_id, 'in', self.pageName)
         self.clear_layout(self.foodList_layout.getLayout()) 
 
         if self.pageName == "admin" :

@@ -1,6 +1,6 @@
 import os
 from PyQt6.QtGui import QPixmap
-from PIL import Image, ImageFilter
+from PIL import Image
 import shutil
 
 def setPixMapOf(label, imgFileName, folder) :
