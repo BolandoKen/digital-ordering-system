@@ -20,6 +20,7 @@ from src.utils.PixMap import checkImgSize, saveImageToLocalTemp, setPixMapOf, mo
 from src.components.Buttons import QImageButton
 from src.components.ImageCard import QSelectImageCard
 from PyQt6.QtGui import QPixmap
+from PyQt6.QtGui import QDoubleValidator
 import traceback
 
 class QaddDialog(QDialog) :
@@ -53,6 +54,9 @@ class QaddDialog(QDialog) :
         self.foodnameLineEdit = QLineEdit()
         self.foodpriceLabel = QLabel("food price : ")
         self.foodpriceLineEdit = QLineEdit()
+        foodpricevalidator = QDoubleValidator(0.00,1000.00,2) #1000 lang ako gi maximum, 0 minimum for like maybe if mag set sila og free stuff cuz event
+        foodpricevalidator.setNotation(QDoubleValidator.Notation.StandardNotation)
+        self.foodpriceLineEdit.setValidator(foodpricevalidator)
         self.selectImgCard = QSelectImageCard(self.handleClearBtn)
         self.selectImgCard.connectTo(self.open_file)
         self.categoryidLabel = QLabel("category")
