@@ -35,3 +35,8 @@ def fetchStatistics(order='DESC') :
                    """)
     results = cursor.fetchall()
     return results
+
+def fetchOrderHistory() :
+    cursor.execute(f"""SELECT * FROM Orders ORDER BY order_datetime DESC """)
+    results = cursor.fetchall()
+    return results

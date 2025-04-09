@@ -1,4 +1,5 @@
 import sys
+
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QApplication,
@@ -14,6 +15,8 @@ from PyQt6.QtWidgets import (
     QHeaderView,
 )
 
+from src.database.queries import fetchOrderHistory
+
 class QOrderHPanel(QFrame) :
     def __init__(self):
         super().__init__()
@@ -22,7 +25,7 @@ class QOrderHPanel(QFrame) :
         title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.table = QTableWidget()
         self.table.setColumnCount(2)
-        self.table.setHorizontalHeaderLabels(["Date", "Order ID"])
+        self.table.setHorizontalHeaderLabels(["OrderID", "Date"])
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         self.order_layout.addWidget(title_label)
@@ -30,12 +33,10 @@ class QOrderHPanel(QFrame) :
         self.add_sample_data()
     
     def add_sample_data(self):
-        self.table.setRowCount(3)
-        self.table.setItem(0, 0, QTableWidgetItem("Day 1"))
-        self.table.setItem(0, 1, QTableWidgetItem("sumthing sumething"))
-        self.table.setItem(1, 0, QTableWidgetItem("Day 2"))
-        self.table.setItem(1, 1, QTableWidgetItem("fried chiken"))
-        self.table.setItem(2, 0, QTableWidgetItem("Day 3"))
-        self.table.setItem(2, 1, QTableWidgetItem("buh buh"))
+        orders = fetchOrderHistory()
+        self.table.setRowCount(len(orders))
+        for row, order in enumerate(orders):
+            order_id, order_datetime = order
+            self.table.setItem(row, 1, QTableWidgetItem(str(order_datetime)))
+            self.table.setItem(row, 0, QTableWidgetItem(str(order_id)))
         
-
