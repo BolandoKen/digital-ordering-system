@@ -32,30 +32,38 @@ class QFoodList(QFrame) :
         self.showUnavailable = False
         self.addFoodDialog = QaddDialog("food")
         pubsub.subscribe(f"{self.pageName}_catCardClicked", self.update_listContent)
-        pubsub.subscribe(f"admin_toggleShowUnavailable", self.toggleShowUnavailable)
-        pubsub.subscribe("updateFoodItem", self.update_listContent)
+        self.subbedToUpdate = False
+        self.subbedToToggle = False
 
     def init_customerFoodList(self) :
         foodlist = fetchFoodUnderCatList(self.category_id, self.showUnavailable)
         for foodTuple in foodlist :
             foodCard = QFoodItemCard(foodTuple, self.pageName)
             self.foodList_layout.addWidget(foodCard)
+        
         # no plus sign, unable to add
 
     def init_adminFoodList(self) :
         addFoodBtn = QPushButton("+ add food item")
         addFoodBtn.clicked.connect(self.handleAddFoodItem)
         self.foodList_layout.addWidget(addFoodBtn)
-
+        if not self.subbedToToggle :
+            pubsub.subscribe(f"admin_toggleShowUnavailable", self.toggleShowUnavailable)
+            self.subbedToToggle = True
         self.init_customerFoodList()
         # plus sign to add food under category
 
     
     def update_listContent(self, catTuple = None) :
+        if self.subbedToUpdate is False :
+            pubsub.subscribe("updateFoodItem", self.update_listContent)
+            self.subbedToUpdate = True
+            
         if catTuple is not None :
             category_id, catname = catTuple
             self.category_id = category_id
             self.catname = catname
+            print('set self.category_id to ', self.category_id, 'in', self.pageName)
         self.clear_layout(self.foodList_layout.getLayout()) 
 
         if self.pageName == "admin" :
@@ -71,6 +79,7 @@ class QFoodList(QFrame) :
     
     def toggleShowUnavailable(self, e = None) :
         self.showUnavailable = not self.showUnavailable
+
         self.update_listContent()
 
     def clear_layout(self, layout): 

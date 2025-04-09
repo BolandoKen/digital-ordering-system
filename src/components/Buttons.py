@@ -13,7 +13,6 @@ from PyQt6.QtWidgets import (
     QFileDialog
 )
 from PyQt6.QtGui import QIcon
-from PyQt6.QtWidgets import QPushButton
 
 class QButton1(QPushButton) :
     def __init__(self, text, width, height, color, text_color, icon=None, font_style="Regular", font_size=20):
@@ -28,11 +27,23 @@ class QButton1(QPushButton) :
                            font-weight: {font_style};
                            """)
         self.clicked.connect(self.on_click)
-
         if icon: # if an icon is provided
             self.setIcon(QIcon(icon))
             self.setIconSize(self.size())
 
     def on_click(self):
         print(f"Button clicked: {self.text()}")
+
+class QImageButton(QLabel) :
+    def __init__(self, text) :
+        super().__init__(text)
+    
+    def connectTo(self, callback) :
+        self.callback = callback
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.callback()
+
+
        

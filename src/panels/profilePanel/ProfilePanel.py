@@ -23,7 +23,7 @@ class QProfilePanel(QFrame) :
         super().__init__()
         self.order_layout = QVBoxLayout(self)
         self.image_label = QLabel()
-        setPixMapOf(self.image_label, "icecream.png")        
+        setPixMapOf(self.image_label, "icecream.png", "food")        
         name_label = QLabel("M's Kitchen")
         name_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         edit_button = QPushButton("Edit")

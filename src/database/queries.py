@@ -12,7 +12,6 @@ def fetchFoodUnderCatList(category_id, showUnavailable = False) :
     if showUnavailable :
         cursor.execute(f"SELECT fooditem_id, name, price, imgfile, category_id FROM FoodItems WHERE category_id = {category_id}")
     else :
-        print('fetching only available')
         cursor.execute(f"SELECT fooditem_id, name, price, imgfile, category_id FROM FoodItems WHERE category_id = {category_id} AND is_available = {not showUnavailable} ") 
     results = cursor.fetchall()
     return results
