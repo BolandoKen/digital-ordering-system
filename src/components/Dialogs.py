@@ -86,22 +86,22 @@ class QaddDialog(QDialog) :
     def handleSubmitBtn(self) :
         if self.panelName == "category" :
             hasImg = self.tempImagePath is not None # checks if an img is appended
-            catTuple = (self.catnameLineEdit.text(), None)
-            if formValidated(catTuple, self.panelName) :
-                imgfileName = addCategory(catTuple, hasImg)
+            catTupleToAdd = (self.catnameLineEdit.text(), None)
+            if formValidated(catTupleToAdd, self.panelName) :
+                imgfileName = addCategory(catTupleToAdd, hasImg)
                 if hasImg: # if it has an img, move temp to assets renamed
                     moveImageToAssets(self.tempImagePath, self.panelName, imgfileName)
                 pubsub.publish("updateCategory")
-                print("added category : ", catTuple)
+                print("added category : ", catTupleToAdd)
         elif self.panelName == "food" :
             hasImg = self.tempImagePath is not None
-            foodTuple = (self.foodnameLineEdit.text(), self.foodpriceLineEdit.text(), None, self.category_id)
-            if formValidated(foodTuple, self.panelName) :
-                imgfileName = addFoodItem(foodTuple, hasImg)
+            foodTupleToAdd = (self.foodnameLineEdit.text(), self.foodpriceLineEdit.text(), None, self.category_id)
+            if formValidated(foodTupleToAdd, self.panelName) :
+                imgfileName = addFoodItem(foodTupleToAdd, hasImg)
                 if hasImg : 
                     moveImageToAssets(self.tempImagePath, self.panelName, imgfileName)
                 pubsub.publish("updateFoodItem")
-                print("added food item : ", foodTuple)
+                print("added food item : ", foodTupleToAdd)
         self.close()
         self.selectImgCard.clearImg()
         self.tempImagePath = None
@@ -114,7 +114,7 @@ class QeditDialog(QaddDialog) :
             self.category_id, self.catname, self.imgfile = Tuple                
             self.init_editCategory()
         elif self.panelName == "food" :
-            self.fooditem_id, self.foodname, self.price, self.imgfile, self.category_id = Tuple
+            self.fooditem_id, self.foodname, self.price, self.imgfile, self.is_available, self.category_id = Tuple
             self.init_editFood()
         self.submitBtn.setText(f"edit {self.panelName}")
 
@@ -135,22 +135,22 @@ class QeditDialog(QaddDialog) :
     def handleSubmitBtn(self) :
         if self.panelName == "category" :
             hasImg = self.tempImagePath is not None # checks if an img is appended
-            catTuple = (self.catnameLineEdit.text(), None, self.category_id)
-            if formValidated(catTuple, self.panelName) :
-                imgfileName = editCategory(catTuple, hasImg)
+            catTupleToEdit = (self.catnameLineEdit.text(), None, self.category_id)
+            if formValidated(catTupleToEdit, self.panelName) :
+                imgfileName = editCategory(catTupleToEdit, hasImg)
                 if hasImg: # if it has an img, move temp to assets renamed, will overwrite on edit
                     moveImageToAssets(self.tempImagePath, self.panelName, imgfileName)
                 pubsub.publish("updateCategory")
-                print("edited category : ", catTuple)
+                print("edited category : ", catTupleToEdit)
         elif self.panelName == "food" :
             hasImg = self.tempImagePath is not None
-            foodTuple = (self.foodnameLineEdit.text(), self.foodpriceLineEdit.text(), None, self.categoryidLineEdit.text(), self.fooditem_id)
-            if formValidated(foodTuple, self.panelName) :
-                imgfileName = editFoodItem(foodTuple, hasImg)
+            foodTupleToEdit = (self.foodnameLineEdit.text(), self.foodpriceLineEdit.text(), None, self.categoryidLineEdit.text(), self.fooditem_id)
+            if formValidated(foodTupleToEdit, self.panelName) :
+                imgfileName = editFoodItem(foodTupleToEdit, hasImg)
                 if hasImg : 
                     moveImageToAssets(self.tempImagePath, self.panelName, imgfileName)
                 pubsub.publish("updateFoodItem")
-                print("edited food item : ", foodTuple)
+                print("edited food item : ", foodTupleToEdit)
         self.close()
         self.selectImgCard.clearImg()
         self.tempImagePath = None

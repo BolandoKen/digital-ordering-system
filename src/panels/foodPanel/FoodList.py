@@ -48,9 +48,12 @@ class QFoodList(QFrame) :
         addFoodBtn.clicked.connect(self.handleAddFoodItem)
         self.foodList_layout.addWidget(addFoodBtn)
         if not self.subbedToToggle :
-            pubsub.subscribe(f"admin_toggleShowUnavailable", self.toggleShowUnavailable)
+            pubsub.subscribe("admin_toggleShowUnavailable", self.toggleShowUnavailable)
+            pubsub.subscribe("orderSubmitted_event", self.update_listContent)
             self.subbedToToggle = True
         self.init_customerFoodList()
+
+        # pubsub.subscribe("orderSubmitted_event", self.setState)
         # plus sign to add food under category
 
     
@@ -82,6 +85,7 @@ class QFoodList(QFrame) :
         self.update_listContent()
 
     def clear_layout(self, layout): 
+        print('rerender from', self.pageName)
         if layout is not None:
             for i in reversed(range(layout.count())): # reverse, because deletion fills gaps
                 item = layout.takeAt(i) 

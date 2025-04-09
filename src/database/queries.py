@@ -29,9 +29,9 @@ def fetchCategoryItemCount() :
 
 def fetchFoodUnderCatList(category_id, showUnavailable = False) :
     if showUnavailable :
-        cursor.execute(f"SELECT fooditem_id, name, price, imgfile, category_id FROM FoodItems WHERE category_id = {category_id}")
+        cursor.execute(f"SELECT fooditem_id, name, price, imgfile, is_available, category_id FROM FoodItems WHERE category_id = {category_id} ORDER BY is_available DESC")
     else :
-        cursor.execute(f"SELECT fooditem_id, name, price, imgfile, category_id FROM FoodItems WHERE category_id = {category_id} AND is_available = {not showUnavailable} ") 
+        cursor.execute(f"SELECT fooditem_id, name, price, imgfile, is_available, category_id FROM FoodItems WHERE category_id = {category_id} AND is_available = {not showUnavailable} ") 
     results = cursor.fetchall()
     return results
 
