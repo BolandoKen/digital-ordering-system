@@ -34,7 +34,7 @@ class QFoodList(QFrame) :
         pubsub.subscribe(f"{self.pageName}_catCardClicked", self.update_listContent)
         self.subbedToUpdate = False
         self.subbedToToggle = False
-
+        # make separete subscribe function? like init_subscribe
     def init_customerFoodList(self) :
         foodlist = fetchFoodUnderCatList(self.category_id, self.showUnavailable)
         for foodTuple in foodlist :

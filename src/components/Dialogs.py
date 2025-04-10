@@ -88,6 +88,7 @@ class QaddDialog(QDialog) :
         print(self.tempImagePath)
 
     def handleSubmitBtn(self) :
+        validated = False
         if self.panelName == "category" :
             hasImg = self.tempImagePath is not None # checks if an img is appended
             catTupleToAdd = (self.catnameLineEdit.text(), None)
@@ -97,6 +98,7 @@ class QaddDialog(QDialog) :
                     moveImageToAssets(self.tempImagePath, self.panelName, imgfileName)
                 pubsub.publish("updateCategory")
                 print("added category : ", catTupleToAdd)
+                validated = True
         elif self.panelName == "food" :
             hasImg = self.tempImagePath is not None
             foodTupleToAdd = (self.foodnameLineEdit.text(), self.foodpriceLineEdit.text(), None, self.category_id)
@@ -105,10 +107,13 @@ class QaddDialog(QDialog) :
                 if hasImg : 
                     moveImageToAssets(self.tempImagePath, self.panelName, imgfileName)
                 pubsub.publish("updateFoodItem")
+                pubsub.publish("updateCategory")
                 print("added food item : ", foodTupleToAdd)
-        self.close()
-        self.selectImgCard.clearImg()
-        self.tempImagePath = None
+                validated = True
+        if validated :
+            self.close()
+            self.selectImgCard.clearImg()
+            self.tempImagePath = None
 
 class QeditDialog(QaddDialog) :
     def __init__(self, panelName, Tuple):

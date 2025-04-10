@@ -78,6 +78,7 @@ class QFoodItemCard(QMenuCard) :
         else :
             deleteFoodItem(self.fooditem_id)
         pubsub.publish("updateFoodItem")
+        pubsub.publish("updateCategory")
 
 
     def mousePressEvent(self, event):

@@ -11,6 +11,7 @@ def fetchCatList(pageName) :
                     FROM Categories AS c
                     LEFT JOIN FoodItems AS f
                     ON c.category_id = f.category_id
+                    WHERE f.is_available = 1
                     GROUP BY c.category_id
                     HAVING COUNT(f.fooditem_id)!= 0
                     """)
@@ -24,8 +25,27 @@ def fetchCategoryItemCount() :
                    ON c.category_id = f.category_id 
                    GROUP BY c.category_id
                    """)
-    pass
+    return len(cursor.fetchall())
 
+def fetchCategoryAvailableItemCount(category_id) :
+    cursor.execute("""SELECT COUNT(f.fooditem_id)
+                   FROM Categories AS c 
+                   LEFT JOIN FoodItems AS f 
+                   ON c.category_id = f.category_id 
+                   WHERE f.is_available = 1
+                   AND c.category_id = %s
+                   """, (category_id,))
+    return cursor.fetchone()
+
+def fetchCategoryUnavailableItemCount(category_id) :
+    cursor.execute("""SELECT COUNT(f.fooditem_id)
+                   FROM Categories AS c 
+                   LEFT JOIN FoodItems AS f 
+                   ON c.category_id = f.category_id 
+                   WHERE f.is_available = 0
+                   AND c.category_id = %s
+                   """, (category_id,))
+    return cursor.fetchone()
 
 def fetchFoodUnderCatList(category_id, showUnavailable = False) :
     if showUnavailable :
