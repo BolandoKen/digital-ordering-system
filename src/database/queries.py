@@ -11,6 +11,7 @@ def fetchCatList(pageName) :
                     FROM Categories AS c
                     LEFT JOIN FoodItems AS f
                     ON c.category_id = f.category_id
+                    WHERE f.is_available = 1
                     GROUP BY c.category_id
                     HAVING COUNT(f.fooditem_id)!= 0
                     """)
@@ -24,14 +25,33 @@ def fetchCategoryItemCount() :
                    ON c.category_id = f.category_id 
                    GROUP BY c.category_id
                    """)
-    pass
+    return len(cursor.fetchall())
 
+def fetchCategoryAvailableItemCount(category_id) :
+    cursor.execute("""SELECT COUNT(f.fooditem_id)
+                   FROM Categories AS c 
+                   LEFT JOIN FoodItems AS f 
+                   ON c.category_id = f.category_id 
+                   WHERE f.is_available = 1
+                   AND c.category_id = %s
+                   """, (category_id,))
+    return cursor.fetchone()
+
+def fetchCategoryUnavailableItemCount(category_id) :
+    cursor.execute("""SELECT COUNT(f.fooditem_id)
+                   FROM Categories AS c 
+                   LEFT JOIN FoodItems AS f 
+                   ON c.category_id = f.category_id 
+                   WHERE f.is_available = 0
+                   AND c.category_id = %s
+                   """, (category_id,))
+    return cursor.fetchone()
 
 def fetchFoodUnderCatList(category_id, showUnavailable = False) :
     if showUnavailable :
-        cursor.execute(f"SELECT fooditem_id, name, price, imgfile, category_id FROM FoodItems WHERE category_id = {category_id}")
+        cursor.execute(f"SELECT fooditem_id, name, price, imgfile, is_available, category_id FROM FoodItems WHERE category_id = {category_id} ORDER BY is_available DESC")
     else :
-        cursor.execute(f"SELECT fooditem_id, name, price, imgfile, category_id FROM FoodItems WHERE category_id = {category_id} AND is_available = {not showUnavailable} ") 
+        cursor.execute(f"SELECT fooditem_id, name, price, imgfile, is_available, category_id FROM FoodItems WHERE category_id = {category_id} AND is_available = {not showUnavailable} ") 
     results = cursor.fetchall()
     return results
 

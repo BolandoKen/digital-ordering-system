@@ -20,6 +20,7 @@ from src.utils.PixMap import checkImgSize, saveImageToLocalTemp, setPixMapOf, mo
 from src.components.Buttons import QImageButton
 from src.components.ImageCard import QSelectImageCard
 from PyQt6.QtGui import QPixmap
+from PyQt6.QtGui import QDoubleValidator
 import traceback
 
 class QaddDialog(QDialog) :
@@ -53,6 +54,9 @@ class QaddDialog(QDialog) :
         self.foodnameLineEdit = QLineEdit()
         self.foodpriceLabel = QLabel("food price : ")
         self.foodpriceLineEdit = QLineEdit()
+        foodpricevalidator = QDoubleValidator(0.00,1000.00,2) #1000 lang ako gi maximum, 0 minimum for like maybe if mag set sila og free stuff cuz event
+        foodpricevalidator.setNotation(QDoubleValidator.Notation.StandardNotation)
+        self.foodpriceLineEdit.setValidator(foodpricevalidator)
         self.selectImgCard = QSelectImageCard(self.handleClearBtn)
         self.selectImgCard.connectTo(self.open_file)
         self.categoryidLabel = QLabel("category")
@@ -84,27 +88,32 @@ class QaddDialog(QDialog) :
         print(self.tempImagePath)
 
     def handleSubmitBtn(self) :
+        validated = False
         if self.panelName == "category" :
             hasImg = self.tempImagePath is not None # checks if an img is appended
-            catTuple = (self.catnameLineEdit.text(), None)
-            if formValidated(catTuple, self.panelName) :
-                imgfileName = addCategory(catTuple, hasImg)
+            catTupleToAdd = (self.catnameLineEdit.text(), None)
+            if formValidated(catTupleToAdd, self.panelName) :
+                imgfileName = addCategory(catTupleToAdd, hasImg)
                 if hasImg: # if it has an img, move temp to assets renamed
                     moveImageToAssets(self.tempImagePath, self.panelName, imgfileName)
                 pubsub.publish("updateCategory")
-                print("added category : ", catTuple)
+                print("added category : ", catTupleToAdd)
+                validated = True
         elif self.panelName == "food" :
             hasImg = self.tempImagePath is not None
-            foodTuple = (self.foodnameLineEdit.text(), self.foodpriceLineEdit.text(), None, self.category_id)
-            if formValidated(foodTuple, self.panelName) :
-                imgfileName = addFoodItem(foodTuple, hasImg)
+            foodTupleToAdd = (self.foodnameLineEdit.text(), self.foodpriceLineEdit.text(), None, self.category_id)
+            if formValidated(foodTupleToAdd, self.panelName) :
+                imgfileName = addFoodItem(foodTupleToAdd, hasImg)
                 if hasImg : 
                     moveImageToAssets(self.tempImagePath, self.panelName, imgfileName)
                 pubsub.publish("updateFoodItem")
-                print("added food item : ", foodTuple)
-        self.close()
-        self.selectImgCard.clearImg()
-        self.tempImagePath = None
+                pubsub.publish("updateCategory")
+                print("added food item : ", foodTupleToAdd)
+                validated = True
+        if validated :
+            self.close()
+            self.selectImgCard.clearImg()
+            self.tempImagePath = None
 
 class QeditDialog(QaddDialog) :
     def __init__(self, panelName, Tuple):
@@ -114,7 +123,7 @@ class QeditDialog(QaddDialog) :
             self.category_id, self.catname, self.imgfile = Tuple                
             self.init_editCategory()
         elif self.panelName == "food" :
-            self.fooditem_id, self.foodname, self.price, self.imgfile, self.category_id = Tuple
+            self.fooditem_id, self.foodname, self.price, self.imgfile, self.is_available, self.category_id = Tuple
             self.init_editFood()
         self.submitBtn.setText(f"edit {self.panelName}")
 
@@ -135,22 +144,22 @@ class QeditDialog(QaddDialog) :
     def handleSubmitBtn(self) :
         if self.panelName == "category" :
             hasImg = self.tempImagePath is not None # checks if an img is appended
-            catTuple = (self.catnameLineEdit.text(), None, self.category_id)
-            if formValidated(catTuple, self.panelName) :
-                imgfileName = editCategory(catTuple, hasImg)
+            catTupleToEdit = (self.catnameLineEdit.text(), None, self.category_id)
+            if formValidated(catTupleToEdit, self.panelName) :
+                imgfileName = editCategory(catTupleToEdit, hasImg)
                 if hasImg: # if it has an img, move temp to assets renamed, will overwrite on edit
                     moveImageToAssets(self.tempImagePath, self.panelName, imgfileName)
                 pubsub.publish("updateCategory")
-                print("edited category : ", catTuple)
+                print("edited category : ", catTupleToEdit)
         elif self.panelName == "food" :
             hasImg = self.tempImagePath is not None
-            foodTuple = (self.foodnameLineEdit.text(), self.foodpriceLineEdit.text(), None, self.categoryidLineEdit.text(), self.fooditem_id)
-            if formValidated(foodTuple, self.panelName) :
-                imgfileName = editFoodItem(foodTuple, hasImg)
+            foodTupleToEdit = (self.foodnameLineEdit.text(), self.foodpriceLineEdit.text(), None, self.categoryidLineEdit.text(), self.fooditem_id)
+            if formValidated(foodTupleToEdit, self.panelName) :
+                imgfileName = editFoodItem(foodTupleToEdit, hasImg)
                 if hasImg : 
                     moveImageToAssets(self.tempImagePath, self.panelName, imgfileName)
                 pubsub.publish("updateFoodItem")
-                print("edited food item : ", foodTuple)
+                print("edited food item : ", foodTupleToEdit)
         self.close()
         self.selectImgCard.clearImg()
         self.tempImagePath = None

@@ -17,12 +17,15 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 from src.utils.PixMap import setPixMapOf
 from src.components.MenuCards import QMenuCard
+from src.database.queries import fetchCategoryAvailableItemCount, fetchCategoryUnavailableItemCount
 
 class QCategoryCard(QMenuCard) :
     def __init__(self, catTuple, pageName, stackedLists) :
         super().__init__()
         self.pageName = pageName
         self.category_id, self.catname, self.imgfile = catTuple
+        self.availableItemCount = fetchCategoryAvailableItemCount(self.category_id) # will show only in admin
+        self.unavailableItemCount = fetchCategoryUnavailableItemCount(self.category_id)
         self.editCatDialog = QeditDialog("category", catTuple)
         self.stackedLists = stackedLists
         self.catCard_layout = QVBoxLayout(self)

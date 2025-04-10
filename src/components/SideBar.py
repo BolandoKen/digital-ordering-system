@@ -93,12 +93,12 @@ class QSideBar(QFrame) :
         self.cartItems = []
         self.init_customerSideBar()
         orderitem_info = [(quantity,food_id) for food_id, quantity in item_counts.items()] #should return a list of tuples based on whats inside the dict
-
         print(orderitem_info)
 
         confirmation = True # placeholder for confirmation dialog
         if confirmation :
             addOrder(orderitem_info)
+            pubsub.publish("orderSubmitted_event")
 
     def handleFoodAddToCart(self, foodTuple) :
         fooditem_id, foodname = foodTuple

@@ -65,6 +65,7 @@ class QCategoryList(QFrame) :
         self.init_catList()
 
     def clear_layout(self, layout): 
+        print('rerendered category list from ', self.pageName)
         if layout is not None:
             for i in reversed(range(layout.count())): # reverse, because deletion fills gaps
                 item = layout.takeAt(i) 
