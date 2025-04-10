@@ -18,7 +18,7 @@ from PyQt6.QtGui import QPixmap
 from src.utils.PixMap import setPixMapOf
 from src.components.MenuCards import QMenuCard
 from src.database.queries import fetchCategoryAvailableItemCount, fetchCategoryUnavailableItemCount
-
+from src.components.CatStatus import QStatusIndicator
 class QCategoryCard(QMenuCard) :
     def __init__(self, catTuple, pageName, stackedLists) :
         super().__init__()
@@ -52,10 +52,13 @@ class QCategoryCard(QMenuCard) :
         self.init_customerCategoryCard()
         self.editBtn = QPushButton("edit")
         self.editBtn.clicked.connect(self.editCatDialog.exec)
+        self.catCard_layout.addWidget(QStatusIndicator(self.availableItemCount, self.unavailableItemCount))
         self.catCard_layout.addWidget(self.editBtn)
         self.delBtn = QPushButton("delete")
         self.delBtn.clicked.connect(self.handleCatDelete)
         self.catCard_layout.addWidget(self.delBtn)
+        if self.availableItemCount > 0 or self.unavailableItemCount > 0:
+            self.delBtn.hide()
 
     def handleCatDelete(self) :
         deleteCategory(self.category_id)

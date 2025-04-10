@@ -28,7 +28,7 @@ class CatStatus(QLabel):
 class QStatusIndicator(QWidget):
     def __init__(self, available_items=0, unavailable_items=0):
         super().__init__()
-
+        self.setFixedWidth(100)
         layout = QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(10)
@@ -44,3 +44,5 @@ class QStatusIndicator(QWidget):
         layout.addWidget(unavailable_Count)
 
         self.setLayout(layout)
+        # add logic here, if label is 0, hide that label and status
+

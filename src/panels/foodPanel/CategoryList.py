@@ -33,7 +33,6 @@ class QCategoryList(QFrame) :
         pubsub.subscribe("updateCategory", self.update_categoryList)
         self.init_catList()
 
-        self.setStyleSheet("border: 1px solid black")
 
     def init_catList(self) :
         if self.pageName == "admin" :

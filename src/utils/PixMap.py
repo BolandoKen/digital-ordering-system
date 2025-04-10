@@ -5,8 +5,7 @@ import shutil
 
 def setPixMapOf(label, imgFileName, folder) :
     if imgFileName is None:
-        return 0
-        # imgFileName = "icecream.png"
+        return None
     if folder == "temp" :
         destFolder = "temp"
     else :

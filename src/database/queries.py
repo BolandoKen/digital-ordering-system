@@ -35,7 +35,7 @@ def fetchCategoryAvailableItemCount(category_id) :
                    WHERE f.is_available = 1
                    AND c.category_id = %s
                    """, (category_id,))
-    return cursor.fetchone()
+    return cursor.fetchone()[0]
 
 def fetchCategoryUnavailableItemCount(category_id) :
     cursor.execute("""SELECT COUNT(f.fooditem_id)
@@ -45,7 +45,7 @@ def fetchCategoryUnavailableItemCount(category_id) :
                    WHERE f.is_available = 0
                    AND c.category_id = %s
                    """, (category_id,))
-    return cursor.fetchone()
+    return cursor.fetchone()[0]
 
 def fetchFoodUnderCatList(category_id, showUnavailable = False) :
     if showUnavailable :

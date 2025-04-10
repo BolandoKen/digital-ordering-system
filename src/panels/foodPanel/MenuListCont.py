@@ -21,7 +21,6 @@ class QMenuListContainer(QFrame) :
         self.listCont_layout = QVBoxLayout(self)
         self.listCont_layout.setContentsMargins(0,0,0,0)
 
-        self.setStyleSheet("border: 1px solid black")
         self.stackedLists = QStackedWidget()
         self.foodList = QFoodList(pageName, self.stackedLists)
         self.categoryList = QCategoryList(pageName,self.stackedLists)
