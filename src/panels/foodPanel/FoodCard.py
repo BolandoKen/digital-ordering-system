@@ -53,10 +53,10 @@ class QFoodItemCard(QMenuCard) :
         self.delBtn = QPushButton("delete")
         self.delBtn.clicked.connect(self.handleFoodDel)
         self.foodCard_layout.addWidget(self.delBtn)
-        if self.is_available :
-            self.foodCard_layout.addWidget(QLabel("hi im available"))
-        else :
-            self.foodCard_layout.addWidget(QLabel("hi im unavailable"))
+        # if self.is_available :
+        #     self.foodCard_layout.addWidget(QLabel("hi im available"))
+        # else :
+        #     self.foodCard_layout.addWidget(QLabel("hi im unavailable"))
         if self.hasBeenOrdered :
             if self.is_available  :
                 self.delBtn.setText("set unavailable") # diff icons instead of text

@@ -49,6 +49,7 @@ class QCategoryList(QFrame) :
 
     def init_adminCatList(self) :
         addCatBtn = QPushButton("+ add Category")
+        addCatBtn.setFixedSize(200,200)
         addCatBtn.clicked.connect(self.handleAddCategory)
         self.catList_Layout.addWidget(addCatBtn)
 

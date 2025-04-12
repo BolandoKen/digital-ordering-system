@@ -18,6 +18,7 @@ from src.database.queries import fetchFoodUnderCatList
 from PyQt6.QtGui import QPixmap
 from src.components.ScrollArea import QScrollAreaLayout
 from src.components.FlowLayout import QFlowLayout
+from src.database.queries import fetchCategoryUnavailableItemCount
 
 class QFoodList(QFrame) :
 
@@ -45,12 +46,15 @@ class QFoodList(QFrame) :
 
     def init_adminFoodList(self) :
         addFoodBtn = QPushButton("+ add food item")
+        addFoodBtn.setFixedSize(200,200)
+
         addFoodBtn.clicked.connect(self.handleAddFoodItem)
         self.foodList_layout.addWidget(addFoodBtn)
         if not self.subbedToToggle :
             pubsub.subscribe("admin_toggleShowUnavailable", self.toggleShowUnavailable)
             pubsub.subscribe("orderSubmitted_event", self.update_listContent)
             self.subbedToToggle = True
+        pubsub.publish("initHeaderUnBtn_event", self.unavailableCountStatus)
         self.init_customerFoodList()
 
         # pubsub.subscribe("orderSubmitted_event", self.setState)
@@ -67,8 +71,10 @@ class QFoodList(QFrame) :
             self.category_id = category_id
             self.catname = catname
         self.clear_layout(self.foodList_layout.getLayout()) 
-
         if self.pageName == "admin" :
+            self.unavailableCountStatus = "show" if fetchCategoryUnavailableItemCount(self.category_id) > 0 else "hide"
+            print(fetchCategoryUnavailableItemCount(self.category_id))
+            print(self.unavailableCountStatus)
             self.init_adminFoodList()
         elif self.pageName == "customer" :
             self.init_customerFoodList()

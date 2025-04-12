@@ -22,6 +22,7 @@ class QFoodPanelHeader(QFrame) :
         self.main_layout = QVBoxLayout(self)
         self.header_layout = QHBoxLayout()
         self.logo = QPushButton("Logo")
+        self.logo.setFixedWidth(50)
         if self.pageName == "customer" :
             self.logo.clicked.connect(self.handleLogoClicked)
         self.main_layout.addWidget(self.logo)
@@ -30,7 +31,10 @@ class QFoodPanelHeader(QFrame) :
         self.backBtn = QPushButton("<-")
         self.showUnBtn = QPushButton("show unavailable items")
         self.showUnavailable = False
- 
+
+        if self.pageName == "admin" : 
+            pubsub.subscribe("initHeaderUnBtn_event", self.setShowUnavailableBtn)
+
         self.header = QLabel()
         self.header_layout.addWidget(self.backBtn)
         self.header_layout.addWidget(self.header)
@@ -49,8 +53,9 @@ class QFoodPanelHeader(QFrame) :
     def init_food(self) :
         self.backBtn.show()
         self.header.setText(self.catname)
-        if self.pageName == "admin" :
-            self.showUnBtn.show()
+        # if self.pageName == "admin" :
+        #     print('hi')
+        #     self.showUnBtn.show()
 
     def setHeaderState(self, catTuple = None) :
         self.category_id, self.catname = catTuple
@@ -72,6 +77,14 @@ class QFoodPanelHeader(QFrame) :
             self.showUnBtn.setText("hide unavailable items") 
         else :
             self.showUnBtn.setText("show unavailable items")
+    
+    def setShowUnavailableBtn(self, typeOf) :
+        if typeOf == "hide" :
+            self.showUnBtn.hide()
+        elif typeOf == "show" :
+            print('haa')
+            self.showUnBtn.show()
+
 
     
 

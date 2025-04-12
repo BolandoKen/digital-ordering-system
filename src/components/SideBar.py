@@ -27,6 +27,7 @@ class QSideBar(QFrame) :
         self.cartItems = []
         self.cartItems_amount = []
         self.scroll_layout = QVBoxLayout(self)
+        self.scroll_layout.setContentsMargins(0,0,0,0)
 
 
         if self.pageName == "admin" :
@@ -37,13 +38,14 @@ class QSideBar(QFrame) :
             self.scroll_layout.addWidget(self.logoutBtn)
             self.init_adminSideBar()
         elif self.pageName == "customer" :
-            title = QLabel("Your Cart")
+            title = QLabel("My Orders")
             self.scroll_layout.addWidget(title)
             title.setStyleSheet("""
                     font-size: 16px;
                     font-weight: bold;
                     padding-bottom: 10px;
                     qproperty-alignment: AlignCenter;
+                    margin-top: 10px;
                 """)
             self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout)
             self.submitBtn = QPushButton("SubmitBtn")

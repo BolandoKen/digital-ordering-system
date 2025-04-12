@@ -46,5 +46,3 @@ class QImageButton(QLabel) :
         if event.button() == Qt.MouseButton.LeftButton:
             self.callback()
 
-
-       
