@@ -70,6 +70,7 @@ class QFoodList(QFrame) :
         if catTuple is not None :
             category_id, catname = catTuple
             if self.previousCategory_id == category_id : 
+                pubsub.publish("initHeaderUnBtn_event", self.unavailableCountStatus)
                 return
             self.category_id = category_id
             self.catname = catname

@@ -22,5 +22,6 @@ class QCustomerPage(QFrame) :
 
         self.customer_layout = QGridLayout(self)
         self.customer_layout.setSpacing(0)
+        self.customer_layout.setContentsMargins(0,0,0,0)
         self.customer_layout.addWidget(self.foodPanel, 0, 0)
         self.customer_layout.addWidget(self.sideBar, 0, 1, 2, 1)

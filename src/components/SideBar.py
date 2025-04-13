@@ -14,7 +14,7 @@ from PyQt6.QtWidgets import (
 from src.utils.PubSub import pubsub
 from src.database.Orders import addOrder
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QPixmap
+from PyQt6.QtGui import QPixmap, QFont
 from src.components.ScrollArea import QScrollAreaLayout
 import traceback
 
@@ -28,7 +28,7 @@ class QSideBar(QFrame) :
         self.scroll_layout = QVBoxLayout(self)
         self.scroll_layout.setContentsMargins(0,0,0,0)
         self.scroll_layout.setSpacing(0)
-        self.setStyleSheet("background-color: white; color: black;border: 1px solid #d9d9d9")
+        self.setStyleSheet("background-color: white; color: black;border-left: 1px solid #d9d9d9")
 
         if self.pageName == "admin" :
             self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout, "sidebar")
@@ -40,12 +40,9 @@ class QSideBar(QFrame) :
         elif self.pageName == "customer" :
             title = QLabel("My Orders")
             self.scroll_layout.addWidget(title)
+            title.setFont(QFont("Helvitica", 15, QFont.Weight.Bold))
             title.setStyleSheet("""
-                    font-size: 16px;
-                    font-weight: bold;
-                    padding-bottom: 10px;
                     qproperty-alignment: AlignCenter;
-                    margin-top: 10px;
                 """)
             self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout, "sidebar")
             self.submitBtn = QPushButton("SubmitBtn")
