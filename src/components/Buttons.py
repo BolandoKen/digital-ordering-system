@@ -90,9 +90,6 @@ class LogoButton(QWidget):
                 print("Logo button clicked!")
 
 
-        
-
-
 class QAddButton(QMenuCard) : # not yet used
     def __init__(self):
         super().__init__()
