@@ -19,8 +19,8 @@ from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QPixmap, QMouseEvent, QFont
 from PyQt6.QtCore import Qt
-from src.components.MenuCards import QMenuCard
-from src.utils.PixMap import setPixMapOf
+#from src.components.MenuCards import QMenuCard
+#from src.utils.PixMap import setPixMapOf
 
 class DeleteButton(QPushButton):
 
@@ -66,7 +66,7 @@ class LogoButton(QWidget):
         self.setStyleSheet("""
             background: transparent;
             padding: 0px;
-            color: black;               
+            color: black;           
         """)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
 
@@ -79,7 +79,7 @@ class LogoButton(QWidget):
         layout.addWidget(icon_label)
 
         text_label = QLabel(eatery_name)
-        text_label.setFont(QFont("Helvitica", 30))
+        text_label.setFont(QFont("Helvitica", 30, QFont.Weight.Bold))
         layout.addWidget(text_label)
         layout.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 
@@ -89,8 +89,8 @@ class LogoButton(QWidget):
             if event.button() == Qt.MouseButton.LeftButton:
                 print("Logo button clicked!")
 
-
-class QAddButton(QMenuCard) : # not yet used
+"""
+class QAddButton(QMenuCard) :
     def __init__(self):
         super().__init__()
         layout = QVBoxLayout(self)
@@ -104,3 +104,4 @@ class QAddButton(QMenuCard) : # not yet used
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
             self.callback()
+"""
