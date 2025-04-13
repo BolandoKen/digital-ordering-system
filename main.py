@@ -1,6 +1,6 @@
 import sys
 # import os
-sys.path.append(os.path.abspath("src"))
+# sys.path.append(os.path.abspath("src"))
 from PyQt6.QtWidgets import (
     QApplication,
     QVBoxLayout,
@@ -22,6 +22,7 @@ class QWindow(QMainWindow) :
         super().__init__()  
         self.setWindowTitle("Orderoo")
         self.setGeometry(0,0,900,700)
+        self.setStyleSheet("background-color: white")
 
         self.stackedPages = QStackedWidget()
         self.CustomerPage = QCustomerPage()

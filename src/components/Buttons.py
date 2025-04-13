@@ -19,52 +19,98 @@ from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QPixmap, QMouseEvent, QFont
 from PyQt6.QtCore import Qt
-#from src.components.MenuCards import QMenuCard
-#from src.utils.PixMap import setPixMapOf
+from src.components.MenuCards import QMenuCard
+from src.utils.PixMap import setPixMapOf
 
-class DeleteButton(QPushButton):
+class QDeleteButton(QPushButton):
 
     def __init__(self):
         super().__init__("")
-        self.setFixedSize(52, 52)
+        self.setFixedSize(25, 25)
        
         self.setStyleSheet("""
             background: transparent;
-            padding: 0px;                 
+            background-color: white;
+            border: none;
+            padding: 0px;      
         """)
         
-        self.clicked.connect(self.on_click)
         self.setIcon(QIcon("assets/icons/delete_icon.svg"))
-        self.setIconSize(QSize(32, 32))
+        self.setIconSize(QSize(20, 20))
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+    
+    def setState(self, state) :
+        if state == "delete" :
+            self.setIcon(QIcon("assets/icons/delete_icon.svg"))
+        elif state == "unavailable" :
+            self.setIcon(QIcon("assets/icons/unavailable_icon.svg"))
+        elif state == "revive" :
+            self.setIcon(QIcon("assets/icons/revive_icon.svg"))
 
-    def on_click(self):
-        print("Delete button clicked!")
-
-class BackButton(QPushButton):
+class QBackButton(QPushButton):
     def __init__(self):
         super().__init__("")
         self.setFixedSize(44, 44)
 
         self.setStyleSheet("""
             background: transparent;
+            background-color: white;
             border-radius: 10px;
             border: 2px solid #D9D9D9;
             padding: 0px;                 
         """)
         
-        self.clicked.connect(self.on_click)
         self.setIcon(QIcon("assets/icons/back_icon.svg"))
         self.setIconSize(QSize(32, 32))
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
 
-    def on_click(self):
-        print("Back button clicked!")
+class QEditButton(QPushButton):
+    def __init__(self):
+        super().__init__("")
+        self.setFixedSize(30, 30)
 
-class LogoButton(QWidget):
-    def __init__(self, logo_path: str, eatery_name: str):
+        self.setStyleSheet("""
+            background: transparent;
+            background-color: white;
+            border: none;
+            padding: 0px;                 
+        """)
+        
+        self.setIcon(QIcon("assets/icons/edit_icon.svg"))
+        self.setIconSize(QSize(25, 25))
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+
+class QEyeButton(QPushButton) :
+    def __init__(self):
+        super().__init__("")
+        self.setFixedSize(44, 44)
+
+        self.setStyleSheet("""
+            background: transparent;
+            background-color: white;
+            border-radius: 10px;
+            border: 2px solid #D9D9D9;
+            padding: 0px;                 
+        """)
+        
+        self.setIcon(QIcon("assets/icons/closedeye_icon.svg"))
+        self.setIconSize(QSize(32, 32))
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+    
+    def setState(self, state) :
+        if state == "hide" :
+            self.setIcon(QIcon("assets/icons/eye_icon.svg"))
+        elif state == "show" :
+            self.setIcon(QIcon("assets/icons/closedeye_icon.svg"))
+
+class QLogoButton(QWidget):
+    def __init__(self, logo_path: str, eatery_name: str, pageName):
         super().__init__()
+        self.pageName = pageName
         self.setFixedSize(400, 70)
         self.setStyleSheet("""
             background: transparent;
+            background-color: white;
             padding: 0px;
             color: black;           
         """)
@@ -85,11 +131,15 @@ class LogoButton(QWidget):
 
         self.setLayout(layout)
 
-        def mousePressEvent(self, event):
-            if event.button() == Qt.MouseButton.LeftButton:
-                print("Logo button clicked!")
+    def connectTo(self, callback) :
+        self.callback = callback
 
-"""
+    def mousePressEvent(self, event):
+        if self.pageName == "admin" : return
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.callback()
+
+
 class QAddButton(QMenuCard) :
     def __init__(self):
         super().__init__()
@@ -104,4 +154,14 @@ class QAddButton(QMenuCard) :
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
             self.callback()
-"""
+
+class QImageButton(QLabel) :
+    def __init__(self, text) :
+        super().__init__(text)
+
+    def connectTo(self, callback) :
+        self.callback = callback
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.callback()

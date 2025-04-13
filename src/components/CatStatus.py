@@ -9,6 +9,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtGui import QPixmap, QColor, QPainter
 from PyQt6.QtCore import QSize, Qt
+from src.components.Buttons import QEditButton
 
 class CatStatus(QLabel):
     def __init__(self, color, size=10):
@@ -68,6 +69,6 @@ class QCatStatusEditLayout(QHBoxLayout) :
         self.setContentsMargins(0,0,0,0)
         self.addWidget(QStatusIndicator(availableItemCount, unavailableItemCount))
         self.addStretch()
-        self.editBtn = QPushButton("edit") 
+        self.editBtn = QEditButton() 
         self.addWidget(self.editBtn)
         self.editBtn.clicked.connect(editCb)

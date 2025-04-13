@@ -11,6 +11,7 @@ from PyQt6.QtWidgets import (
 )
 
 from src.utils.PubSub import pubsub
+from src.components.Buttons import QBackButton, QLogoButton, QEyeButton
 
 
 class QFoodPanelHeader(QFrame) :
@@ -21,15 +22,15 @@ class QFoodPanelHeader(QFrame) :
         pubsub.subscribe(f"{self.pageName}_catCardClicked", self.setHeaderState)
         self.main_layout = QVBoxLayout(self)
         self.header_layout = QHBoxLayout()
-        self.logo = QPushButton("Logo")
-        self.logo.setFixedWidth(50)
+        self.logo = QLogoButton("assets/icons/Logo.png", "M'sKitchen", self.pageName)
         if self.pageName == "customer" :
-            self.logo.clicked.connect(self.handleLogoClicked)
+            self.logo.connectTo(self.handleLogoClicked)
+
         self.main_layout.addWidget(self.logo)
         self.main_layout.addLayout(self.header_layout)
         
-        self.backBtn = QPushButton("<-")
-        self.showUnBtn = QPushButton("show unavailable items")
+        self.backBtn = QBackButton()
+        self.showUnBtn = QEyeButton()
         self.showUnavailable = False
 
         if self.pageName == "admin" : 
@@ -71,9 +72,9 @@ class QFoodPanelHeader(QFrame) :
         pubsub.publish(f"admin_toggleShowUnavailable", None)
         self.showUnavailable = not self.showUnavailable
         if self.showUnavailable :
-            self.showUnBtn.setText("hide unavailable items") 
+            self.showUnBtn.setState("hide")
         else :
-            self.showUnBtn.setText("show unavailable items")
+            self.showUnBtn.setState("show")
     
     def setShowUnavailableBtn(self, typeOf) :
         if typeOf == "hide" :

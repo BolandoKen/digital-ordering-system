@@ -1,5 +1,6 @@
 import sys
-
+import os
+sys.path.append(os.path.abspath("."))
 from PyQt6.QtWidgets import (
     QApplication,
     QVBoxLayout,
@@ -9,7 +10,7 @@ from PyQt6.QtWidgets import (
     QFrame,
 )
 from PyQt6.QtCore import Qt
-from Buttons import DeleteButton, BackButton, LogoButton
+from src.components.Buttons import QDeleteButton, QBackButton, QLogoButton
 
 class QWindow(QMainWindow):
     def __init__(self):
@@ -18,9 +19,9 @@ class QWindow(QMainWindow):
         self.setFixedSize(1280, 720)
 
         main_layout = QVBoxLayout()
-        delete_button = DeleteButton()
-        back_button = BackButton()
-        logo_button = LogoButton("assets/icons/Logo.png", "M'sKitchen")
+        delete_button = QDeleteButton()
+        back_button = QBackButton()
+        logo_button = QLogoButton("assets/icons/Logo.png", "M'sKitchen")
 
         main_layout.addWidget(delete_button)
         main_layout.addWidget(back_button)

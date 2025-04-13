@@ -5,6 +5,13 @@ import shutil
 
 def setPixMapOf(label, imgFileName, folder) :
     if imgFileName is None:
+        destFolder = "icons"
+        imgFileName = "placeholder_img"
+        path = os.path.join(os.path.abspath(f"assets/{destFolder}"), imgFileName) 
+        pixmap = QPixmap(path)
+        label.setPixmap(pixmap)
+        label.setFixedSize(100,100)
+        label.setScaledContents(True)
         return None
     if folder == "temp" :
         destFolder = "temp"

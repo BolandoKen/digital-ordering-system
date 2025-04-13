@@ -21,6 +21,7 @@ from src.components.MenuCards import QMenuCard
 from src.database.queries import fetchCategoryAvailableItemCount, fetchCategoryUnavailableItemCount
 from src.components.CatStatus import QCatStatusEditLayout
 from src.components.ImageCard import QCatLabelImageLayout
+from src.components.Buttons import QDeleteButton
 class QCategoryCard(QMenuCard) :
     def __init__(self, catTuple, pageName, stackedLists) :
         super().__init__()
@@ -50,13 +51,14 @@ class QCategoryCard(QMenuCard) :
         self.init_customerCategoryCard()
         self.catCard_layout.addLayout(QCatStatusEditLayout(self.availableItemCount, self.unavailableItemCount, self.editCatDialog.exec))
         delHBoxLayout = QHBoxLayout()
+        delHBoxLayout.setContentsMargins(0,0,0,0)
         delHBoxLayout.addStretch()
-        self.delBtn = QPushButton("delete")
+        self.delBtn = QDeleteButton()
         self.delBtn.clicked.connect(self.handleCatDelete)
+        delHBoxLayout.addWidget(self.delBtn)
         delBtn_sizePolicy = self.delBtn.sizePolicy()
         delBtn_sizePolicy.setRetainSizeWhenHidden(True)
         self.delBtn.setSizePolicy(delBtn_sizePolicy)
-        delHBoxLayout.addWidget(self.delBtn)
         self.catCard_layout.insertLayout(0,delHBoxLayout)
         if self.availableItemCount > 0 or self.unavailableItemCount > 0:
             self.delBtn.hide()

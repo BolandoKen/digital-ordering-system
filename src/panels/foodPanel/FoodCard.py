@@ -3,6 +3,7 @@ import os
 from PyQt6.QtWidgets import (
     QApplication,
     QVBoxLayout,
+    QHBoxLayout,
     QMainWindow,
     QWidget,
     QPushButton,
@@ -19,6 +20,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 from src.utils.PixMap import setPixMapOf
 from src.components.MenuCards import QMenuCard
+from src.components.Buttons import QDeleteButton
 from src.database.queries import checkFoodHasBeenOrdered
 
 class QFoodItemCard(QMenuCard) : 
@@ -34,8 +36,6 @@ class QFoodItemCard(QMenuCard) :
         elif self.pageName == "customer" :
             self.init_customerFoodItemCard()
 
-        self.setStyleSheet("background-color: white; color: black")
-
     def init_customerFoodItemCard(self) :
         # no edit/del btns
         self.foodLabel = QLabel(self.foodname)
@@ -43,27 +43,27 @@ class QFoodItemCard(QMenuCard) :
         setPixMapOf(self.foodimg, self.imgfile, "food")
         self.priceLabel = QLabel(str(self.price))   
              
-        self.foodCard_layout.addWidget(self.foodimg) 
-        self.foodCard_layout.addWidget(self.foodLabel)   
-        self.foodCard_layout.addWidget(self.priceLabel)
+        self.foodCard_layout.addWidget(self.foodimg, alignment=Qt.AlignmentFlag.AlignCenter) 
+        self.foodCard_layout.addWidget(self.foodLabel, alignment=Qt.AlignmentFlag.AlignCenter)   
+        self.foodCard_layout.addWidget(self.priceLabel, alignment=Qt.AlignmentFlag.AlignCenter)
 
     def init_adminFoodItemCard(self) :
         # has edit/del btns , edit/trash icons in the card
         self.init_customerFoodItemCard()
-        self.delBtn = QPushButton("delete")
+        delHBoxLayout = QHBoxLayout()
+        delHBoxLayout.setContentsMargins(0,0,0,0)
+        delHBoxLayout.addStretch()
+        self.delBtn = QDeleteButton()
         self.delBtn.clicked.connect(self.handleFoodDel)
-        self.foodCard_layout.insertWidget(0,self.delBtn)
-        # if self.is_available :
-        #     self.foodCard_layout.addWidget(QLabel("hi im available"))
-        # else :
-        #     self.foodCard_layout.addWidget(QLabel("hi im unavailable"))
+        delHBoxLayout.addWidget(self.delBtn)
+        self.foodCard_layout.insertLayout(0,delHBoxLayout)
         if self.hasBeenOrdered :
             if self.is_available  :
-                self.delBtn.setText("set unavailable") # diff icons instead of text
+                self.delBtn.setState("unavailable") # diff icons instead of text
             else :
-                self.delBtn.setText("revive")
+                self.delBtn.setState("revive")
         else :
-            self.delBtn.setText("delete")
+            self.delBtn.setState("delete")
         # note : its bad to subscribe pubsub for temporary elements
 
 
