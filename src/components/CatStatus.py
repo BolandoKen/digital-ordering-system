@@ -4,7 +4,8 @@ from PyQt6.QtWidgets import (
    QWidget,
    QLabel,
    QHBoxLayout,
-   QVBoxLayout
+   QVBoxLayout,
+   QPushButton
 )
 from PyQt6.QtGui import QPixmap, QColor, QPainter
 from PyQt6.QtCore import QSize, Qt
@@ -59,3 +60,13 @@ class QStatusIndicator(QWidget):
             emptyCategoryLabel.show()
         # add logic here, if label is 0, hide that label and status
 
+
+class QCatStatusEditLayout(QHBoxLayout) :
+    def __init__(self, availableItemCount, unavailableItemCount, editCb) :
+        super().__init__()
+        self.setContentsMargins(0,0,0,0)
+        self.addWidget(QStatusIndicator(availableItemCount, unavailableItemCount))
+        self.addStretch()
+        self.editBtn = QPushButton("edit") 
+        self.addWidget(self.editBtn)
+        self.editBtn.clicked.connect(editCb)

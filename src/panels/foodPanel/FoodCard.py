@@ -41,10 +41,10 @@ class QFoodItemCard(QMenuCard) :
         self.foodLabel = QLabel(self.foodname)
         self.foodimg = QLabel()
         setPixMapOf(self.foodimg, self.imgfile, "food")
-        self.priceLabel = QLabel(str(self.price))        
-
-        self.foodCard_layout.addWidget(self.foodLabel)   
+        self.priceLabel = QLabel(str(self.price))   
+             
         self.foodCard_layout.addWidget(self.foodimg) 
+        self.foodCard_layout.addWidget(self.foodLabel)   
         self.foodCard_layout.addWidget(self.priceLabel)
 
     def init_adminFoodItemCard(self) :
@@ -52,7 +52,7 @@ class QFoodItemCard(QMenuCard) :
         self.init_customerFoodItemCard()
         self.delBtn = QPushButton("delete")
         self.delBtn.clicked.connect(self.handleFoodDel)
-        self.foodCard_layout.addWidget(self.delBtn)
+        self.foodCard_layout.insertWidget(0,self.delBtn)
         # if self.is_available :
         #     self.foodCard_layout.addWidget(QLabel("hi im available"))
         # else :

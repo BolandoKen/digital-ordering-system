@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import (
     QApplication,
     QVBoxLayout,
+    QHBoxLayout,
     QMainWindow,
     QWidget,
     QPushButton,
@@ -13,6 +14,7 @@ from PyQt6.QtWidgets import (
 )
 from src.components.Buttons import QImageButton
 from PyQt6.QtGui import QPixmap
+from src.utils.PixMap import setPixMapOf
 
 class QSelectImageCard(QFrame) :
     def __init__(self, handleClearBtnCallback):
@@ -37,3 +39,16 @@ class QSelectImageCard(QFrame) :
     def getLabel(self) :
         return self.imageButton
 
+class QCatLabelImageLayout(QHBoxLayout) :
+    def __init__(self, name, imgfile, panelName) :
+        super().__init__()
+        self.setContentsMargins(0,0,0,0)
+        self.name = name
+        self.imgfile = imgfile
+        self.panelName = panelName
+        self.nameLabel = QLabel(self.name)
+        self.imgWidget = QLabel()
+        setPixMapOf(self.imgWidget, self.imgfile, "category")
+
+        self.addWidget(self.nameLabel)
+        self.addWidget(self.imgWidget)                

@@ -29,7 +29,7 @@ class QFoodList(QFrame) :
         self.scroll_layout = QVBoxLayout(self)
         self.scroll_layout.setContentsMargins(0,0,0,0)
         self.foodList_layout = QScrollAreaLayout(QFlowLayout, self.scroll_layout)
-
+        self.previousCategory_id = None
         self.showUnavailable = False
         self.addFoodDialog = QaddDialog("food")
         pubsub.subscribe(f"{self.pageName}_catCardClicked", self.update_listContent)
@@ -46,7 +46,7 @@ class QFoodList(QFrame) :
 
     def init_adminFoodList(self) :
         addFoodBtn = QPushButton("+ add food item")
-        addFoodBtn.setFixedSize(200,200)
+        addFoodBtn.setFixedSize(225,225)
 
         addFoodBtn.clicked.connect(self.handleAddFoodItem)
         self.foodList_layout.addWidget(addFoodBtn)
@@ -68,8 +68,12 @@ class QFoodList(QFrame) :
             
         if catTuple is not None :
             category_id, catname = catTuple
+            if self.previousCategory_id == category_id : 
+                return
             self.category_id = category_id
             self.catname = catname
+            self.previousCategory_id = self.category_id
+
         self.clear_layout(self.foodList_layout.getLayout()) 
         if self.pageName == "admin" :
             self.unavailableCountStatus = "show" if fetchCategoryUnavailableItemCount(self.category_id) > 0 else "hide"
