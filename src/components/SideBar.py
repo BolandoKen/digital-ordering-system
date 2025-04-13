@@ -63,7 +63,6 @@ class QSideBar(QFrame) :
         self.submitBtn.setEnabled(len(self.cartItems) > 0)
     
     def init_adminSideBar(self) :
-        print('adminSidebar')
         self.switchBtn = QPushButton("switch admin panel")
         self.switchBtn.clicked.connect(self.switchPage)
         self.sidebar_layout.addWidget(self.switchBtn)

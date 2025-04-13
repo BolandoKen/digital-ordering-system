@@ -73,8 +73,6 @@ class QFoodList(QFrame) :
         self.clear_layout(self.foodList_layout.getLayout()) 
         if self.pageName == "admin" :
             self.unavailableCountStatus = "show" if fetchCategoryUnavailableItemCount(self.category_id) > 0 else "hide"
-            print(fetchCategoryUnavailableItemCount(self.category_id))
-            print(self.unavailableCountStatus)
             self.init_adminFoodList()
         elif self.pageName == "customer" :
             self.init_customerFoodList()
@@ -91,7 +89,7 @@ class QFoodList(QFrame) :
         self.update_listContent()
 
     def clear_layout(self, layout): 
-        print('rerender from', self.pageName)
+        print('rerender foodlist from', self.pageName)
         if layout is not None:
             for i in reversed(range(layout.count())): # reverse, because deletion fills gaps
                 item = layout.takeAt(i) 

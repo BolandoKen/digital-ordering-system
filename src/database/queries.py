@@ -5,7 +5,13 @@ cursor = get_dbCursor()
 
 def fetchCatList(pageName) :
     if pageName == "admin" :
-        cursor.execute("SELECT category_id, name, imgfile FROM Categories")
+        cursor.execute("""SELECT c.category_id, c.name, c.imgfile
+                       FROM Categories AS c
+                       LEFT JOIN FoodItems AS f
+                       on c.category_id = f.category_id
+                       GROUP BY c.category_id
+                       ORDER BY COUNT(IF(f.is_available = 1, 1, NULL)) DESC
+                       """)
     elif pageName == "customer" :
         cursor.execute("""SELECT c.category_id, c.name, c.imgfile
                     FROM Categories AS c

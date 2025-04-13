@@ -19,6 +19,7 @@ from src.database.FoodItems import addFoodItem, editFoodItem
 from src.utils.PixMap import checkImgSize, saveImageToLocalTemp, setPixMapOf, moveImageToAssets
 from src.components.Buttons import QImageButton
 from src.components.ImageCard import QSelectImageCard
+from src.components.ComboBox import QCatComboBox
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtGui import QDoubleValidator
 import traceback
@@ -60,9 +61,9 @@ class QaddDialog(QDialog) :
         self.selectImgCard = QSelectImageCard(self.handleClearBtn)
         self.selectImgCard.connectTo(self.open_file)
         self.categoryidLabel = QLabel("category")
-        self.categoryidLineEdit = QLineEdit()
         self.categoryidLabel.hide()
-        self.categoryidLineEdit.hide()
+        self.categoryidComboBox = QCatComboBox()
+        self.categoryidComboBox.hide()
         self.submitBtn = QPushButton("add food item")
         self.submitBtn.clicked.connect(self.handleSubmitBtn)
         self.dialog_layout.addWidget(self.foodnameLabel)
@@ -71,7 +72,7 @@ class QaddDialog(QDialog) :
         self.dialog_layout.addWidget(self.foodpriceLineEdit)
         self.dialog_layout.addWidget(self.selectImgCard)
         self.dialog_layout.addWidget(self.categoryidLabel)
-        self.dialog_layout.addWidget(self.categoryidLineEdit)
+        self.dialog_layout.addWidget(self.categoryidComboBox)
         self.dialog_layout.addStretch()
         self.dialog_layout.addWidget(self.submitBtn)
         
@@ -137,9 +138,8 @@ class QeditDialog(QaddDialog) :
         self.foodpriceLineEdit.setText(str(self.price))
         self.tempImagePath = setPixMapOf(self.selectImgCard.getLabel(), self.imgfile, "food")
         self.categoryidLabel.show()
-        self.categoryidLineEdit.show()
-        self.categoryidLineEdit.setText(str(self.category_id))
-
+        self.categoryidComboBox.show()
+        self.categoryidComboBox.setDefaultOption(str(self.category_id))
 
     def handleSubmitBtn(self) :
         validated = False
@@ -155,12 +155,17 @@ class QeditDialog(QaddDialog) :
                 validated = True
         elif self.panelName == "food" :
             hasImg = self.tempImagePath is not None
-            foodTupleToEdit = (self.foodnameLineEdit.text(), self.foodpriceLineEdit.text(), None, self.categoryidLineEdit.text(), self.fooditem_id)
+            foodTupleToEdit = (self.foodnameLineEdit.text(),
+                                self.foodpriceLineEdit.text(),
+                                None, 
+                                self.categoryidComboBox.itemData(self.categoryidComboBox.currentIndex()),
+                                self.fooditem_id)
             if formValidated(foodTupleToEdit, self.panelName) :
                 imgfileName = editFoodItem(foodTupleToEdit, hasImg)
                 if hasImg : 
                     moveImageToAssets(self.tempImagePath, self.panelName, imgfileName)
                 pubsub.publish("updateFoodItem")
+                pubsub.publish("updateCategory")
                 print("edited food item : ", foodTupleToEdit)
                 validated = True
         if validated :

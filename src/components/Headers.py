@@ -53,9 +53,6 @@ class QFoodPanelHeader(QFrame) :
     def init_food(self) :
         self.backBtn.show()
         self.header.setText(self.catname)
-        # if self.pageName == "admin" :
-        #     print('hi')
-        #     self.showUnBtn.show()
 
     def setHeaderState(self, catTuple = None) :
         self.category_id, self.catname = catTuple
@@ -82,7 +79,6 @@ class QFoodPanelHeader(QFrame) :
         if typeOf == "hide" :
             self.showUnBtn.hide()
         elif typeOf == "show" :
-            print('haa')
             self.showUnBtn.show()
 
 

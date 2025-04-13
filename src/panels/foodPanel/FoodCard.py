@@ -26,10 +26,10 @@ class QFoodItemCard(QMenuCard) :
         super().__init__()
         self.pageName = pageName
         self.fooditem_id, self.foodname, self.price, self.imgfile, self.is_available, self.category_id = foodTuple
-        self.editFoodDialog = QeditDialog("food", foodTuple)
         self.foodCard_layout = QVBoxLayout(self)
         self.hasBeenOrdered = checkFoodHasBeenOrdered(self.fooditem_id)
         if self.pageName == "admin" :
+            self.editFoodDialog = QeditDialog("food", foodTuple)
             self.init_adminFoodItemCard()
         elif self.pageName == "customer" :
             self.init_customerFoodItemCard()

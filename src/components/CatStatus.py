@@ -55,7 +55,7 @@ class QStatusIndicator(QWidget):
         if (unavailable_items == 0 ) : 
             red_dot.hide()
             unavailable_Count.hide()
-        if (available_items == 0 & unavailable_items == 0) :
+        if (available_items == 0 and unavailable_items == 0) :
             emptyCategoryLabel.show()
         # add logic here, if label is 0, hide that label and status
 
