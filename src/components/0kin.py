@@ -5,22 +5,29 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QMainWindow,
     QWidget,
-    QPushButton,
+    QHBoxLayout,
     QFrame,
 )
-from Buttons import QButton1
-from CatStatus import QStatusIndicator
+from PyQt6.QtCore import Qt
+from Buttons import DeleteButton, BackButton, LogoButton
 
 class QWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("QGridLayout Example")
-        main_layout = QVBoxLayout()
+        self.setFixedSize(1280, 720)
 
-        main_layout.addWidget(QButton1("hello",100,50,"white","red"))
-        main_layout.addWidget(QStatusIndicator(1,2))
+        main_layout = QVBoxLayout()
+        delete_button = DeleteButton()
+        back_button = BackButton()
+        logo_button = LogoButton("assets/icons/Logo.png", "M'sKitchen")
+
+        main_layout.addWidget(delete_button)
+        main_layout.addWidget(back_button)
+        main_layout.addWidget(logo_button)
+        main_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         main_centralwidget = QWidget()
-        main_centralwidget.setStyleSheet("background")
+        main_centralwidget.setStyleSheet("background: white;")
         main_centralwidget.setLayout(main_layout)
         self.setCentralWidget(main_centralwidget)
         
