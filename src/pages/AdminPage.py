@@ -34,6 +34,7 @@ class QAdminPage(QFrame) :
         self.adminStackedPanels.addWidget(self.profilePanel)
 
         self.admin_layout = QGridLayout(self)
+        self.admin_layout.setSpacing(0)
         self.admin_layout.addWidget(self.adminStackedPanels, 0, 0)
         self.admin_layout.addWidget(self.sideBar, 0, 1, 2, 1)
 

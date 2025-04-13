@@ -17,11 +17,11 @@ from src.components.Headers import QFoodPanelHeader
 class QFoodPanel(QFrame) :
     def __init__(self, pageName):
         super().__init__()
-
         self.menuListCont = QMenuListContainer(pageName)
         
         self.food_layout = QVBoxLayout(self) # 
         self.food_layout.setContentsMargins(0,0,0,0)
+        self.food_layout.setSpacing(0)
         
         self.food_layout.addWidget(QFoodPanelHeader(pageName))
         self.food_layout.addWidget(self.menuListCont) 

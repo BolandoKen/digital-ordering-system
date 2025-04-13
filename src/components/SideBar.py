@@ -23,15 +23,15 @@ class QSideBar(QFrame) :
         super().__init__()
         self.pageName = pageName
         self.setFixedWidth(300)
-        self.setStyleSheet("background-color: white; color: black")
         self.cartItems = []
         self.cartItems_amount = []
         self.scroll_layout = QVBoxLayout(self)
         self.scroll_layout.setContentsMargins(0,0,0,0)
-
+        self.scroll_layout.setSpacing(0)
+        self.setStyleSheet("background-color: white; color: black;border: 1px solid #d9d9d9")
 
         if self.pageName == "admin" :
-            self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout)
+            self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout, "sidebar")
 
             self.switchPage = switchPage
             self.logoutBtn = QPushButton("Log out")
@@ -47,7 +47,7 @@ class QSideBar(QFrame) :
                     qproperty-alignment: AlignCenter;
                     margin-top: 10px;
                 """)
-            self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout)
+            self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout, "sidebar")
             self.submitBtn = QPushButton("SubmitBtn")
             self.scroll_layout.addWidget(self.submitBtn)
             self.submitBtn.clicked.connect(self.handleSubmitOrderClicked)

@@ -125,7 +125,7 @@ class QLogoButton(QWidget):
         layout.addWidget(icon_label)
 
         text_label = QLabel(eatery_name)
-        text_label.setFont(QFont("Helvitica", 30, QFont.Weight.Bold))
+        text_label.setFont(QFont("Helvitica", 15, QFont.Weight.Bold))
         layout.addWidget(text_label)
         layout.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 

@@ -12,6 +12,7 @@ from PyQt6.QtWidgets import (
 
 from src.utils.PubSub import pubsub
 from src.components.Buttons import QBackButton, QLogoButton, QEyeButton
+from PyQt6.QtGui import QFont
 
 
 class QFoodPanelHeader(QFrame) :
@@ -21,8 +22,9 @@ class QFoodPanelHeader(QFrame) :
         self.state = "category"
         pubsub.subscribe(f"{self.pageName}_catCardClicked", self.setHeaderState)
         self.main_layout = QVBoxLayout(self)
+        self.main_layout.setSpacing(20)
         self.header_layout = QHBoxLayout()
-        self.logo = QLogoButton("assets/icons/Logo.png", "M'sKitchen", self.pageName)
+        self.logo = QLogoButton("assets/icons/pfp_icon.svg", "M'sKitchen", self.pageName)
         if self.pageName == "customer" :
             self.logo.connectTo(self.handleLogoClicked)
 
@@ -30,13 +32,19 @@ class QFoodPanelHeader(QFrame) :
         self.main_layout.addLayout(self.header_layout)
         
         self.backBtn = QBackButton()
+ 
         self.showUnBtn = QEyeButton()
+        showUnBtn_sizePolicy = self.showUnBtn.sizePolicy()
+        showUnBtn_sizePolicy.setRetainSizeWhenHidden(True)
+        self.showUnBtn.setSizePolicy(showUnBtn_sizePolicy)
         self.showUnavailable = False
 
         if self.pageName == "admin" : 
             pubsub.subscribe("initHeaderUnBtn_event", self.setShowUnavailableBtn)
 
         self.header = QLabel()
+        self.header.setFont(QFont("Helvitica", 25, QFont.Weight.Bold))
+
         self.header_layout.addWidget(self.backBtn)
         self.header_layout.addWidget(self.header)
         self.header_layout.addStretch()

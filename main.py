@@ -22,7 +22,7 @@ class QWindow(QMainWindow) :
         super().__init__()  
         self.setWindowTitle("Orderoo")
         self.setGeometry(0,0,900,700)
-        self.setStyleSheet("background-color: white")
+        self.setStyleSheet("background-color: white; color: black")
 
         self.stackedPages = QStackedWidget()
         self.CustomerPage = QCustomerPage()

@@ -20,7 +20,6 @@ class QMenuListContainer(QFrame) :
         super().__init__()
         self.listCont_layout = QVBoxLayout(self)
         self.listCont_layout.setContentsMargins(0,0,0,0)
-
         self.stackedLists = QStackedWidget()
         self.foodList = QFoodList(pageName, self.stackedLists)
         self.categoryList = QCategoryList(pageName,self.stackedLists)
