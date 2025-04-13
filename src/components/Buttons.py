@@ -18,6 +18,9 @@ from PyQt6.QtWidgets import QPushButton
 from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QPixmap, QMouseEvent, QFont
+from PyQt6.QtCore import Qt
+from src.components.MenuCards import QMenuCard
+from src.utils.PixMap import setPixMapOf
 
 class DeleteButton(QPushButton):
 
@@ -89,3 +92,18 @@ class LogoButton(QWidget):
 
         
 
+
+class QAddButton(QMenuCard) : # not yet used
+    def __init__(self):
+        super().__init__()
+        layout = QVBoxLayout(self)
+        label = QLabel()
+        setPixMapOf(label, "addCircle.svg", "icon")
+        layout.addWidget(label, alignment=Qt.AlignmentFlag.AlignHCenter)
+    
+    def connectTo(self, callback) :
+        self.callback = callback
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.callback()

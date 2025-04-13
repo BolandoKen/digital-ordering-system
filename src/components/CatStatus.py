@@ -4,7 +4,8 @@ from PyQt6.QtWidgets import (
    QWidget,
    QLabel,
    QHBoxLayout,
-   QVBoxLayout
+   QVBoxLayout,
+   QPushButton
 )
 from PyQt6.QtGui import QPixmap, QColor, QPainter
 from PyQt6.QtCore import QSize, Qt
@@ -13,7 +14,8 @@ class CatStatus(QLabel):
     def __init__(self, color, size=10):
         super().__init__()
         self.setFixedSize(QSize(size, size))
-        self.setPixmap(self.create_dot(color, size))  
+        self.setPixmap(self.create_dot(color, size))
+
 
     def create_dot(self, color, size):
         pixmap = QPixmap(size, size)
@@ -47,7 +49,7 @@ class QStatusIndicator(QWidget):
         layout.addWidget(emptyCategoryLabel)
         emptyCategoryLabel.hide()
         self.setLayout(layout)
-        
+        layout.addStretch()
 
         if (available_items == 0 ) : 
             green_dot.hide()
@@ -59,3 +61,13 @@ class QStatusIndicator(QWidget):
             emptyCategoryLabel.show()
         # add logic here, if label is 0, hide that label and status
 
+
+class QCatStatusEditLayout(QHBoxLayout) :
+    def __init__(self, availableItemCount, unavailableItemCount, editCb) :
+        super().__init__()
+        self.setContentsMargins(0,0,0,0)
+        self.addWidget(QStatusIndicator(availableItemCount, unavailableItemCount))
+        self.addStretch()
+        self.editBtn = QPushButton("edit") 
+        self.addWidget(self.editBtn)
+        self.editBtn.clicked.connect(editCb)

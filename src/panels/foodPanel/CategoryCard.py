@@ -3,6 +3,7 @@ import os
 from PyQt6.QtWidgets import (
     QApplication,
     QVBoxLayout,
+    QHBoxLayout,
     QMainWindow,
     QWidget,
     QPushButton,
@@ -18,7 +19,8 @@ from PyQt6.QtGui import QPixmap
 from src.utils.PixMap import setPixMapOf
 from src.components.MenuCards import QMenuCard
 from src.database.queries import fetchCategoryAvailableItemCount, fetchCategoryUnavailableItemCount
-from src.components.CatStatus import QStatusIndicator
+from src.components.CatStatus import QCatStatusEditLayout
+from src.components.ImageCard import QCatLabelImageLayout
 class QCategoryCard(QMenuCard) :
     def __init__(self, catTuple, pageName, stackedLists) :
         super().__init__()
@@ -29,7 +31,7 @@ class QCategoryCard(QMenuCard) :
         self.editCatDialog = QeditDialog("category", catTuple)
         self.stackedLists = stackedLists
         self.catCard_layout = QVBoxLayout(self)
-
+        self.catCard_layout.setSpacing(0)
         if self.pageName == "admin" :
             self.publishClickedEvent = "admin_catCardClicked"
             self.init_adminCategoryCard()
@@ -40,23 +42,22 @@ class QCategoryCard(QMenuCard) :
 
     def init_customerCategoryCard(self) :
         # no edit/del btns
-        self.catLabel = QLabel(self.catname)
-        self.catimg = QLabel()
-        setPixMapOf(self.catimg, self.imgfile, "category") 
-    
-        self.catCard_layout.addWidget(self.catLabel)
-        self.catCard_layout.addWidget(self.catimg)
+        self.catLabelImg = QCatLabelImageLayout(self.catname, self.imgfile, "category")
+        self.catCard_layout.addLayout(self.catLabelImg)
 
     def init_adminCategoryCard(self) :
         # has edit/del btns , edit/trash icons in the card
         self.init_customerCategoryCard()
-        self.editBtn = QPushButton("edit")
-        self.editBtn.clicked.connect(self.editCatDialog.exec)
-        self.catCard_layout.addWidget(QStatusIndicator(self.availableItemCount, self.unavailableItemCount))
-        self.catCard_layout.addWidget(self.editBtn)
+        self.catCard_layout.addLayout(QCatStatusEditLayout(self.availableItemCount, self.unavailableItemCount, self.editCatDialog.exec))
+        delHBoxLayout = QHBoxLayout()
+        delHBoxLayout.addStretch()
         self.delBtn = QPushButton("delete")
         self.delBtn.clicked.connect(self.handleCatDelete)
-        self.catCard_layout.addWidget(self.delBtn)
+        delBtn_sizePolicy = self.delBtn.sizePolicy()
+        delBtn_sizePolicy.setRetainSizeWhenHidden(True)
+        self.delBtn.setSizePolicy(delBtn_sizePolicy)
+        delHBoxLayout.addWidget(self.delBtn)
+        self.catCard_layout.insertLayout(0,delHBoxLayout)
         if self.availableItemCount > 0 or self.unavailableItemCount > 0:
             self.delBtn.hide()
 

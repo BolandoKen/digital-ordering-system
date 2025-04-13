@@ -21,7 +21,7 @@ class QWindow(QMainWindow) :
     def __init__(self):
         super().__init__()  
         self.setWindowTitle("Orderoo")
-        self.setGeometry(0,0,800,500)
+        self.setGeometry(0,0,900,700)
 
         self.stackedPages = QStackedWidget()
         self.CustomerPage = QCustomerPage()

@@ -19,6 +19,7 @@ from PyQt6.QtGui import QPixmap
 from src.components.ScrollArea import QScrollAreaLayout
 from src.components.FlowLayout import QFlowLayout
 from src.database.queries import fetchCategoryUnavailableItemCount
+from src.components.Buttons import QAddButton
 
 class QFoodList(QFrame) :
 
@@ -29,7 +30,7 @@ class QFoodList(QFrame) :
         self.scroll_layout = QVBoxLayout(self)
         self.scroll_layout.setContentsMargins(0,0,0,0)
         self.foodList_layout = QScrollAreaLayout(QFlowLayout, self.scroll_layout)
-
+        self.previousCategory_id = None
         self.showUnavailable = False
         self.addFoodDialog = QaddDialog("food")
         pubsub.subscribe(f"{self.pageName}_catCardClicked", self.update_listContent)
@@ -45,10 +46,10 @@ class QFoodList(QFrame) :
         # no plus sign, unable to add
 
     def init_adminFoodList(self) :
-        addFoodBtn = QPushButton("+ add food item")
-        addFoodBtn.setFixedSize(200,200)
 
-        addFoodBtn.clicked.connect(self.handleAddFoodItem)
+        addFoodBtn = QAddButton()
+
+        addFoodBtn.connectTo(self.handleAddFoodItem)
         self.foodList_layout.addWidget(addFoodBtn)
         if not self.subbedToToggle :
             pubsub.subscribe("admin_toggleShowUnavailable", self.toggleShowUnavailable)
@@ -68,8 +69,12 @@ class QFoodList(QFrame) :
             
         if catTuple is not None :
             category_id, catname = catTuple
+            if self.previousCategory_id == category_id : 
+                return
             self.category_id = category_id
             self.catname = catname
+            self.previousCategory_id = self.category_id
+
         self.clear_layout(self.foodList_layout.getLayout()) 
         if self.pageName == "admin" :
             self.unavailableCountStatus = "show" if fetchCategoryUnavailableItemCount(self.category_id) > 0 else "hide"
