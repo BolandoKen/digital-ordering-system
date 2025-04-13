@@ -1,6 +1,6 @@
 import sys
 # import os
-# sys.path.append(os.path.abspath("src"))
+sys.path.append(os.path.abspath("src"))
 from PyQt6.QtWidgets import (
     QApplication,
     QVBoxLayout,
