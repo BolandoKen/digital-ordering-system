@@ -55,7 +55,7 @@ class QAddButton(QMenuCard) : # not yet used
         layout = QVBoxLayout(self)
         label = QLabel()
         setPixMapOf(label, "addCircle.svg", "icon")
-        layout.addWidget(label)
+        layout.addWidget(label, alignment=Qt.AlignmentFlag.AlignHCenter)
     
     def connectTo(self, callback) :
         self.callback = callback

@@ -14,7 +14,8 @@ class CatStatus(QLabel):
     def __init__(self, color, size=10):
         super().__init__()
         self.setFixedSize(QSize(size, size))
-        self.setPixmap(self.create_dot(color, size))  
+        self.setPixmap(self.create_dot(color, size))
+
 
     def create_dot(self, color, size):
         pixmap = QPixmap(size, size)
@@ -48,7 +49,7 @@ class QStatusIndicator(QWidget):
         layout.addWidget(emptyCategoryLabel)
         emptyCategoryLabel.hide()
         self.setLayout(layout)
-        
+        layout.addStretch()
 
         if (available_items == 0 ) : 
             green_dot.hide()

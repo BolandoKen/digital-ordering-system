@@ -19,6 +19,7 @@ from PyQt6.QtGui import QPixmap
 from src.components.ScrollArea import QScrollAreaLayout
 from src.components.FlowLayout import QFlowLayout
 from src.database.queries import fetchCategoryUnavailableItemCount
+from src.components.Buttons import QAddButton
 
 class QFoodList(QFrame) :
 
@@ -45,10 +46,10 @@ class QFoodList(QFrame) :
         # no plus sign, unable to add
 
     def init_adminFoodList(self) :
-        addFoodBtn = QPushButton("+ add food item")
-        addFoodBtn.setFixedSize(225,225)
 
-        addFoodBtn.clicked.connect(self.handleAddFoodItem)
+        addFoodBtn = QAddButton()
+
+        addFoodBtn.connectTo(self.handleAddFoodItem)
         self.foodList_layout.addWidget(addFoodBtn)
         if not self.subbedToToggle :
             pubsub.subscribe("admin_toggleShowUnavailable", self.toggleShowUnavailable)

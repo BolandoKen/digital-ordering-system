@@ -18,6 +18,7 @@ from src.components.Dialogs import QaddDialog
 from PyQt6.QtCore import Qt
 from src.components.ScrollArea import QScrollAreaLayout
 from src.components.FlowLayout import QFlowLayout
+from src.components.Buttons import QAddButton
 
 class QCategoryList(QFrame) : 
     def __init__(self, pageName,stackedLists) :
@@ -48,9 +49,8 @@ class QCategoryList(QFrame) :
         # no plus sign
 
     def init_adminCatList(self) :
-        addCatBtn = QPushButton("+ add Category")
-        addCatBtn.setFixedSize(225,225)
-        addCatBtn.clicked.connect(self.handleAddCategory)
+        addCatBtn = QAddButton()
+        addCatBtn.connectTo(self.handleAddCategory)
         self.catList_Layout.addWidget(addCatBtn)
 
         self.init_customerCatList()
