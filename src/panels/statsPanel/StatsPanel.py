@@ -3,6 +3,7 @@ import sys
 from PyQt6.QtWidgets import (
     QApplication,
     QVBoxLayout,
+    QHBoxLayout,
     QMainWindow,
     QWidget,
     QPushButton,
@@ -16,28 +17,38 @@ from PyQt6.QtWidgets import (
 
 from PyQt6.QtCore import Qt
 from src.database.queries import fetchStatistics
+from src.components.Headers import QOtherPanelHeader
 
 class QStatsPanel(QFrame) :
     def __init__(self):
         super().__init__()
         self.stats_layout = QVBoxLayout(self)
+        self.stats_layout.setContentsMargins(0,0,0,0)
+        self.stats_layout.setSpacing(0)
         self.mostordered = True
         self.page_setup()
         self.statistics_table()
 
     def page_setup(self):
-        title = QLabel("Statistics Panel")
-        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title.setStyleSheet("background-color: white; color: black")
-        self.stats_layout.addWidget(title)
-        self.toggle_btn = QPushButton("Show Least Ordered")
-        self.toggle_btn.clicked.connect(self.changeorder)
-        self.stats_layout.addWidget(self.toggle_btn)
+   
+        self.stats_layout.addWidget(QOtherPanelHeader("Statistics"))
+        queryBarHLayout = QHBoxLayout()
+        self.sort_btn = QPushButton("Show Least Ordered")
+        self.sort_btn.clicked.connect(self.changeorder)
+        queryBarHLayout.addWidget(self.sort_btn)
+        queryBarHLayout.addStretch()
+        queryBarHLayout.addWidget(QPushButton("filter"))
+        contentsVLayout = QVBoxLayout()
+        contentsVLayout.setContentsMargins(10,10,10,10)
+        contentsVLayout.setSpacing(5)
+
         self.table = QTableWidget()
+        contentsVLayout.addLayout(queryBarHLayout)
+        contentsVLayout.addWidget(self.table)
+        self.stats_layout.addLayout(contentsVLayout)
         self.table.setColumnCount(3)
         self.table.setHorizontalHeaderLabels(["Food", "Category", "Times Ordered"])
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-        self.stats_layout.addWidget(self.table)
 
     def statistics_table(self):
         stats_data = fetchStatistics('DESC' if self.mostordered else 'ASC')
@@ -50,9 +61,9 @@ class QStatsPanel(QFrame) :
     def changeorder(self):
         self.mostordered = not self.mostordered
         if self.mostordered:
-            self.toggle_btn.setText("Show Least Ordered")
+            self.sort_btn.setText("Show Least Ordered")
         else:
-            self.toggle_btn.setText("Show Most Ordered")
+            self.sort_btn.setText("Show Most Ordered")
         
         self.statistics_table()
 

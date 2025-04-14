@@ -14,6 +14,17 @@ from src.utils.PubSub import pubsub
 from src.components.Buttons import QBackButton, QLogoButton, QEyeButton
 from PyQt6.QtGui import QFont
 
+class QOtherPanelHeader(QFrame) :
+    def __init__(self, panelName):
+        super().__init__()
+        self.panelName = panelName
+        self.main_layout = QVBoxLayout(self)
+        self.main_layout.setSpacing(20)
+        self.header = QLabel(panelName)
+        self.header.setFont(QFont("Helvitica", 25, QFont.Weight.Bold))
+        self.logo = QLogoButton("assets/icons/pfp_icon.svg", "M'sKitchen", "admin")
+        self.main_layout.addWidget(self.logo)
+        self.main_layout.addWidget(self.header)
 
 class QFoodPanelHeader(QFrame) :
     def __init__(self, pageName):
@@ -91,7 +102,8 @@ class QFoodPanelHeader(QFrame) :
             self.showUnBtn.show()
 
 
-    
+
+
 
 
 

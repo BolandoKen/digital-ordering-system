@@ -17,11 +17,14 @@ from PyQt6.QtWidgets import (
     QScrollArea
 )
 from src.utils.PixMap import setPixMapOf
+from src.components.Headers import QOtherPanelHeader
 
 class QProfilePanel(QFrame) :
     def __init__(self):
         super().__init__()
         self.order_layout = QVBoxLayout(self)
+        self.order_layout.setContentsMargins(0,0,0,0)
+        self.order_layout.setSpacing(0)
         self.image_label = QLabel()
         setPixMapOf(self.image_label, "icecream.png", "food")        
         name_label = QLabel("M's Kitchen")
@@ -33,6 +36,7 @@ class QProfilePanel(QFrame) :
         scroll_area.setWidgetResizable(True)
         self.history_panel = QOrderHPanel()
         scroll_area.setWidget(self.history_panel)
+        self.order_layout.addWidget(QOtherPanelHeader("Profile"))
         self.order_layout.addWidget(self.image_label)
         self.order_layout.addWidget(name_label)
         self.order_layout.addWidget(edit_button, alignment=Qt.AlignmentFlag.AlignCenter)
