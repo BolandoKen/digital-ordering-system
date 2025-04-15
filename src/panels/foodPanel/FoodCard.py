@@ -83,6 +83,9 @@ class QFoodItemCard(QMenuCard) :
             pubsub.publish("updateCategory")
         else:
             warning.setText("are you sure you want to delete this food item?")
+            
+            if self.hasBeenOrdered:
+                warning.setText("this item has existing orders in order history, set to hidden instead of delete")
         
         warning.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         execute = warning.exec()
