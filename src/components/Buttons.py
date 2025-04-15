@@ -165,3 +165,32 @@ class QImageButton(QLabel) :
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
             self.callback()
+
+class QPrimaryButton(QPushButton) :
+    def __init__(self, text, width): 
+        super().__init__(text)
+        self.setFixedSize(width, 60)
+        self.setStyleSheet("""
+            background: #C8161D;
+            border-radius: 10px;
+            color: white;
+            font-style: "Helvetica";
+            font-weight: bold;
+            font-size: 40px;
+        """)
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+
+class QSecondaryButton(QPushButton) :
+    def __init__(self, text, width): 
+        super().__init__(text)
+        self.setFixedSize(width, 60)
+        self.setStyleSheet("""
+            background: transparent;
+            border-radius: 10px;
+            border: 2px solid #C8161D;
+            color: #C8161D;
+            font-style: "Helvetica";
+            font-weight: bold;
+            font-size: 40px;
+        """)
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
