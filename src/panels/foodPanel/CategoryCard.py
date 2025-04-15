@@ -10,6 +10,7 @@ from PyQt6.QtWidgets import (
     QStackedWidget,
     QLabel,
     QFrame,
+    QMessageBox,
 )
 from src.utils.PubSub import pubsub
 from src.database.Categories import deleteCategory
@@ -64,7 +65,15 @@ class QCategoryCard(QMenuCard) :
             self.delBtn.hide()
 
     def handleCatDelete(self) :
-        deleteCategory(self.category_id)
+        warning = QMessageBox()
+        warning.setIcon(QMessageBox.Icon.Warning)
+        warning.setText("Are you sure you want to delete this category?")   
+        warning.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        execute = warning.exec()
+        
+        if execute == QMessageBox.StandardButton.Yes:
+            deleteCategory(self.category_id)
+            pubsub.publish("updateCategory")  
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
