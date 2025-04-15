@@ -18,6 +18,7 @@ from PyQt6.QtWidgets import (
 )
 from src.utils.PixMap import setPixMapOf
 from src.components.Headers import QOtherPanelHeader
+from src.components.Table import QOrderHTable
 
 class QProfilePanel(QFrame) :
     def __init__(self):
@@ -32,14 +33,16 @@ class QProfilePanel(QFrame) :
         edit_button = QPushButton("Edit")
         edit_button.setFixedWidth(100)
         history_label = QLabel("Order History")
-        scroll_area = QScrollArea()
-        scroll_area.setWidgetResizable(True)
-        self.history_panel = QOrderHPanel()
-        scroll_area.setWidget(self.history_panel)
+        contentsVLayout = QVBoxLayout()
+        contentsVLayout.setContentsMargins(10,10,0,10)
+
+        self.orderHTable = QOrderHTable()
+        contentsVLayout.addWidget(history_label)
+        contentsVLayout.addWidget(self.orderHTable)
+
         self.order_layout.addWidget(QOtherPanelHeader("Profile"))
         self.order_layout.addWidget(self.image_label)
         self.order_layout.addWidget(name_label)
         self.order_layout.addWidget(edit_button, alignment=Qt.AlignmentFlag.AlignCenter)
-        self.order_layout.addWidget(history_label)
-        self.order_layout.addWidget(scroll_area)
+        self.order_layout.addLayout(contentsVLayout)
 

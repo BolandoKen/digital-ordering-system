@@ -77,21 +77,23 @@ class QFoodItemCard(QMenuCard) :
         warning =  QMessageBox()
         warning.setIcon(QMessageBox.Icon.Warning)
 
+
+        typeOf = "delete"
+
         if self.hasBeenOrdered and not self.is_available:
-            reviveFoodItem(self.fooditem_id)
-            pubsub.publish("updateFoodItem")
-            pubsub.publish("updateCategory")
+            warning.setText("are you sure you want to revive this food item?")
+            typeOf = "revive"
         else:
             warning.setText("are you sure you want to delete this food item?")
-            
             if self.hasBeenOrdered:
                 warning.setText("this item has existing orders in order history, set to hidden instead of delete")
-        
         warning.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         execute = warning.exec()
-
         if execute == (QMessageBox.StandardButton.Yes):
-            deleteFoodItem(self.fooditem_id)
+            if typeOf == "delete" :
+                deleteFoodItem(self.fooditem_id)
+            elif typeOf == "revive" :
+                reviveFoodItem(self.fooditem_id)
             pubsub.publish("updateFoodItem")
             pubsub.publish("updateCategory")
 

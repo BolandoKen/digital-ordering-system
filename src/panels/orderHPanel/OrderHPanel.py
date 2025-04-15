@@ -21,14 +21,11 @@ class QOrderHPanel(QFrame) :
     def __init__(self):
         super().__init__()
         self.order_layout = QVBoxLayout(self)
-        title_label = QLabel("Order History")
-        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.table = QTableWidget()
         self.table.setColumnCount(2)
         self.table.setHorizontalHeaderLabels(["OrderID", "Date"])
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
-        self.order_layout.addWidget(title_label)
         self.order_layout.addWidget(self.table)
         self.add_sample_data()
     
