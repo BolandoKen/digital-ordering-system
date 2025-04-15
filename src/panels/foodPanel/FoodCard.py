@@ -11,7 +11,8 @@ from PyQt6.QtWidgets import (
     QLabel,
     QFrame,
     QLineEdit,
-    QSpinBox
+    QSpinBox,
+    QMessageBox
 )
 from src.components.Dialogs import QeditDialog
 from src.database.FoodItems import deleteFoodItem, reviveFoodItem
@@ -73,12 +74,23 @@ class QFoodItemCard(QMenuCard) :
     def handleFoodDel(self) :
         # if food is available : delete or hide
         # if food is unavailable : show
-        if self.hasBeenOrdered and not self.is_available :
+        warning =  QMessageBox()
+        warning.setIcon(QMessageBox.Icon.Warning)
+
+        if self.hasBeenOrdered and not self.is_available:
             reviveFoodItem(self.fooditem_id)
-        else :
+            pubsub.publish("updateFoodItem")
+            pubsub.publish("updateCategory")
+        else:
+            warning.setText("are you sure you want to delete this food item?")
+        
+        warning.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        execute = warning.exec()
+
+        if execute == (QMessageBox.StandardButton.Yes):
             deleteFoodItem(self.fooditem_id)
-        pubsub.publish("updateFoodItem")
-        pubsub.publish("updateCategory")
+            pubsub.publish("updateFoodItem")
+            pubsub.publish("updateCategory")
 
 
     def mousePressEvent(self, event):
