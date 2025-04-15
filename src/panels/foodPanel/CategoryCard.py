@@ -67,14 +67,7 @@ class QCategoryCard(QMenuCard) :
     def handleCatDelete(self) :
         warning = QMessageBox()
         warning.setIcon(QMessageBox.Icon.Warning)
-        warning.setText("Are you sure you want to delete this category?")
-        
-        if self.availableItemCount > 0 or self.unavailableItemCount > 0:
-            warning.setText("this category contains food items and cannot be deleted.")
-            warning.setStandardButtons(QMessageBox.StandardButton.Ok)
-            warning.exec()
-            return
-        
+        warning.setText("Are you sure you want to delete this category?")   
         warning.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
         execute = warning.exec()
         
