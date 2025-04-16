@@ -1,3 +1,4 @@
+import os
 import sys
 from PyQt6.QtWidgets import (
     QApplication,
@@ -14,7 +15,7 @@ from PyQt6.QtWidgets import (
     QFileDialog,
     QSizePolicy
 )
-from PyQt6.QtWidgets import QPushButton
+from PyQt6.QtWidgets import QPushButton, QSpacerItem, QSizePolicy
 from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QPixmap, QMouseEvent, QFont
@@ -192,7 +193,7 @@ class QSecondaryButton(QPushButton) :
         styleString = """
             background: transparent;
             border-radius: 10px;
-            border: 2px solid #C8161D;
+            border: 2px solid #D9D9D9;
             color: #C8161D;
             font-style: "Helvetica";
             font-weight: bold;
@@ -206,3 +207,77 @@ class QSecondaryButton(QPushButton) :
             styleString += f"font-size: {fontSize}px;"
         self.setStyleSheet(styleString)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
+
+class QDineInButton(QPushButton):
+    def __init__(self, width=400, height=400):
+        super().__init__("")
+        self.setFixedSize(width, height)
+        
+        layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
+        self.setLayout(layout)
+
+        icon_label = QLabel() 
+        icon_path = "assets/icons/dineIn_icon.svg"  
+        if os.path.exists(icon_path):
+            icon_label.setPixmap(QIcon(icon_path).pixmap(QSize(239, 200)))
+        icon_label.setStyleSheet("background: transparent;") 
+        icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(icon_label)
+
+        layout.addSpacerItem(QSpacerItem(0, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed))
+
+        text_label = QLabel("Dine In") 
+        text_label.setFont(QFont("Helvetica", 60, QFont.Weight.Bold))
+        text_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        text_label.setStyleSheet("background: transparent; color: black;")
+        layout.addWidget(text_label)
+
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        
+        self.setStyleSheet("""
+            QPushButton {
+                background-color: #FFCA40;
+                border-radius: 10px;
+                padding-top: 120px;
+            }
+        """)
+
+
+class QTakeOutButton(QPushButton):
+    def __init__(self, width=400, height=400):
+        super().__init__("")
+        self.setFixedSize(width, height)
+        
+        layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setAlignment(Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
+        self.setLayout(layout)
+
+        icon_label = QLabel() 
+        icon_path = "assets/icons/takeOut_icon.svg"  
+        if os.path.exists(icon_path):
+            icon_label.setPixmap(QIcon(icon_path).pixmap(QSize(239, 200)))
+        icon_label.setStyleSheet("background: transparent;") 
+        icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(icon_label)
+
+        layout.addSpacerItem(QSpacerItem(0, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed))
+
+        text_label = QLabel("Take Out") 
+        text_label.setFont(QFont("Helvetica", 60, QFont.Weight.Bold))
+        text_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        text_label.setStyleSheet("background: transparent; color: white;")
+        layout.addWidget(text_label)
+
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        
+        self.setStyleSheet("""
+            QPushButton {
+                background-color: transparent;
+                border-radius: 10px;
+                border: 4px solid white;
+                padding-top: 120px;
+            }
+        """)
