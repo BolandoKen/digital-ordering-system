@@ -17,6 +17,7 @@ from PyQt6.QtWidgets import (
 )
 
 from src.components.SideBar import QSideBar
+from src.components.Headers import QLogoHeader
 
 class QAdminPage(QFrame) :
     def __init__(self):
@@ -28,6 +29,7 @@ class QAdminPage(QFrame) :
         
         self.adminStackedPanels = QStackedWidget()
         self.sideBar = QSideBar(self.objectName, self.switchPage)
+        self.logoHeader = QLogoHeader("admin")
 
         self.adminStackedPanels.addWidget(self.foodPanel)
         self.adminStackedPanels.addWidget(self.statsPanel)
@@ -36,7 +38,8 @@ class QAdminPage(QFrame) :
         self.admin_layout = QGridLayout(self)
         self.admin_layout.setSpacing(0)
         self.admin_layout.setContentsMargins(0,0,0,0)
-        self.admin_layout.addWidget(self.adminStackedPanels, 0, 0)
+        self.admin_layout.addWidget(self.logoHeader, 0,0)
+        self.admin_layout.addWidget(self.adminStackedPanels, 1, 0)
         self.admin_layout.addWidget(self.sideBar, 0, 1, 2, 1)
 
 
