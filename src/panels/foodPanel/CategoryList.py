@@ -30,7 +30,6 @@ class QCategoryList(QFrame) :
         self.catList_Layout = QScrollAreaLayout(QFlowLayout, self.scroll_layout)
     
         self.addCatDialog = QaddDialog("category")
-
         pubsub.subscribe("updateCategory", self.update_categoryList)
         self.init_catList()
 

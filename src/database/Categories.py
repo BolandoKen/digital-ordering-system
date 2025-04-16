@@ -1,6 +1,7 @@
 from src.database.init_db import get_dbCursor
 from src.database.queries import fetchFoodUnderCatList
-from src.utils.PubSub import pubsub
+from src.utils.PixMap import deleteImageOfCategory
+
 cursor = get_dbCursor()
 
 def addCategory(catTuple, hasImg) :
@@ -27,11 +28,11 @@ def editCategory(catTuple, hasImg) :
     cursor.execute("UPDATE Categories SET imgfile = %s WHERE category_id = %s", (imgfileName,category_id))
     return imgfileName
 
-def deleteCategory(cat) :
-    foodUnderCatCount = len(fetchFoodUnderCatList(cat))
+def deleteCategory(catid) :
+    foodUnderCatCount = len(fetchFoodUnderCatList(catid))
     if foodUnderCatCount <=0 :
-        cursor.execute(f"DELETE FROM Categories WHERE category_id = {cat}")
-        pubsub.publish("updateCategory") 
+        deleteImageOfCategory(catid)
+        cursor.execute(f"DELETE FROM Categories WHERE category_id = {catid}")
     else :
         print('cant delete category! has ', foodUnderCatCount, ' food items under it.') 
     # if has any items at all, do not hard delete

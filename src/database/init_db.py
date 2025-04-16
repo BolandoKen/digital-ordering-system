@@ -20,7 +20,7 @@ def create_FoodItemsTable() :
                      name VARCHAR(128) NOT NULL,
                      price DECIMAL(10,2) NOT NULL,
                      imgfile VARCHAR(128) NULL,
-                     is_available BOOL NOT NULL DEFAULT FALSE,
+                     is_available BOOL NOT NULL DEFAULT TRUE,
                      category_id SMALLINT NOT NULL,
                      FOREIGN KEY(category_id) REFERENCES Categories(category_id)
                      )""")

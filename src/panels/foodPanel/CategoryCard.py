@@ -72,8 +72,8 @@ class QCategoryCard(QMenuCard) :
         execute = warning.exec()
         
         if execute == QMessageBox.StandardButton.Yes:
-            deleteCategory(self.category_id)
-            pubsub.publish("updateCategory")  
+            deleteCategory(self.category_id) # published updateCategory was in the function
+            pubsub.publish("updateCategory") 
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:

@@ -1,5 +1,6 @@
 from src.database.init_db import get_dbCursor
 from src.database.queries import checkFoodHasBeenOrdered
+from src.utils.PixMap import deleteImageOfFood
 
 cursor = get_dbCursor()
 
@@ -36,6 +37,7 @@ def deleteFoodItem(foodid) :
         print('food has previously been ordered, will soft delete!')
     else : 
         print('deleted', foodid)
+        deleteImageOfFood(foodid)
         cursor.execute(f"DELETE FROM FoodItems WHERE fooditem_id = {foodid}")
         
     # to do: listing for unavailable items

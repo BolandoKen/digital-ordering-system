@@ -55,6 +55,22 @@ def moveImageToAssets(imgFilePath, panelName, ImgRename) :
         shutil.move(imgFilePath, destPath)
 
 
+def deleteImageOfCategory(catid) :
+    destPath = os.path.abspath("assets/categoryimg")
+    imgToDelete = f"{catid}.png"
+    filePathToDelete = os.path.join(destPath,imgToDelete)
+    if os.path.exists(filePathToDelete) :
+        os.remove(filePathToDelete)
+
+def deleteImageOfFood(foodid) :
+    destPath = os.path.abspath("assets/foodimg")
+    imgToDelete = f"{foodid}.png"
+    filePathToDelete = os.path.join(destPath,imgToDelete)
+    if os.path.exists(filePathToDelete) :
+        print(filePathToDelete)
+        os.remove(filePathToDelete)
+
+
 # path = os.path.join(os.path.abspath("assets/foodimg"), "test.png")
 # print(path)
 
