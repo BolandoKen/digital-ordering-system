@@ -16,6 +16,7 @@ from src.database.Orders import addOrder
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap, QFont
 from src.components.ScrollArea import QScrollAreaLayout
+from src.components.Buttons import QPrimaryButton
 import traceback
 
 class QSideBar(QFrame) :
@@ -26,7 +27,7 @@ class QSideBar(QFrame) :
         self.cartItems = []
         self.cartItems_amount = []
         self.scroll_layout = QVBoxLayout(self)
-        self.scroll_layout.setContentsMargins(0,0,0,0)
+        self.scroll_layout.setContentsMargins(0,0,0,10)
         self.scroll_layout.setSpacing(0)
         self.setStyleSheet("background-color: white; color: black;border-left: 1px solid #d9d9d9")
 
@@ -34,8 +35,8 @@ class QSideBar(QFrame) :
             self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout, "sidebar")
 
             self.switchPage = switchPage
-            self.logoutBtn = QPushButton("Log out")
-            self.scroll_layout.addWidget(self.logoutBtn)
+            self.logoutBtn = QPrimaryButton("Log out", 90, 30, 20)
+            self.scroll_layout.addWidget(self.logoutBtn, alignment=Qt.AlignmentFlag.AlignCenter)
             self.init_adminSideBar()
         elif self.pageName == "customer" :
             title = QLabel("My Orders")
@@ -45,8 +46,8 @@ class QSideBar(QFrame) :
                     qproperty-alignment: AlignCenter;
                 """)
             self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout, "sidebar")
-            self.submitBtn = QPushButton("SubmitBtn")
-            self.scroll_layout.addWidget(self.submitBtn)
+            self.submitBtn = QPrimaryButton("Done", 70, 30, 20)
+            self.scroll_layout.addWidget(self.submitBtn, alignment=Qt.AlignmentFlag.AlignCenter)
             self.submitBtn.clicked.connect(self.handleSubmitOrderClicked)
             pubsub.subscribe("addToCart", self.handleFoodAddToCart)
             self.init_customerSideBar()

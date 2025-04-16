@@ -26,18 +26,26 @@ class QSelectImageCard(QFrame) :
         self.imageButton = QImageButton("+")
         self.imageCard_layout.addWidget(self.clearButton)
         self.imageCard_layout.addWidget(self.imageButton)
+        setPixMapOf(self.imageButton, "addCircle.svg", "icon")
+        self.imageButton.setFixedSize(125,125)
 
     def connectTo(self, callback) :
         self.imageButton.connectTo(callback)
     
     def clearImg(self) :
-        self.imageButton.setPixmap(QPixmap()) # set to default pixmap
-        self.imageButton.setText("+")
+        setPixMapOf(self.imageButton, "addCircle.svg", "icon")
         self.callback()
 
 
     def getLabel(self) :
         return self.imageButton
+
+
+class QImageLabel(QLabel) :
+    def __init__(self, imgfile):
+        super().__init__()
+        setPixMapOf(self, imgfile, "icon")
+
 
 class QCatLabelImageLayout(QHBoxLayout) :
     def __init__(self, name, imgfile, panelName) :

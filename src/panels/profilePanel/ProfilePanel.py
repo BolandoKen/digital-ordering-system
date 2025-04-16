@@ -19,6 +19,7 @@ from PyQt6.QtWidgets import (
 from src.utils.PixMap import setPixMapOf
 from src.components.Headers import QOtherPanelHeader
 from src.components.Table import QOrderHTable
+from src.panels.profilePanel.ProfileEditSection import QProfileEdit
 
 class QProfilePanel(QFrame) :
     def __init__(self):
@@ -26,12 +27,6 @@ class QProfilePanel(QFrame) :
         self.order_layout = QVBoxLayout(self)
         self.order_layout.setContentsMargins(0,0,0,0)
         self.order_layout.setSpacing(0)
-        self.image_label = QLabel()
-        setPixMapOf(self.image_label, "icecream.png", "food")        
-        name_label = QLabel("M's Kitchen")
-        name_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        edit_button = QPushButton("Edit")
-        edit_button.setFixedWidth(100)
         history_label = QLabel("Order History")
         contentsVLayout = QVBoxLayout()
         contentsVLayout.setContentsMargins(10,10,0,10)
@@ -41,8 +36,6 @@ class QProfilePanel(QFrame) :
         contentsVLayout.addWidget(self.orderHTable)
 
         self.order_layout.addWidget(QOtherPanelHeader("Profile"))
-        self.order_layout.addWidget(self.image_label)
-        self.order_layout.addWidget(name_label)
-        self.order_layout.addWidget(edit_button, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.order_layout.addWidget(QProfileEdit())
         self.order_layout.addLayout(contentsVLayout)
 

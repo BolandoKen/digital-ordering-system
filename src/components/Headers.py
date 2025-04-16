@@ -19,12 +19,29 @@ class QOtherPanelHeader(QFrame) :
         super().__init__()
         self.panelName = panelName
         self.main_layout = QVBoxLayout(self)
+        # self.main_layout.setContentsMargins(30,10,10,10)
         self.main_layout.setSpacing(20)
+        self.header_layout = QHBoxLayout()
         self.header = QLabel(panelName)
         self.header.setFont(QFont("Helvitica", 25, QFont.Weight.Bold))
         self.logo = QLogoButton("assets/icons/pfp_icon.svg", "M'sKitchen", "admin")
+
+        self.header_layout.addWidget(self.header)
+
         self.main_layout.addWidget(self.logo)
-        self.main_layout.addWidget(self.header)
+        self.main_layout.addLayout(self.header_layout)
+
+        if panelName == "Profile" :
+            self.init_ProfilePanel()
+
+
+    def init_ProfilePanel(self) :
+        self.header_layout.addStretch()
+        editBtn = QPushButton("edit")
+        self.header_layout.addWidget(editBtn)
+    
+    def handleEdiProfile(self) :
+        pass
 
 class QFoodPanelHeader(QFrame) :
     def __init__(self, pageName):

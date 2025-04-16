@@ -167,30 +167,30 @@ class QImageButton(QLabel) :
             self.callback()
 
 class QPrimaryButton(QPushButton) :
-    def __init__(self, text, width): 
+    def __init__(self, text, width, height=60, fontSize=40): 
         super().__init__(text)
-        self.setFixedSize(width, 60)
-        self.setStyleSheet("""
+        self.setFixedSize(width, height)
+        self.setStyleSheet(f"""
             background: #C8161D;
             border-radius: 10px;
             color: white;
             font-style: "Helvetica";
             font-weight: bold;
-            font-size: 40px;
+            font-size: {fontSize}px;
         """)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
 
 class QSecondaryButton(QPushButton) :
-    def __init__(self, text, width): 
+    def __init__(self, text, width,height=60,fontSize=40): 
         super().__init__(text)
-        self.setFixedSize(width, 60)
-        self.setStyleSheet("""
+        self.setFixedSize(width, height)
+        self.setStyleSheet(f"""
             background: transparent;
             border-radius: 10px;
             border: 2px solid #C8161D;
             color: #C8161D;
             font-style: "Helvetica";
             font-weight: bold;
-            font-size: 40px;
+            font-size: {fontSize}px;
         """)
         self.setCursor(Qt.CursorShape.PointingHandCursor)

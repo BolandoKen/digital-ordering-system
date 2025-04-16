@@ -10,23 +10,25 @@ def setPixMapOf(label, imgFileName, folder) :
         path = os.path.join(os.path.abspath(f"assets/{destFolder}"), imgFileName) 
         pixmap = QPixmap(path)
         label.setPixmap(pixmap)
-        label.setFixedSize(100,100)
+        label.setFixedSize(125,125)
         label.setScaledContents(True)
         return None
     if folder == "temp" :
         destFolder = "temp"
+        label.setFixedSize(150,150)
+        label.setScaledContents(True)
     elif folder == "icon" :
         destFolder = "icons"
-        path = os.path.join(os.path.abspath(f"assets/{destFolder}"), imgFileName) 
-        pixmap = QPixmap(path)
-        label.setPixmap(pixmap)
     else :
         destFolder = folder + "img"
-        path = os.path.join(os.path.abspath(f"assets/{destFolder}"), imgFileName) 
-        pixmap = QPixmap(path)
-        label.setPixmap(pixmap)
-        label.setFixedSize(100,100)
+        label.setFixedSize(125,125)
         label.setScaledContents(True)
+
+    path = os.path.join(os.path.abspath(f"assets/{destFolder}"), imgFileName) 
+    pixmap = QPixmap(path)
+    label.setPixmap(pixmap)
+       
+
 
     return path
 
