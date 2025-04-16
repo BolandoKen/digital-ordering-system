@@ -5,3 +5,4 @@ requirements.txt
 
 *.png
 styles.css
+.DS_Store

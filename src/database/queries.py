@@ -84,3 +84,27 @@ def fetchOrderHistory() :
     cursor.execute(f"""SELECT * FROM Orders ORDER BY order_datetime DESC """)
     results = cursor.fetchall()
     return results
+
+def fetchOrderItemsSubtotalList(orderid) :
+    cursor.execute(f"""SELECT o.order_id, f.name, oi.quantity, f.price * oi.quantity AS subtotal
+                   FROM Orders AS o
+                   JOIN OrderItems AS oi
+                   ON o.order_id = oi.order_id
+                   JOIN FoodItems AS f
+                   ON oi.fooditem_id = f.fooditem_id
+                   WHERE o.order_id = {orderid};
+                   """)
+    results = cursor.fetchall()
+    return results
+
+def fetchOrderItemsTotal(orderid) :
+    cursor.execute(f"""SELECT SUM(f.price * oi.quantity) AS total
+                   FROM Orders AS o
+                   JOIN OrderItems AS oi
+                   ON o.order_id = oi.order_id
+                   JOIN FoodItems AS f
+                   ON oi.fooditem_id = f.fooditem_id
+                   WHERE o.order_id = {orderid};
+                   """)
+    results = cursor.fetchone()[0]
+    return results

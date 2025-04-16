@@ -14,6 +14,8 @@ from PyQt6.QtWidgets import (
     QHeaderView,
 )
 from src.database.queries import fetchStatistics, fetchOrderHistory
+from src.components.Dialogs import QviewOrderDialog
+from src.utils.PubSub import pubsub
 
 
 class QStyledTable(QTableWidget) :
@@ -96,6 +98,7 @@ class QStatsTable(QStyledTable) :
 class QOrderHTable(QStyledTable) :
     def __init__(self) :
         super().__init__() 
+        self.viewDialog = QviewOrderDialog()
         self.setColumnCount(4)
         self.setHorizontalHeaderLabels(["#","Date", "OrderID", ""])
         self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
@@ -126,9 +129,15 @@ class QOrderHTable(QStyledTable) :
             self.setItem(row, 1, QTableWidgetItem(str(order_datetime)))
             self.setItem(row, 2, QTableWidgetItem(str(order_id)))
             viewBtn = QPushButton("view")
+            viewBtn.clicked.connect(lambda _, order_id = order_id : self.publishToDialog(order_id))
             viewBtn.setFixedHeight(20)
             self.setCellWidget(row, 3, viewBtn)
             count+=1
+    
+    def publishToDialog(self, orderid) :
+        pubsub.publish("viewClicked_event", orderid)
+        self.viewDialog.exec()
+
   
     
 

@@ -16,20 +16,20 @@ class QWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("QGridLayout Example")
-        self.setFixedSize(1280, 720)
+        self.setGeometry(0,0,1280, 720)
 
         main_layout = QVBoxLayout()
         delete_button = QDeleteButton()
         back_button = QBackButton()
         # logo_button = QLogoButton("assets/icons/Logo.png", "M'sKitchen")
         dineIn_button = QDineInButton()
-        # takeOut_button = QTakeOutButton()
+        takeOut_button = QTakeOutButton()
 
         main_layout.addWidget(delete_button)
         main_layout.addWidget(back_button)
         # main_layout.addWidget(logo_button)
         main_layout.addWidget(dineIn_button)
-        # main_layout.addWidget(takeOut_button)
+        main_layout.addWidget(takeOut_button)
 
         main_layout.addWidget(QPrimaryButton("hi primary", 400))
         main_layout.addWidget(QSecondaryButton("hi secondary", 400))

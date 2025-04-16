@@ -25,6 +25,7 @@ from src.components.ComboBox import QCatComboBox
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtGui import QDoubleValidator
 from src.components.Buttons import QPrimaryButton, QSecondaryButton
+from src.database.queries import fetchOrderItemsSubtotalList, fetchOrderItemsTotal
 import traceback
 
 
@@ -186,3 +187,45 @@ class QeditDialog(QaddDialog) :
             self.close()
             self.selectImgCard.clearImg()
             self.tempImagePath = None
+
+
+class QviewOrderDialog(QStyledDialog) :
+    def __init__(self):
+        super().__init__()
+        self.viewOrder_layout = QVBoxLayout(self)
+        pubsub.subscribe("viewClicked_event", self.setContents)
+        self.oldid = None
+        
+    def setContents(self, orderid) :
+        self.orderItemsSubtotalList = fetchOrderItemsSubtotalList(orderid) 
+        self.orderItemsTotal = fetchOrderItemsTotal(orderid)
+        if self.oldid != orderid :
+            self.updateContents()
+        self.oldid = orderid
+    
+    def updateContents(self) :
+        self.clear_layout(self.viewOrder_layout)
+        self.o_id = self.orderItemsSubtotalList[0][0]
+        o_idLabel = QLabel(f"Order #{self.o_id}")
+        self.viewOrder_layout.addWidget(o_idLabel)        
+        for oiTuple in self.orderItemsSubtotalList :
+            _, fname, oiquan, subtotal = oiTuple
+            orderitemLabel = QLabel(f"{oiquan}x {fname} ₱{subtotal}")
+            self.viewOrder_layout.addWidget(orderitemLabel)
+        
+            pass
+        self.viewOrder_layout.addWidget(QLabel(f"Total Amount: ₱{self.orderItemsTotal}"))
+    
+    def clear_layout(self, layout): 
+        print('rerendered viewOrder Dialog')
+        if layout is not None:
+            for i in reversed(range(layout.count())): 
+                item = layout.takeAt(i) 
+                if item.widget(): 
+                    item.widget().hide() # for some reason u can see previous in the bg
+                    item.widget().deleteLater()
+                elif item.spacerItem():  
+                    layout.removeItem(item)   
+
+
+        
