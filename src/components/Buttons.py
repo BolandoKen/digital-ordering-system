@@ -167,30 +167,42 @@ class QImageButton(QLabel) :
             self.callback()
 
 class QPrimaryButton(QPushButton) :
-    def __init__(self, text, width, height=60, fontSize=40): 
+    def __init__(self, text, width=None, height=None, fontSize=None): 
         super().__init__(text)
-        self.setFixedSize(width, height)
-        self.setStyleSheet(f"""
+        styleString = """
             background: #C8161D;
             border-radius: 10px;
             color: white;
             font-style: "Helvetica";
             font-weight: bold;
-            font-size: {fontSize}px;
-        """)
+            padding: 5px;
+            """
+        if width is not None :
+            self.setFixedWidth(width)
+        if height is not None :
+            self.setFixedHeight(height)
+        if fontSize is not None :
+            styleString += f"font-size: {fontSize}px;"
+        self.setStyleSheet(styleString)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
 
 class QSecondaryButton(QPushButton) :
-    def __init__(self, text, width,height=60,fontSize=40): 
+    def __init__(self, text, width=None, height=None, fontSize=None): 
         super().__init__(text)
-        self.setFixedSize(width, height)
-        self.setStyleSheet(f"""
+        styleString = """
             background: transparent;
             border-radius: 10px;
             border: 2px solid #C8161D;
             color: #C8161D;
             font-style: "Helvetica";
             font-weight: bold;
-            font-size: {fontSize}px;
-        """)
+            padding: 5px;
+        """
+        if width is not None :
+            self.setFixedWidth(width)
+        if height is not None :
+            self.setFixedHeight(height)
+        if fontSize is not None :
+            styleString += f"font-size: {fontSize}px;"
+        self.setStyleSheet(styleString)
         self.setCursor(Qt.CursorShape.PointingHandCursor)

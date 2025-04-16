@@ -15,13 +15,17 @@ from PyQt6.QtWidgets import (
 from src.components.Buttons import QImageButton
 from PyQt6.QtGui import QPixmap
 from src.utils.PixMap import setPixMapOf
+from PyQt6.QtCore import Qt
 
 class QSelectImageCard(QFrame) :
     def __init__(self, handleClearBtnCallback):
         super().__init__()
+        self.setObjectName("imageCard")
+        self.setStyleSheet("#imageCard{border: 1px solid black; border-radius: 10px}")
         self.callback = handleClearBtnCallback
         self.imageCard_layout = QVBoxLayout(self)
         self.clearButton = QPushButton("X")
+        self.clearButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.clearButton.clicked.connect(self.clearImg)
         self.imageButton = QImageButton("+")
         self.imageCard_layout.addWidget(self.clearButton)

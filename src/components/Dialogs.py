@@ -2,6 +2,8 @@ import os
 from PyQt6.QtWidgets import (
     QApplication,
     QVBoxLayout,
+    QHBoxLayout,
+    QGridLayout,
     QMainWindow,
     QWidget,
     QPushButton,
@@ -22,13 +24,21 @@ from src.components.ImageCard import QSelectImageCard
 from src.components.ComboBox import QCatComboBox
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtGui import QDoubleValidator
+from src.components.Buttons import QPrimaryButton, QSecondaryButton
 import traceback
 
-class QaddDialog(QDialog) :
+
+class QStyledDialog(QDialog) :
+    def __init__(self):
+        super().__init__()
+        self.setStyleSheet("Background-color: white; color: black")
+
+
+class QaddDialog(QStyledDialog) :
     def __init__(self, panelName):
         super().__init__()
         self.panelName = panelName
-        self.dialog_layout = QVBoxLayout(self)
+        self.dialog_layout = QGridLayout(self)
         self.tempImagePath = None
 
         if panelName == "category" :
@@ -41,13 +51,15 @@ class QaddDialog(QDialog) :
         self.catnameLineEdit = QLineEdit()
         self.selectImgCard = QSelectImageCard(self.handleClearBtn)
         self.selectImgCard.connectTo(self.open_file)
-        self.submitBtn = QPushButton("add category")
+        self.submitBtn = QPrimaryButton("Add", 70, 30 )
         self.submitBtn.clicked.connect(self.handleSubmitBtn)
-        self.dialog_layout.addWidget(self.catnameLabel)
-        self.dialog_layout.addWidget(self.catnameLineEdit)
-        self.dialog_layout.addWidget(self.selectImgCard)
-        self.dialog_layout.addStretch()
-        self.dialog_layout.addWidget(self.submitBtn)
+        self.cancelBtn = QSecondaryButton("Cancel", 70, 30) 
+        self.cancelBtn.clicked.connect(self.close)
+        self.dialog_layout.addWidget(self.selectImgCard, 0,0,5,2)
+        self.dialog_layout.addWidget(self.catnameLabel, 1,2,1,2)
+        self.dialog_layout.addWidget(self.catnameLineEdit,2,2,1,3)
+        self.dialog_layout.addWidget(self.cancelBtn, 4,3,1,1,)
+        self.dialog_layout.addWidget(self.submitBtn, 4,4,1,1)
 
     def init_addFood(self) :
         self.category_id = None
@@ -64,17 +76,19 @@ class QaddDialog(QDialog) :
         self.categoryidLabel.hide()
         self.categoryidComboBox = QCatComboBox()
         self.categoryidComboBox.hide()
-        self.submitBtn = QPushButton("add food item")
+        self.submitBtn = QPrimaryButton("Add", 70, 30 )
         self.submitBtn.clicked.connect(self.handleSubmitBtn)
-        self.dialog_layout.addWidget(self.foodnameLabel)
-        self.dialog_layout.addWidget(self.foodnameLineEdit)
-        self.dialog_layout.addWidget(self.foodpriceLabel)
-        self.dialog_layout.addWidget(self.foodpriceLineEdit)
-        self.dialog_layout.addWidget(self.selectImgCard)
-        self.dialog_layout.addWidget(self.categoryidLabel)
-        self.dialog_layout.addWidget(self.categoryidComboBox)
-        self.dialog_layout.addStretch()
-        self.dialog_layout.addWidget(self.submitBtn)
+        self.cancelBtn = QSecondaryButton("Cancel", 70, 30) 
+        self.cancelBtn.clicked.connect(self.close)
+        self.dialog_layout.addWidget(self.selectImgCard,0,0,7,2)
+        self.dialog_layout.addWidget(self.foodnameLabel,0,2,1,1)
+        self.dialog_layout.addWidget(self.foodnameLineEdit,1,2,1,3)
+        self.dialog_layout.addWidget(self.foodpriceLabel,2,2,1,1)
+        self.dialog_layout.addWidget(self.foodpriceLineEdit,3,2,1,3)
+        self.dialog_layout.addWidget(self.categoryidLabel,4,2,1,1)
+        self.dialog_layout.addWidget(self.categoryidComboBox,5,2,1,3)
+        self.dialog_layout.addWidget(self.cancelBtn, 6,3,1,1)
+        self.dialog_layout.addWidget(self.submitBtn,6,4,1,1)
         
     def open_file(self):
         home_dir = os.path.expanduser("~")
@@ -126,7 +140,7 @@ class QeditDialog(QaddDialog) :
         elif self.panelName == "food" :
             self.fooditem_id, self.foodname, self.price, self.imgfile, self.is_available, self.category_id = Tuple
             self.init_editFood()
-        self.submitBtn.setText(f"edit {self.panelName}")
+        self.submitBtn.setText(f"Save")
 
 
     def init_editCategory(self) :
