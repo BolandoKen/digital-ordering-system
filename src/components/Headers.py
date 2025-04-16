@@ -37,7 +37,7 @@ class QOtherPanelHeader(QFrame) :
         super().__init__()
         self.panelName = panelName
         # self.main_layout.setContentsMargins(30,10,10,10)
-        self.header_layout = QHBoxLayout()
+        self.header_layout = QHBoxLayout(self)
         self.headerLabel = QLabel(panelName)
         self.headerLabel.setFont(QFont("Helvitica", 25, QFont.Weight.Bold))
 
@@ -49,10 +49,11 @@ class QOtherPanelHeader(QFrame) :
     def init_ProfilePanel(self) :
         self.header_layout.addStretch()
         editBtn = QPushButton("edit")
+        editBtn.clicked.connect(self.handleEditProfile)
         self.header_layout.addWidget(editBtn)
     
     def handleEditProfile(self) :
-        pass
+        pubsub.publish("editProfile", None)
 
 class QFoodPanelHeader(QFrame) :
     def __init__(self, pageName):
