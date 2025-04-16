@@ -9,7 +9,8 @@ from PyQt6.QtWidgets import (
     QStackedWidget,
     QLabel,
     QFrame,
-    QSpinBox
+    QSpinBox,
+    QHBoxLayout
 )
 from src.utils.PubSub import pubsub
 from src.database.Orders import addOrder
@@ -41,23 +42,26 @@ class QSideBar(QFrame) :
         elif self.pageName == "customer" :
             title = QLabel("My Orders")
             self.scroll_layout.addWidget(title)
-            title.setFont(QFont("Helvitica", 15, QFont.Weight.Bold))
+            title.setFont(QFont("Helvetica", 15, QFont.Weight.Bold))
             title.setStyleSheet("""
                     qproperty-alignment: AlignCenter;
                 """)
             self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout, "sidebar")
+
+            self.total_label = QLabel("Total: ₱0.00")
+            self.total_label.setFont(QFont("Helvetica", 12, QFont.Weight.Bold))
+            self.scroll_layout.addWidget(self.total_label, alignment=Qt.AlignmentFlag.AlignCenter)
+
             self.submitBtn = QPrimaryButton("Done", 70, 30, 20)
             self.scroll_layout.addWidget(self.submitBtn, alignment=Qt.AlignmentFlag.AlignCenter)
             self.submitBtn.clicked.connect(self.handleSubmitOrderClicked)
             pubsub.subscribe("addToCart", self.handleFoodAddToCart)
             self.init_customerSideBar()
 
-
     def init_customerSideBar(self) :
         self.clear_layout(self.sidebar_layout.getLayout())
         self.renderCartItems()
         self.sidebar_layout.addStretch()
-
         self.submitBtn.setEnabled(len(self.cartItems) > 0)
     
     def init_adminSideBar(self) :
@@ -75,44 +79,44 @@ class QSideBar(QFrame) :
         if not self.cartItems:
             print("Cart is empty")
             return []
-
-        item_counts = {}
-        for i in range(0, self.sidebar_layout.getLayout().count()):
-            item = self.sidebar_layout.getLayout().itemAt(i)
-            if item and (widget := item.widget()) and isinstance(widget, QSimpleCartItem):
-                food_id = widget.foodid 
-                quantity = widget.getQuantity()
-                if food_id in item_counts:
-                    item_counts[food_id] += quantity
-                if food_id in item_counts:
-                    item_counts[food_id] += quantity
-                else:
-                    item_counts[food_id] = quantity
-
-        self.cartItems = []
-        self.init_customerSideBar()
-        orderitem_info = [(quantity,food_id) for food_id, quantity in item_counts.items()] #should return a list of tuples based on whats inside the dict
-        print(orderitem_info)
+      
+        valid_items = [(fid, fname, qty, price) for fid, fname, qty, price in self.cartItems if qty > 0] #chatgpt lessened my code to this bruh
+        orderitem_info = [(qty, fid) for fid, fname, qty, price in valid_items]
 
         confirmation = True # placeholder for confirmation dialog
         if confirmation :
             addOrder(orderitem_info)
             pubsub.publish("orderSubmitted_event")
+            self.cartItems = []
+            self.init_customerSideBar()
 
     def handleFoodAddToCart(self, foodTuple) :
-        fooditem_id, foodname = foodTuple
-        if any(item[0] == fooditem_id for item in self.cartItems):
-            print(fooditem_id,foodname," is a duplicate")
-            return
-        self.cartItems.append((fooditem_id, foodname))
+        fooditem_id, foodname, price = foodTuple
+        for item in self.cartItems:
+            if item[0] == fooditem_id:
+                print(f"{foodname} already in cart")
+                return
+        self.cartItems.append((fooditem_id, foodname, 1, price))
         self.init_customerSideBar()
-        print(fooditem_id,foodname, " added to cart")
+        print(fooditem_id,foodname,price, " added to cart")
     
     def renderCartItems(self) :
-        if not self.cartItems :
+        if not self.cartItems:
+            self.total_label.setText("Total: ₱0.00") 
             return
-        for foodid, foodname in self.cartItems :
-            self.sidebar_layout.addWidget(QSimpleCartItem(foodid, foodname, "icecream.png")) 
+            
+        total = 0
+        for f_item in self.cartItems:
+            foodid, foodname, item_quantity, price = f_item
+            f_item_widget = QSimpleCartItem(foodid, foodname, "icecream.png", price)
+            f_item_widget.quantityBox.setValue(item_quantity)
+            f_item_widget.quantityBox.valueChanged.connect(
+                lambda val, fid=foodid: self.handleQuantityChanged(fid, val)
+            )
+            self.sidebar_layout.addWidget(f_item_widget)
+            total += f_item_widget.getSubtotal()
+            
+        self.total_label.setText(f"Total: ₱{total:.2f}")
 
     def clear_layout(self, layout): 
         if layout is not None:
@@ -123,12 +127,25 @@ class QSideBar(QFrame) :
                 elif item.spacerItem():  
                     layout.removeItem(item)   
     
+    def handleQuantityChanged(self, food_id, new_quantity):
+        updated_cart = []
+        for item in self.cartItems:
+            fid, fname, qty, price = item
+            if fid == food_id:
+                updated_cart.append((fid, fname, new_quantity, price))
+            else:
+                updated_cart.append(item)
+        self.cartItems = updated_cart
+        self.init_customerSideBar()
+        self.submitBtn.setEnabled(len(self.cartItems) > 0)
+
 class QSimpleCartItem(QFrame) : # refactor this later
-    def __init__(self, foodid, foodname, imgfile):
+    def __init__(self, foodid, foodname, imgfile, price):
         super().__init__()
         self.setStyleSheet("background-color: white; color: black")
         self.foodid = foodid
         self.foodname = foodname
+        self.price = price
         self.cartItem_layout = QVBoxLayout(self)
 
         self.img_label = QLabel()
@@ -137,10 +154,35 @@ class QSimpleCartItem(QFrame) : # refactor this later
         self.img_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.cartItem_layout.addWidget(self.img_label)
 
+        name_price_layout = QHBoxLayout()
+        name_price_layout.addWidget(QLabel(foodname))
+        self.price_label = QLabel(f"₱{price:.2f}")
+        name_price_layout.addWidget(self.price_label)
+        self.cartItem_layout.addLayout(name_price_layout)
+
+        quantity_layout = QHBoxLayout()
+        quantity_layout.addWidget(QLabel("Quantity:"))
+        
         self.quantityBox = QSpinBox()
         self.quantityBox.setValue(1)
-        self.cartItem_layout.addWidget(QLabel(foodname))
         self.cartItem_layout.addWidget(self.quantityBox)
+        quantity_layout.addWidget(self.quantityBox)
+
+        self.cartItem_layout.addLayout(quantity_layout)
+        self.subtotal_label = QLabel(f"Subtotal: ₱{price:.2f}")
+        self.cartItem_layout.addWidget(self.subtotal_label)
+
+        self.quantityBox.valueChanged.connect(self.update_subtotal)
 
     def getQuantity(self):
         return self.quantityBox.value()
+    
+    def update_subtotal(self):
+        subtotal = self.price * self.quantityBox.value()
+        self.subtotal_label.setText(f"Subtotal: ₱{subtotal:.2f}")
+        return subtotal
+    
+    def getSubtotal(self):
+        return self.price * self.quantityBox.value()
+
+
