@@ -3,7 +3,7 @@ import mysql.connector
 db = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="root",
+    password="1234",
     database="orderoo_db" # delete this pls, will have to refactor later
 )
 db.autocommit = True
