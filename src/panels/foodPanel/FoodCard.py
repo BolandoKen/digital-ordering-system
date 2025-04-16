@@ -67,7 +67,6 @@ class QFoodItemCard(QMenuCard) :
             self.delBtn.setState("delete")
         # note : its bad to subscribe pubsub for temporary elements
 
-
     # : will have different icons for deletes, card will have different state
     # orders will emit setState functions, 
 
@@ -76,7 +75,6 @@ class QFoodItemCard(QMenuCard) :
         # if food is unavailable : show
         warning =  QMessageBox()
         warning.setIcon(QMessageBox.Icon.Warning)
-
 
         typeOf = "delete"
 
@@ -97,13 +95,12 @@ class QFoodItemCard(QMenuCard) :
             pubsub.publish("updateFoodItem")
             pubsub.publish("updateCategory")
 
-
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
             if self.pageName == "customer" :
-                self.handleAddToCart(self.fooditem_id, self.foodname)
+                self.handleAddToCart(self.fooditem_id, self.foodname, self.price)
             elif self.pageName == "admin" :
                 self.editFoodDialog.exec()
 
-    def handleAddToCart(self, fooditem_id, foodname) :
-        pubsub.publish("addToCart", (fooditem_id, foodname))
+    def handleAddToCart(self, fooditem_id, foodname, price) :
+        pubsub.publish("addToCart", (fooditem_id, foodname, price))
