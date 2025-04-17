@@ -281,3 +281,33 @@ class QTakeOutButton(QPushButton):
                 padding-top: 120px;
             }
         """)
+
+class QPlusButton(QPushButton):
+    def __init__(self):
+        super().__init__("")
+        self.setFixedSize(80, 50)
+        self.setStyleSheet("""
+            background: #FFCA40;
+            border: none;
+            border-radius: 10px;
+            padding: 0px;      
+        """)
+        
+        self.setIcon(QIcon("assets/icons/plus_icon.svg"))
+        self.setIconSize(QSize(20, 20))
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+
+class QMinusButton(QPushButton):
+    def __init__(self):
+        super().__init__("")
+        self.setFixedSize(80, 50)
+        self.setStyleSheet("""
+            background: transparent;
+            border: 2px solid black;
+            border-radius: 10px;
+            padding: 0px;      
+        """)
+        
+        self.setIcon(QIcon("assets/icons/minus_icon.svg"))
+        self.setIconSize(QSize(20, 20))
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
