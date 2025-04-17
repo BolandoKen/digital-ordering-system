@@ -51,12 +51,24 @@ class QOtherPanelHeader(QFrame) :
 
     def init_ProfilePanel(self) :
         self.header_layout.addStretch()
-        editBtn = QPushButton("edit")
-        editBtn.clicked.connect(self.handleEditProfile)
-        self.header_layout.addWidget(editBtn)
+        self.editBtn = QPushButton("edit")
+        self.editBtn.clicked.connect(self.handleEditProfile)
+        self.saveBtn = QPushButton("save") 
+        self.saveBtn.clicked.connect(self.handleSaveProfile)
+        self.header_layout.addWidget(self.editBtn)
+        self.header_layout.addWidget(self.saveBtn)
+        self.saveBtn.hide()
     
     def handleEditProfile(self) :
-        pubsub.publish("editProfile", None)
+        pubsub.publish("editProfile", 1)
+        self.editBtn.hide()
+        self.saveBtn.show()
+    
+    def handleSaveProfile(self) :
+        pubsub.publish("saveProfile", None)
+        self.editBtn.show()
+        self.saveBtn.hide()
+        
 
 class QFoodPanelHeader(QFrame) :
     def __init__(self, pageName):

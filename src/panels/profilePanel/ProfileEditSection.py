@@ -40,8 +40,9 @@ class QProfileViewState(QFrame) :
 
 
 class QProfileEditState(QFrame) : 
-    def __init__(self):
+    def __init__(self, switch):
         super().__init__()
+        self.switch = switch
         self.main_layout = QHBoxLayout(self)
         self.main_layout.setContentsMargins(0,0,0,0)
         self.main_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
@@ -64,6 +65,12 @@ class QProfileEditState(QFrame) :
         self.inner_VLayout.addWidget(self.changeBtn)
         self.inner_VLayout.addWidget(self.nameLineEdit)
         self.inner_VLayout.addWidget(self.checkbox)
+        pubsub.subscribe("saveProfile", self.saveProfile)
+
+    # handle here saved state
+    def saveProfile(self, e = None) :
+        self.switch(0)
+
 
     
 
@@ -71,15 +78,15 @@ class QProfile(QStackedWidget) :
     def __init__(self):
         super().__init__()
         self.viewState = QProfileViewState()
-        self.editState = QProfileEditState()
+        self.editState = QProfileEditState(self.switch)
         self.addWidget(self.viewState)
         self.addWidget(self.editState)
         self.curr = 0
         pubsub.subscribe("editProfile", self.switch)
 
-    def switch(self, e = None) :
-        self.curr += 1 
-        self.setCurrentIndex(self.curr%2)
+    def switch(self, index) :
+        self.setCurrentIndex(index)
+    
 
 
 
