@@ -16,6 +16,7 @@ from PyQt6.QtWidgets import (
 from src.database.queries import fetchStatistics, fetchOrderHistory
 from src.components.Dialogs import QviewOrderDialog
 from src.utils.PubSub import pubsub
+from src.utils.listOrganizer import organizeByDate
 
 
 class QStyledTable(QTableWidget) :
@@ -97,6 +98,7 @@ class QStatsTable(QStyledTable) :
     
 class QOrderHTable(QStyledTable) :
     def __init__(self) :
+        # fetch all list -> paginate -> organize by date
         super().__init__() 
         self.viewDialog = QviewOrderDialog()
         self.setColumnCount(4)
@@ -117,10 +119,9 @@ class QOrderHTable(QStyledTable) :
         
 
     def order_table(self): 
-        stats_data = fetchOrderHistory()
-        self.setRowCount(len(stats_data))
         orders = fetchOrderHistory()
         self.setRowCount(len(orders) + 1)
+        organizedOrders = organizeByDate(orders)
         count = 1
 
         for row, order in enumerate(orders):
