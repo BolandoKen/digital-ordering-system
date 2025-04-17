@@ -101,17 +101,15 @@ class QOrderHTable(QStyledTable) :
         # fetch all list -> paginate -> organize by date
         super().__init__() 
         self.viewDialog = QviewOrderDialog()
-        self.setColumnCount(4)
-        self.setHorizontalHeaderLabels(["#","Date", "OrderID", ""])
+        self.setColumnCount(3)
+        self.setHorizontalHeaderLabels(["Date", "OrderID", ""])
         self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.setShowGrid(False)
         self.order_table()
         self.verticalHeader().setVisible(False)
 
-        self.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)
-        self.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)
-        self.setColumnWidth(0, 30)
-        self.setColumnWidth(3, 50)
+        self.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)
+        self.setColumnWidth(2, 50)
         self.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
 
         self.horizontalHeader().setStyleSheet("margin-right: 10px")
@@ -120,20 +118,30 @@ class QOrderHTable(QStyledTable) :
 
     def order_table(self): 
         orders = fetchOrderHistory()
-        self.setRowCount(len(orders) + 1)
         organizedOrders = organizeByDate(orders)
         count = 1
+        self.setRowCount(len(organizedOrders))
 
-        for row, order in enumerate(orders):
-            order_id, order_datetime = order
-            self.setItem(row, 0, QTableWidgetItem(str(count)))
-            self.setItem(row, 1, QTableWidgetItem(str(order_datetime)))
-            self.setItem(row, 2, QTableWidgetItem(str(order_id)))
-            viewBtn = QPushButton("view")
-            viewBtn.clicked.connect(lambda _, order_id = order_id : self.publishToDialog(order_id))
-            viewBtn.setFixedHeight(20)
-            self.setCellWidget(row, 3, viewBtn)
-            count+=1
+
+        for row, item in enumerate(organizedOrders):
+            is_header = item["is_header"]
+       
+            if not is_header :
+                order = item["content"]
+                order_datetime, order_id = order
+                self.setItem(row, 0, QTableWidgetItem(str(order_datetime)))
+                self.setItem(row, 1, QTableWidgetItem(str(order_id)))
+                viewBtn = QPushButton("view")
+                viewBtn.clicked.connect(lambda _, order_id = order_id : self.publishToDialog(order_id))
+                viewBtn.setFixedHeight(20)
+                self.setCellWidget(row, 2, viewBtn)
+                count+=1
+            else :
+                #add header
+                headerDateLabel = QLabel(item["content"])
+                self.setCellWidget(row, 0, headerDateLabel)
+                self.setSpan(row, 0,1,3)
+                pass
     
     def publishToDialog(self, orderid) :
         pubsub.publish("viewClicked_event", orderid)

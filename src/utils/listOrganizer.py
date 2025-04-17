@@ -61,12 +61,13 @@ def dateParser(datestr) :
         return f"{weekday}, {month} {day}, {year}"
 
 
-print(dateParser("2025-04-07 04:19:37"))
+# print(dateParser("2025-04-07 04:19:37"))
 
 
-orders = fetchOrderHistory()
-organizedOrders = organizeByDate(orders)
+# orders = fetchOrderHistory()
+# organizedOrders = organizeByDate(orders)
 
-for item in organizedOrders :
-    print(item["content"])
+# for item in organizedOrders :
+#     print(len(item["content"]))
+#     # print(item["content"])
 
