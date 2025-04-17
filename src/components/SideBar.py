@@ -80,8 +80,8 @@ class QSideBar(QFrame) :
             print("Cart is empty")
             return []
       
-        valid_items = [(fid, fname, qty, price) for fid, fname, qty, price in self.cartItems if qty > 0] #chatgpt lessened my code to this bruh
-        orderitem_info = [(qty, fid) for fid, fname, qty, price in valid_items]
+        valid_items = [(fid, fname, qty, imgfile, price) for fid, fname, qty, imgfile, price in self.cartItems if qty > 0] #chatgpt lessened my code to this bruh
+        orderitem_info = [(qty, fid) for fid, fname, qty, imgfile, price in valid_items]
 
         confirmation = True # placeholder for confirmation dialog
         if confirmation :
@@ -91,12 +91,12 @@ class QSideBar(QFrame) :
             self.init_customerSideBar()
 
     def handleFoodAddToCart(self, foodTuple) :
-        fooditem_id, foodname, price = foodTuple
+        fooditem_id, foodname, imgfile, price = foodTuple
         for item in self.cartItems:
             if item[0] == fooditem_id:
                 print(f"{foodname} already in cart")
                 return
-        self.cartItems.append((fooditem_id, foodname, 1, price))
+        self.cartItems.append((fooditem_id, foodname, 1, imgfile, price))
         self.init_customerSideBar()
         print(fooditem_id,foodname,price, " added to cart")
     
@@ -107,8 +107,8 @@ class QSideBar(QFrame) :
             
         total = 0
         for f_item in self.cartItems:
-            foodid, foodname, item_quantity, price = f_item
-            f_item_widget = QSimpleCartItem(foodid, foodname, "icecream.png", price)
+            foodid, foodname, item_quantity, imgfile, price = f_item
+            f_item_widget = QSimpleCartItem(foodid, foodname, imgfile, price)
             f_item_widget.quantityBox.setValue(item_quantity)
             f_item_widget.quantityBox.valueChanged.connect(
                 lambda val, fid=foodid: self.handleQuantityChanged(fid, val)
@@ -130,9 +130,9 @@ class QSideBar(QFrame) :
     def handleQuantityChanged(self, food_id, new_quantity):
         updated_cart = []
         for item in self.cartItems:
-            fid, fname, qty, price = item
+            fid, fname, qty, imgfile, price = item
             if fid == food_id:
-                updated_cart.append((fid, fname, new_quantity, price))
+                updated_cart.append((fid, fname, new_quantity, imgfile, price))
             else:
                 updated_cart.append(item)
         self.cartItems = updated_cart
@@ -149,10 +149,13 @@ class QSimpleCartItem(QFrame) : # refactor this later
         self.cartItem_layout = QVBoxLayout(self)
 
         self.img_label = QLabel()
-        pixmap = QPixmap(f"assets/foodimg/{imgfile}")
-        self.img_label.setPixmap(pixmap.scaled(60, 60, Qt.AspectRatioMode.KeepAspectRatio))
-        self.img_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.cartItem_layout.addWidget(self.img_label)
+        # pixmap = QPixmap(f"assets/foodimg/{imgfile}")
+        pixmap = imgfile
+        self.img_label.setPixmap(pixmap)
+        self.img_label.setFixedSize(100,100)
+        self.img_label.setScaledContents(True)
+        self.cartItem_layout.addWidget(self.img_label, alignment=Qt.AlignmentFlag.AlignCenter)
+
 
         name_price_layout = QHBoxLayout()
         name_price_layout.addWidget(QLabel(foodname))

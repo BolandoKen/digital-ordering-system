@@ -12,7 +12,11 @@ def setPixMapOf(label, imgFileName, folder) :
         label.setPixmap(pixmap)
         label.setFixedSize(125,125)
         label.setScaledContents(True)
-        return None
+        obj = {
+            "path" : path,
+            "pixmap" : pixmap,
+        }
+        return obj
     if folder == "temp" :
         destFolder = "temp"
         label.setFixedSize(150,150)
@@ -28,9 +32,12 @@ def setPixMapOf(label, imgFileName, folder) :
     pixmap = QPixmap(path)
     label.setPixmap(pixmap)
        
+    obj = {
+        "path" : path,
+        "pixmap" : pixmap,
+    }
 
-
-    return path
+    return obj
 
 def checkImgSize(imgFilePath) :
     filesize = os.path.getsize(imgFilePath)

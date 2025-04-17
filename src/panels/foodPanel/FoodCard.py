@@ -41,7 +41,7 @@ class QFoodItemCard(QMenuCard) :
         # no edit/del btns
         self.foodLabel = QLabel(self.foodname)
         self.foodimg = QLabel()
-        setPixMapOf(self.foodimg, self.imgfile, "food")
+        self.foodimgpixmap = setPixMapOf(self.foodimg, self.imgfile, "food")["pixmap"]
         self.priceLabel = QLabel(str(self.price))   
              
         self.foodCard_layout.addWidget(self.foodimg, alignment=Qt.AlignmentFlag.AlignCenter) 
@@ -98,9 +98,9 @@ class QFoodItemCard(QMenuCard) :
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
             if self.pageName == "customer" :
-                self.handleAddToCart(self.fooditem_id, self.foodname, self.price)
+                self.handleAddToCart(self.fooditem_id, self.foodname, self.foodimgpixmap, self.price)
             elif self.pageName == "admin" :
                 self.editFoodDialog.exec()
 
-    def handleAddToCart(self, fooditem_id, foodname, price) :
-        pubsub.publish("addToCart", (fooditem_id, foodname, price))
+    def handleAddToCart(self, fooditem_id, foodname,imgpixmap, price) :
+        pubsub.publish("addToCart", (fooditem_id, foodname, imgpixmap, price))
