@@ -91,7 +91,7 @@ class QStatsTable(QStyledTable) :
         self.statistics_table()
 
     def updateStatsTable(self, category_id=None, mostordered=True):
-        order = "DESC" if mostordered else "ASC"
+        order = ("DESC" if mostordered else "ASC")
         stats = fetchStatistics(order, category_id)
         self.setRowCount(len(stats))
         count = 1 
@@ -102,7 +102,7 @@ class QStatsTable(QStyledTable) :
             self.setItem(row_id, 1, QTableWidgetItem(food)) 
             self.setItem(row_id, 2, QTableWidgetItem(category))
             self.setItem(row_id, 3, QTableWidgetItem(str(times)))
-            count += 1
+            count += 1 #i might change this later, muni gi suggest sa chatgpt, ako orig code kay somehow na shift to the left tanan values after nako i-change ang category
 
     def statistics_table(self, e = None): 
         stats_data = fetchStatistics('DESC' if self.orderBy_mostOrdered else 'ASC')
