@@ -70,23 +70,27 @@ class QStyledTable(QTableWidget) :
 class QStatsTable(QStyledTable) : 
     def __init__(self) :
         super().__init__() 
+        self.orderBy_mostOrdered = True
         self.setColumnCount(4)
         self.setHorizontalHeaderLabels(["#","Food", "Category", "Times Ordered"])
         self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-        self.statistics_table(True)    
+        self.statistics_table()    
         self.setShowGrid(False)
         self.verticalHeader().setVisible(False)
         self.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)
         self.setColumnWidth(0, 30)
         self.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
-       
+
         self.horizontalHeader().setStyleSheet("margin-right: 10px")
         self.viewport().setStyleSheet("margin-right: 10px")
+        pubsub.subscribe("orderSubmitted_event", self.statistics_table)
         
+    def setOrderBy(self, orderby) :
+        self.orderBy_mostOrdered = orderby
+        self.statistics_table()
 
-
-    def statistics_table(self, mostordered): 
-        stats_data = fetchStatistics('DESC' if mostordered else 'ASC')
+    def statistics_table(self, e = None): 
+        stats_data = fetchStatistics('DESC' if self.orderBy_mostOrdered else 'ASC')
         self.setRowCount(len(stats_data))
         count = 1
         for row, (food, category, times) in enumerate(stats_data): 
@@ -99,10 +103,10 @@ class QStatsTable(QStyledTable) :
 class QOrderHTable(QStyledTable) :
     def __init__(self) :
         # fetch all list -> paginate -> organize by date
+        # possible feature, sticky headers
         super().__init__() 
         self.viewDialog = QviewOrderDialog()
         self.setColumnCount(3)
-        self.setHorizontalHeaderLabels(["Date", "OrderID", ""])
         self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.setShowGrid(False)
         self.order_table()
@@ -114,9 +118,12 @@ class QOrderHTable(QStyledTable) :
 
         self.horizontalHeader().setStyleSheet("margin-right: 10px")
         self.viewport().setStyleSheet("margin-right: 10px")
+        pubsub.subscribe("orderSubmitted_event", self.order_table)
         
 
-    def order_table(self): 
+    def order_table(self, e = None): 
+        self.clearTable()
+        self.setHorizontalHeaderLabels(["Date", "OrderID", ""])
         orders = fetchOrderHistory()
         organizedOrders = organizeByDate(orders)
         count = 1
@@ -125,7 +132,6 @@ class QOrderHTable(QStyledTable) :
 
         for row, item in enumerate(organizedOrders):
             is_header = item["is_header"]
-       
             if not is_header :
                 order = item["content"]
                 order_datetime, order_id = order
@@ -146,6 +152,14 @@ class QOrderHTable(QStyledTable) :
     def publishToDialog(self, orderid) :
         pubsub.publish("viewClicked_event", orderid)
         self.viewDialog.exec()
+    
+    def clearTable(self) :
+        for row in range(self.rowCount()) :
+            for col in range(self.columnCount()) :
+                widget = self.cellWidget(row,col) 
+                if widget is not None :
+                    widget.deleteLater()
+        self.setRowCount(0)
 
   
     

@@ -54,6 +54,6 @@ class QStatsPanel(QFrame) :
         else:
             self.sort_btn.setText("Show Most Ordered")
         
-        self.table.statistics_table(self.mostordered)
+        self.table.setOrderBy(self.mostordered)
 
     #Still have to make handleSubmitOrderClicked actually send the data into the database (orderitems is empty)
