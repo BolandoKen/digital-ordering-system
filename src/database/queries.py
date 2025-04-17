@@ -68,15 +68,27 @@ def checkFoodHasBeenOrdered(foodid) :
     
     return results > 0
 
-def fetchStatistics(order='DESC') :
-    #chatgpt gikan ang pagkuha sa times ordered, nangutana langko unsaon pagkuha sa sum sa tanan quantity gikan sa orderitems
-    cursor.execute(f"""SELECT f.name AS Food, c.name AS Category, IFNULL(SUM(o.quantity),0) AS Times_Ordered
-                   FROM FoodItems f
-                   LEFT JOIN Categories c ON f.category_id = c.category_id
-                   LEFT JOIN OrderItems o ON f.fooditem_id = o.fooditem_id
-                   GROUP BY f.fooditem_id, f.name, c.name
-                   ORDER BY Times_Ordered {order}
-                   """)
+def fetchStatistics(order='DESC', category_id=None):
+    if category_id is not None:
+        cursor.execute(f"""
+            SELECT f.name AS Food, c.name AS Category, IFNULL(SUM(o.quantity),0) AS Times_Ordered
+            FROM FoodItems f
+            LEFT JOIN Categories c ON f.category_id = c.category_id
+            LEFT JOIN OrderItems o ON f.fooditem_id = o.fooditem_id
+            WHERE c.category_id = %s
+            GROUP BY f.fooditem_id, f.name, c.name
+            ORDER BY Times_Ordered {order}
+        """, (category_id,))
+    else:
+        cursor.execute(f"""
+            SELECT f.name AS Food, c.name AS Category, IFNULL(SUM(o.quantity),0) AS Times_Ordered
+            FROM FoodItems f
+            LEFT JOIN Categories c ON f.category_id = c.category_id
+            LEFT JOIN OrderItems o ON f.fooditem_id = o.fooditem_id
+            GROUP BY f.fooditem_id, f.name, c.name
+            ORDER BY Times_Ordered {order}
+        """)
+        
     results = cursor.fetchall()
     return results
 

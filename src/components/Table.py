@@ -90,6 +90,20 @@ class QStatsTable(QStyledTable) :
         self.orderBy_mostOrdered = orderby
         self.statistics_table()
 
+    def updateStatsTable(self, category_id=None, mostordered=True):
+        order = "DESC" if mostordered else "ASC"
+        stats = fetchStatistics(order, category_id)
+        self.setRowCount(len(stats))
+        count = 1 
+
+        for row_id, row_data in enumerate(stats):
+            food, category, times = row_data
+            self.setItem(row_id, 0, QTableWidgetItem(str(count)))
+            self.setItem(row_id, 1, QTableWidgetItem(food)) 
+            self.setItem(row_id, 2, QTableWidgetItem(category))
+            self.setItem(row_id, 3, QTableWidgetItem(str(times)))
+            count += 1
+
     def statistics_table(self, e = None): 
         stats_data = fetchStatistics('DESC' if self.orderBy_mostOrdered else 'ASC')
         self.setRowCount(len(stats_data))

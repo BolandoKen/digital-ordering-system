@@ -38,8 +38,9 @@ class QStatsPanel(QFrame) :
         self.sort_btn.clicked.connect(self.changeorder)
         queryBarHLayout.addWidget(self.sort_btn)
         queryBarHLayout.addStretch()
-        catComboBox = QCatComboBox("stat")
-        queryBarHLayout.addWidget(catComboBox)
+        self.catComboBox = QCatComboBox("stat")
+        self.catComboBox.currentIndexChanged.connect(self.update_table)
+        queryBarHLayout.addWidget(self.catComboBox)
         contentsVLayout = QVBoxLayout()
         contentsVLayout.setContentsMargins(10,10,0,10)
         contentsVLayout.setSpacing(5)
@@ -52,6 +53,7 @@ class QStatsPanel(QFrame) :
         contentsVLayout.addLayout(queryBarHLayout)
         contentsVLayout.addWidget(self.table)
         self.stats_layout.addLayout(contentsVLayout)
+        self.update_table()
     
     def changeorder(self):
         self.mostordered = not self.mostordered
@@ -60,4 +62,12 @@ class QStatsPanel(QFrame) :
         else:
             self.sort_btn.setText("Show Most Ordered")
         
-        self.table.setOrderBy(self.mostordered)
+        self.update_table()
+
+    def update_table(self):
+        category_id = self.catComboBox.itemData(self.catComboBox.currentIndex())
+        if category_id == None or category_id == "no filter":
+            category_id = None
+        
+        self.table.updateStatsTable(category_id, self.mostordered)
+    
