@@ -3,6 +3,7 @@ import sys
 from src.panels.foodPanel.FoodPanel import QFoodPanel
 from src.panels.statsPanel.StatsPanel import QStatsPanel
 from src.panels.profilePanel.ProfilePanel import QProfilePanel
+from src.utils.PubSub import pubsub
 
 from PyQt6.QtWidgets import (
     QApplication,
@@ -41,8 +42,8 @@ class QAdminPage(QFrame) :
         self.admin_layout.addWidget(self.logoHeader, 0,0)
         self.admin_layout.addWidget(self.adminStackedPanels, 1, 0)
         self.admin_layout.addWidget(self.sideBar, 0, 1, 2, 1)
+        pubsub.subscribe("backToFoodPanel_clicked", self.switchPage)
 
 
-    def switchPage(self) :
-        curr = self.adminStackedPanels.currentIndex()
-        self.adminStackedPanels.setCurrentIndex( (curr+1) %3)
+    def switchPage(self, index) :
+        self.adminStackedPanels.setCurrentIndex(index)

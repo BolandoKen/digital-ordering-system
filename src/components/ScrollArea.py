@@ -48,9 +48,9 @@ class QScrollAreaLayout(QScrollArea) :
                             width: 0px                              
                         }}""")
 
-        if isinstance(QLayoutType, QVBoxLayout) :
+        if isinstance(QLayoutType, QVBoxLayout) : # whats this for?
             self.myLayout = QLayoutType(self.container, alignment=Qt.AlignmentFlag.AlignCenter)
-            QLayoutType.setContentsMargins(0,0,0,0)
+            QLayoutType.setContentsMargins(0,0,0,0) 
         else :
             self.myLayout = QLayoutType(self.container)
         parentWidget.addWidget(self)
@@ -61,6 +61,11 @@ class QScrollAreaLayout(QScrollArea) :
     def addStretch(self) :
         self.myLayout.addStretch()
     
+    def addItem(self, item) :
+        self.myLayout.addItem(item)
+        self.myLayout.setContentsMargins(0,0,0,0)
+        self.myLayout.setSpacing(0)
+
     def getLayout(self) :
         return self.myLayout
 

@@ -40,7 +40,10 @@ class QOtherPanelHeader(QFrame) :
         self.header_layout = QHBoxLayout(self)
         self.headerLabel = QLabel(panelName)
         self.headerLabel.setFont(QFont("Helvitica", 25, QFont.Weight.Bold))
-
+        self.backBtn = QBackButton()
+        self.backBtn.clicked.connect(lambda: pubsub.publish("backToFoodPanel_clicked", 0))
+        
+        self.header_layout.addWidget(self.backBtn)
         self.header_layout.addWidget(self.headerLabel)
 
         if panelName == "Profile" :

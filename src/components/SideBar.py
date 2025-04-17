@@ -10,7 +10,8 @@ from PyQt6.QtWidgets import (
     QLabel,
     QFrame,
     QSpinBox,
-    QHBoxLayout
+    QHBoxLayout,
+    QSpacerItem
 )
 from src.utils.PubSub import pubsub
 from src.database.Orders import addOrder
@@ -47,7 +48,6 @@ class QSideBar(QFrame) :
                     qproperty-alignment: AlignCenter;
                 """)
             self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout, "sidebar")
-
             self.total_label = QLabel("Total: ₱0.00")
             self.total_label.setFont(QFont("Helvetica", 12, QFont.Weight.Bold))
             self.scroll_layout.addWidget(self.total_label, alignment=Qt.AlignmentFlag.AlignCenter)
@@ -65,12 +65,26 @@ class QSideBar(QFrame) :
         self.submitBtn.setEnabled(len(self.cartItems) > 0)
     
     def init_adminSideBar(self) :
-        self.switchBtn = QPushButton("switch admin panel")
-        self.switchBtn.clicked.connect(self.switchPage)
-        self.sidebar_layout.addWidget(self.switchBtn)
+        self.currindex = 0 
+        pubsub.subscribe("backToFoodPanel_clicked", self.handlePanelBtnClicked)
+        self.AccPanelBtn = QPushButton("Account")
+        self.StatsPanelBtn = QPushButton("Statistics")
+        self.AccPanelBtn.clicked.connect(lambda: self.handlePanelBtnClicked(2))
+        self.StatsPanelBtn.clicked.connect(lambda: self.handlePanelBtnClicked(1))
+        self.sidebar_layout.addItem(QSpacerItem(50,150))
+        self.sidebar_layout.addWidget(self.AccPanelBtn)
+        self.sidebar_layout.addWidget(self.StatsPanelBtn)
         self.logoutBtn.clicked.connect(self.handleLogoutClicked)
         self.sidebar_layout.addStretch()
 
+    def handlePanelBtnClicked(self, index) :
+        self.StatsPanelBtn.setStyleSheet("background-color: white; color: black;")
+        self.AccPanelBtn.setStyleSheet("background-color: white; color: black")
+        if index == 1 : 
+            self.StatsPanelBtn.setStyleSheet("background-color: #a1a1a1; color: black")
+        elif index == 2 :
+            self.AccPanelBtn.setStyleSheet("background-color: #a1a1a1; color: black")
+        self.switchPage(index)
     
     def handleLogoutClicked(self) :
         pubsub.publish("logout_Event", None)
