@@ -84,7 +84,8 @@ class QStatsTable(QStyledTable) :
         self.horizontalHeader().setStyleSheet("margin-right: 10px")
         self.viewport().setStyleSheet("margin-right: 10px")
         pubsub.subscribe("orderSubmitted_event", self.statistics_table)
-        
+        pubsub.subscribe("updateFoodItem", self.statistics_table)
+
     def setOrderBy(self, orderby) :
         self.orderBy_mostOrdered = orderby
         self.statistics_table()
