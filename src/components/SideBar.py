@@ -129,6 +129,7 @@ class QCustomerSideBar(QSideBar) :
                 print(f"{foodname} already in cart")
                 return
         new_cartItem = QSimpleCartItem(fooditem_id, foodname, imgfile, price, self.recalculate_total)
+        new_cartItem.closeButton.clicked.connect(lambda _, foodid= fooditem_id: self.removeItemFromCart(foodid))
         self.cartItems.append(new_cartItem)
         # for item in self.cartItems:
         #     if item[0] == fooditem_id:
@@ -141,6 +142,20 @@ class QCustomerSideBar(QSideBar) :
         self.submitBtn.setEnabled(len(self.cartItems) > 0)
 
         print(fooditem_id,foodname,price, " added to cart")
+    
+    def removeItemFromCart(self, foodid) :
+        print(foodid)
+        newCartItem = []
+        widgetToRemove = None
+        for item in self.cartItems :
+            if item.foodid == foodid :
+                widgetToRemove = item
+                continue
+            newCartItem.append(item)
+        self.cartItems = newCartItem 
+        self.sidebar_layout.getLayout().removeWidget(widgetToRemove)
+        widgetToRemove.deleteLater()
+        self.recalculate_total()
     
     def recalculate_total(self, e =None) :
         if not self.cartItems:
@@ -215,9 +230,10 @@ class QSimpleCartItem(QFrame) : # refactor this later
         self.img_label.setPixmap(pixmap)
         self.img_label.setFixedSize(100,100)
         self.img_label.setScaledContents(True)
-        self.cartItem_layout.addWidget(self.img_label, alignment=Qt.AlignmentFlag.AlignCenter)
         self.closeButton = QPushButton("x")
         self.cartItem_layout.addWidget(self.closeButton)
+        self.cartItem_layout.addWidget(self.img_label, alignment=Qt.AlignmentFlag.AlignCenter)
+
         name_price_layout = QHBoxLayout()
         name_price_layout.addWidget(QLabel(foodname))
         self.price_label = QLabel(f"₱{price:.2f}")
