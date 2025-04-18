@@ -10,7 +10,7 @@ from PyQt6.QtWidgets import (
     QFrame,
     QGridLayout,
 )
-from src.components.SideBar import QSideBar
+from src.components.SideBar import QCustomerSideBar
 from src.components.Headers import QLogoHeader
 
 
@@ -19,7 +19,7 @@ class QCustomerPage(QFrame) :
         super().__init__()
         self.objectName = "customer"
         self.foodPanel = QFoodPanel(self.objectName)
-        self.sideBar = QSideBar(self.objectName)
+        self.sideBar = QCustomerSideBar()
         self.logoHeader = QLogoHeader("customer")
         self.customer_layout = QGridLayout(self)
         self.customer_layout.setSpacing(0)

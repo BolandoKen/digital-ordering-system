@@ -19,12 +19,12 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap, QFont
 from src.components.ScrollArea import QScrollAreaLayout
 from src.components.Buttons import QPrimaryButton
+from src.components.SpinBox import QCartItemSpinBox
 import traceback
 
 class QSideBar(QFrame) :
-    def __init__(self, pageName, switchPage = None) :
+    def __init__(self) :
         super().__init__()
-        self.pageName = pageName
         self.setFixedWidth(300)
         self.cartItems = []
         self.cartItems_amount = []
@@ -33,37 +33,18 @@ class QSideBar(QFrame) :
         self.scroll_layout.setSpacing(0)
         self.setStyleSheet("background-color: white; color: black;border-left: 1px solid #d9d9d9")
 
-        if self.pageName == "admin" :
-            self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout, "sidebar")
 
-            self.switchPage = switchPage
-            self.logoutBtn = QPrimaryButton("Log out", 90, 30, 20)
-            self.scroll_layout.addWidget(self.logoutBtn, alignment=Qt.AlignmentFlag.AlignCenter)
-            self.init_adminSideBar()
-        elif self.pageName == "customer" :
-            title = QLabel("My Orders")
-            self.scroll_layout.addWidget(title)
-            title.setFont(QFont("Helvetica", 15, QFont.Weight.Bold))
-            title.setStyleSheet("""
-                    qproperty-alignment: AlignCenter;
-                """)
-            self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout, "sidebar")
-            self.total_label = QLabel("Total: ₱0.00")
-            self.total_label.setFont(QFont("Helvetica", 12, QFont.Weight.Bold))
-            self.scroll_layout.addWidget(self.total_label, alignment=Qt.AlignmentFlag.AlignCenter)
 
-            self.submitBtn = QPrimaryButton("Done", 70, 30, 20)
-            self.scroll_layout.addWidget(self.submitBtn, alignment=Qt.AlignmentFlag.AlignCenter)
-            self.submitBtn.clicked.connect(self.handleSubmitOrderClicked)
-            pubsub.subscribe("addToCart", self.handleFoodAddToCart)
-            self.init_customerSideBar()
+class QAdminSideBar(QSideBar) : 
+    def __init__(self, switchPage=None):
+        super().__init__()
+        self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout, "sidebar")
 
-    def init_customerSideBar(self) :
-        self.clear_layout(self.sidebar_layout.getLayout())
-        self.renderCartItems()
-        self.sidebar_layout.addStretch()
-        self.submitBtn.setEnabled(len(self.cartItems) > 0)
-    
+        self.switchPage = switchPage
+        self.logoutBtn = QPrimaryButton("Log out", 90, 30, 20)
+        self.scroll_layout.addWidget(self.logoutBtn, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.init_adminSideBar()
+
     def init_adminSideBar(self) :
         self.currindex = 0 
         pubsub.subscribe("backToFoodPanel_clicked", self.handlePanelBtnClicked)
@@ -89,6 +70,33 @@ class QSideBar(QFrame) :
     def handleLogoutClicked(self) :
         pubsub.publish("logout_Event", None)
 
+class QCustomerSideBar(QSideBar) :
+    def __init__(self) :
+        super().__init__()
+
+        title = QLabel("My Orders")
+        self.scroll_layout.addWidget(title)
+        title.setFont(QFont("Helvetica", 15, QFont.Weight.Bold))
+        title.setStyleSheet("""
+                qproperty-alignment: AlignCenter;
+            """)
+        self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout, "sidebar")
+        self.total_label = QLabel("Total: ₱0.00")
+        self.total_label.setFont(QFont("Helvetica", 12, QFont.Weight.Bold))
+        self.scroll_layout.addWidget(self.total_label, alignment=Qt.AlignmentFlag.AlignCenter)
+
+        self.submitBtn = QPrimaryButton("Done", 70, 30, 20)
+        self.scroll_layout.addWidget(self.submitBtn, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.submitBtn.clicked.connect(self.handleSubmitOrderClicked)
+        pubsub.subscribe("addToCart", self.handleFoodAddToCart)
+        self.init_customerSideBar()
+
+    def init_customerSideBar(self) :
+        self.clear_layout(self.sidebar_layout.getLayout())
+        self.renderCartItems()
+        self.sidebar_layout.addStretch()
+        self.submitBtn.setEnabled(len(self.cartItems) > 0)
+    
     def handleSubmitOrderClicked(self) :
         if not self.cartItems:
             print("Cart is empty")

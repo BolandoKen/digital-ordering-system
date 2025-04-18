@@ -17,7 +17,7 @@ from PyQt6.QtWidgets import (
     QGridLayout,
 )
 
-from src.components.SideBar import QSideBar
+from src.components.SideBar import QAdminSideBar
 from src.components.Headers import QLogoHeader
 
 class QAdminPage(QFrame) :
@@ -29,7 +29,7 @@ class QAdminPage(QFrame) :
         self.profilePanel = QProfilePanel()
         
         self.adminStackedPanels = QStackedWidget()
-        self.sideBar = QSideBar(self.objectName, self.switchPage)
+        self.sideBar = QAdminSideBar(self.switchPage)
         self.logoHeader = QLogoHeader("admin")
 
         self.adminStackedPanels.addWidget(self.foodPanel)

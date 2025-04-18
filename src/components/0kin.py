@@ -11,6 +11,8 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt
 from src.components.Buttons import QDeleteButton, QBackButton, QLogoButton, QPrimaryButton, QSecondaryButton, QDineInButton, QTakeOutButton, QPlusButton, QMinusButton
+from src.components.SpinBox import QCartItemSpinBox
+from PyQt6.QtGui import QPixmap, QMouseEvent, QFont, QIntValidator, QShortcut, QKeySequence
 
 class QWindow(QMainWindow):
     def __init__(self):
@@ -34,15 +36,21 @@ class QWindow(QMainWindow):
         #main_layout.addWidget(takeOut_button)
         main_layout.addWidget(plus_button)
         main_layout.addWidget(minus_button)
+        main_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         main_layout.addWidget(QPrimaryButton("hi primary", 400))
         main_layout.addWidget(QSecondaryButton("hi secondary", 400))
-        main_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        main_layout.addWidget(QCartItemSpinBox())
+
+        
         main_centralwidget = QWidget()
         #main_centralwidget.setStyleSheet("background: #C8161D;")
-        main_centralwidget.setStyleSheet("background: white;")
+        main_centralwidget.setStyleSheet("background: white;color: black")
         main_centralwidget.setLayout(main_layout)
         self.setCentralWidget(main_centralwidget)
+
+        exit_shortcut = QShortcut(QKeySequence('esc'), self)
+        exit_shortcut.activated.connect(self.close)
         
 
 
