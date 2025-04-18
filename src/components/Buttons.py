@@ -294,7 +294,7 @@ class QPlusButton(QPushButton):
         """)
         
         self.setIcon(QIcon("assets/icons/plus_icon.svg"))
-        self.setIconSize(QSize(20, 20))
+        self.setIconSize(QSize(15, 15))
         self.setCursor(Qt.CursorShape.PointingHandCursor)
 
 class QMinusButton(QPushButton):
@@ -309,5 +309,5 @@ class QMinusButton(QPushButton):
         """)
         
         self.setIcon(QIcon("assets/icons/minus_icon.svg"))
-        self.setIconSize(QSize(20, 20))
+        self.setIconSize(QSize(15, 15))
         self.setCursor(Qt.CursorShape.PointingHandCursor)

@@ -20,8 +20,10 @@ class QScrollAreaLayout(QScrollArea) :
         self.setWidget(self.container)
         if component == "list" : 
             mywidth = "10px"
+            borderradius = "5px"
         elif component == "sidebar" :
-            mywidth = "5px"
+            mywidth = "8px"
+            borderradius = "4px"
         #styles derived from https://forum.qt.io/topic/41040/pyqt-custom-scrollbar-design-solved/5
         self.setStyleSheet(f"""QScrollBar:vertical {{
                             width: {mywidth};
@@ -33,7 +35,7 @@ class QScrollAreaLayout(QScrollArea) :
                             min-height: 10px;
                             border: none;
                            background-color: #D9D9D9;
-                           border-radius: 5px;
+                           border-radius: {borderradius};
                         }}
                         QScrollArea {{
                            padding: 0px;

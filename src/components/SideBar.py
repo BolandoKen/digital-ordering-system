@@ -25,7 +25,7 @@ import traceback
 class QSideBar(QFrame) :
     def __init__(self) :
         super().__init__()
-        self.setFixedWidth(300)
+        self.setFixedWidth(250)
         self.cartItems = []
         self.cartItems_amount = []
         self.scroll_layout = QVBoxLayout(self)
@@ -73,22 +73,42 @@ class QAdminSideBar(QSideBar) :
 class QCustomerSideBar(QSideBar) :
     def __init__(self) :
         super().__init__()
-
+        # self.scroll_layout.addItem(QSpacerItem(50,100))
         title = QLabel("My Orders")
         self.scroll_layout.addWidget(title)
         title.setFont(QFont("Helvetica", 15, QFont.Weight.Bold))
         title.setStyleSheet("""
                 qproperty-alignment: AlignCenter;
+                margin-top: 110px;
+                border-bottom: 1px solid #d9d9d9;
+                padding-bottom: 20px;
             """)
         self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout, "sidebar")
+        self.sidebar_layout.getLayout().setContentsMargins(0,0,0,0)
+        self.sidebar_layout.getLayout().setSpacing(0)
         self.sidebar_layout.getLayout().setAlignment(Qt.AlignmentFlag.AlignTop)
-        self.total_label = QLabel("Total: ₱0.00")
-        self.total_label.setFont(QFont("Helvetica", 12, QFont.Weight.Bold))
-        self.scroll_layout.addWidget(self.total_label, alignment=Qt.AlignmentFlag.AlignCenter)
+
+
+        self.totalContainer = QFrame()
+        self.totalContainer.setStyleSheet("border-top: 1px solid #d9d9d9;padding-top: 30px")
+        self.totalContainer_Vbox = QVBoxLayout(self.totalContainer)
+        self.totalContainer_Vbox.setContentsMargins(0,0,0,0)
+        self.totalContainer_Vbox.setSpacing(5)
+        self.totalText_label = QLabel("Total") 
+        self.totalText_label.setStyleSheet("border:none;margin:0px;padding:0px;color: #a1a1a1;")
+        self.total_label = QLabel("₱0.00")
+        self.total_label.setFont(QFont("Helvetica", 15, QFont.Weight.Bold))
+        self.total_label.setStyleSheet("border:none;margin-bottom: 0px;padding:0px;")
 
         self.submitBtn = QPrimaryButton("Done", 70, 30, 20)
-        self.scroll_layout.addWidget(self.submitBtn, alignment=Qt.AlignmentFlag.AlignCenter)
         self.submitBtn.clicked.connect(self.handleSubmitOrderClicked)
+    
+        self.totalContainer_Vbox.addWidget(self.totalText_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.totalContainer_Vbox.addWidget(self.total_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.totalContainer_Vbox.addWidget(self.submitBtn, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.scroll_layout.addWidget(self.totalContainer)
+
+
         pubsub.subscribe("addToCart", self.handleFoodAddToCart)
         self.total = 0 
         self.init_customerSideBar()
@@ -103,7 +123,6 @@ class QCustomerSideBar(QSideBar) :
         self.submitBtn.setEnabled(len(self.cartItems) > 0)
     
     def handleSubmitOrderClicked(self) :
-        print('wait')
         if not self.cartItems:
             print("Cart is empty")
             return []
@@ -159,17 +178,17 @@ class QCustomerSideBar(QSideBar) :
     
     def recalculate_total(self, e =None) :
         if not self.cartItems:
-            self.total_label.setText("Total: ₱0.00") 
+            self.total_label.setText("₱0.00") 
             return
         total = 0
         for item in self.cartItems :
             total += item.getSubtotal()
-        self.total_label.setText(f"Total: ₱{total:.2f}")
+        self.total_label.setText(f"₱{total:.2f}")
         self.total = total
 
     def renderCartItems(self) :
         if not self.cartItems:
-            self.total_label.setText("Total: ₱0.00") 
+            self.total_label.setText("₱0.00") 
             return
             
         total = 0
@@ -217,12 +236,20 @@ class QSimpleCartItem(QFrame) : # refactor this later
     def __init__(self, foodid, foodname, imgfile, price, recalculate_cb):
         super().__init__()
         self.recalculate_cb = recalculate_cb
-        self.setStyleSheet("background-color: white; color: black")
+        self.setStyleSheet("""
+                           #cartItem {
+                            border-bottom: 1px solid #D9D9D9;
+                           padding: 5px;
+                           }
+                           #cartItem > *{background-color: white; color: black; border: none;}""")
+        self.setObjectName("cartItem") 
         self.foodid = foodid
         self.foodname = foodname
         self.price = price
         self.cartItem_layout = QVBoxLayout(self)
-        self.setFixedHeight(250)
+        self.cartItem_layout.setContentsMargins(0,0,0,0)
+        self.cartItem_layout.setSpacing(0)
+        self.cartItem_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
         self.img_label = QLabel()
         # pixmap = QPixmap(f"assets/foodimg/{imgfile}")
@@ -231,26 +258,29 @@ class QSimpleCartItem(QFrame) : # refactor this later
         self.img_label.setFixedSize(100,100)
         self.img_label.setScaledContents(True)
         self.closeButton = QPushButton("x")
-        self.cartItem_layout.addWidget(self.closeButton)
+        self.closeButton.setFixedWidth(50)
+        self.closeButton.setCursor(Qt.CursorShape.PointingHandCursor)
+
+        # self.setFixedWidth(50)
+        self.price_close_hbox = QHBoxLayout()
+        self.subtotal_label = QLabel(f"₱{price:.2f}")
+        self.subtotal_label.setStyleSheet("margin: 10px")
+        self.price_close_hbox.addWidget(self.subtotal_label)
+        self.price_close_hbox.addStretch()
+        self.price_close_hbox.addWidget(self.closeButton)
+
+
+        self.cartItem_layout.addLayout(self.price_close_hbox)
         self.cartItem_layout.addWidget(self.img_label, alignment=Qt.AlignmentFlag.AlignCenter)
 
-        name_price_layout = QHBoxLayout()
-        name_price_layout.addWidget(QLabel(foodname))
-        self.price_label = QLabel(f"₱{price:.2f}")
-        name_price_layout.addWidget(self.price_label)
-        self.cartItem_layout.addLayout(name_price_layout)
-
-        quantity_layout = QHBoxLayout()
-        quantity_layout.addWidget(QLabel("Quantity:"))
         
         self.quantityBox = QSpinBox()
         self.quantityBox.setValue(1)
 
-        self.cartItem_layout.addLayout(quantity_layout)
-        self.subtotal_label = QLabel(f"Subtotal: ₱{price:.2f}")
-        self.cartItem_layout.addWidget(self.subtotal_label)
+        self.cartItem_layout.addWidget(QLabel(foodname), alignment=Qt.AlignmentFlag.AlignCenter)
+        self.cartItem_layout.addWidget(QLabel(f"₱{str(price)}"), alignment=Qt.AlignmentFlag.AlignCenter)
         self.customQuanBox = QCartItemSpinBox()
-        self.cartItem_layout.addWidget(self.customQuanBox)
+        self.cartItem_layout.addWidget(self.customQuanBox, alignment=Qt.AlignmentFlag.AlignCenter)
         self.customQuanBox.connectOnChangeTo(self.update_subtotal)
 
     def getQuantity(self):
@@ -258,8 +288,7 @@ class QSimpleCartItem(QFrame) : # refactor this later
     
     def update_subtotal(self, e = None):
         subtotal = self.price * self.customQuanBox.getQuantity()
-        print(subtotal)
-        self.subtotal_label.setText(f"Subtotal: ₱{subtotal:.2f}")
+        self.subtotal_label.setText(f"₱{subtotal:.2f}")
         self.recalculate_cb()
         return subtotal
     
