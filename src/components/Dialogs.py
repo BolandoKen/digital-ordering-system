@@ -213,16 +213,14 @@ class QviewOrderDialog(QStyledDialog) :
         super().__init__()
         self.viewOrder_layout = QVBoxLayout(self)
         pubsub.subscribe("viewClicked_event", self.setContents)
-        self.oldid = None
         
     def setContents(self, orderid) :
         self.orderItemsSubtotalList = fetchOrderItemsSubtotalList(orderid) 
         self.orderItemsTotal = fetchOrderItemsTotal(orderid)
-        if self.oldid != orderid :
-            self.updateContents()
-        self.oldid = orderid
+        self.updateContents()
     
     def updateContents(self) :
+
         self.clear_layout(self.viewOrder_layout)
         self.o_id = self.orderItemsSubtotalList[0][0]
         o_idLabel = QLabel(f"Order #{self.o_id}")
