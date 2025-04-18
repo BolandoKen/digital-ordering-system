@@ -81,6 +81,7 @@ class QCustomerSideBar(QSideBar) :
                 qproperty-alignment: AlignCenter;
             """)
         self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout, "sidebar")
+        self.sidebar_layout.getLayout().setAlignment(Qt.AlignmentFlag.AlignTop)
         self.total_label = QLabel("Total: ₱0.00")
         self.total_label.setFont(QFont("Helvetica", 12, QFont.Weight.Bold))
         self.scroll_layout.addWidget(self.total_label, alignment=Qt.AlignmentFlag.AlignCenter)
@@ -89,56 +90,92 @@ class QCustomerSideBar(QSideBar) :
         self.scroll_layout.addWidget(self.submitBtn, alignment=Qt.AlignmentFlag.AlignCenter)
         self.submitBtn.clicked.connect(self.handleSubmitOrderClicked)
         pubsub.subscribe("addToCart", self.handleFoodAddToCart)
+        self.total = 0 
         self.init_customerSideBar()
 
     def init_customerSideBar(self) :
         self.clear_layout(self.sidebar_layout.getLayout())
-        self.renderCartItems()
-        self.sidebar_layout.addStretch()
+        self.cartItems = []
+        self.total = 0
+        self.recalculate_total()
+        # self.renderCartItems()
+        # self.sidebar_layout.addStretch()
         self.submitBtn.setEnabled(len(self.cartItems) > 0)
     
     def handleSubmitOrderClicked(self) :
+        print('wait')
         if not self.cartItems:
             print("Cart is empty")
             return []
       
-        valid_items = [(fid, fname, qty, imgfile, price) for fid, fname, qty, imgfile, price in self.cartItems if qty > 0] #chatgpt lessened my code to this bruh
-        orderitem_info = [(qty, fid) for fid, fname, qty, imgfile, price in valid_items]
+        # valid_items = [(fid, fname, qty, imgfile, price) for fid, fname, qty, imgfile, price in self.cartItems if qty > 0] #chatgpt lessened my code to this bruh
+        # orderitem_info = [(qty, fid) for fid, fname, qty, imgfile, price in valid_items]
+        orderitem_info = []
+        for item in self.cartItems :
+            orderitem_info.append((item.getQuantity(), item.foodid))
+        
 
         confirmation = True # placeholder for confirmation dialog
         if confirmation :
             addOrder(orderitem_info)
             pubsub.publish("orderSubmitted_event")
-            self.cartItems = []
             self.init_customerSideBar()
 
     def handleFoodAddToCart(self, foodTuple) :
         fooditem_id, foodname, imgfile, price = foodTuple
-        for item in self.cartItems:
-            if item[0] == fooditem_id:
+
+        for item in self.cartItems :
+            if item.foodid == fooditem_id :
                 print(f"{foodname} already in cart")
                 return
-        self.cartItems.append((fooditem_id, foodname, 1, imgfile, price))
-        self.init_customerSideBar()
+        new_cartItem = QSimpleCartItem(fooditem_id, foodname, imgfile, price, self.recalculate_total)
+        self.cartItems.append(new_cartItem)
+        # for item in self.cartItems:
+        #     if item[0] == fooditem_id:
+        #         print(f"{foodname} already in cart")
+        #         return
+        # self.cartItems.append((fooditem_id, foodname, quantity, imgfile, price))
+        # self.init_customerSideBar() 
+        self.sidebar_layout.addWidget(new_cartItem)
+        self.recalculate_total()
+        self.submitBtn.setEnabled(len(self.cartItems) > 0)
+
         print(fooditem_id,foodname,price, " added to cart")
     
+    def recalculate_total(self, e =None) :
+        if not self.cartItems:
+            self.total_label.setText("Total: ₱0.00") 
+            return
+        total = 0
+        for item in self.cartItems :
+            total += item.getSubtotal()
+        self.total_label.setText(f"Total: ₱{total:.2f}")
+        self.total = total
+
     def renderCartItems(self) :
         if not self.cartItems:
             self.total_label.setText("Total: ₱0.00") 
             return
             
         total = 0
-        for f_item in self.cartItems:
-            foodid, foodname, item_quantity, imgfile, price = f_item
-            f_item_widget = QSimpleCartItem(foodid, foodname, imgfile, price)
-            f_item_widget.quantityBox.setValue(item_quantity)
-            f_item_widget.quantityBox.valueChanged.connect(
-                lambda val, fid=foodid: self.handleQuantityChanged(fid, val)
-            )
-            self.sidebar_layout.addWidget(f_item_widget)
-            total += f_item_widget.getSubtotal()
-            
+
+        for item in self.cartItems :
+            self.sidebar_layout.addWidget(item)
+            total += item.getSubTotal()
+        
         self.total_label.setText(f"Total: ₱{total:.2f}")
+        # total = 0
+        # for f_item in self.cartItems:
+        #     foodid, foodname, item_quantity, imgfile, price = f_item
+        #     f_item_widget = QSimpleCartItem(foodid, foodname, imgfile, price)
+        #     f_item_widget.quantityBox.setValue(item_quantity)
+        #     f_item_widget.quantityBox.valueChanged.connect(
+        #         lambda val, fid=foodid: self.handleQuantityChanged(fid, val)
+        #     )
+        #     self.sidebar_layout.addWidget(f_item_widget)
+        #     total += f_item_widget.getSubtotal()
+            
+        # self.total_label.setText(f"Total: ₱{total:.2f}")
 
     def clear_layout(self, layout): 
         if layout is not None:
@@ -162,13 +199,15 @@ class QCustomerSideBar(QSideBar) :
         self.submitBtn.setEnabled(len(self.cartItems) > 0)
 
 class QSimpleCartItem(QFrame) : # refactor this later
-    def __init__(self, foodid, foodname, imgfile, price):
+    def __init__(self, foodid, foodname, imgfile, price, recalculate_cb):
         super().__init__()
+        self.recalculate_cb = recalculate_cb
         self.setStyleSheet("background-color: white; color: black")
         self.foodid = foodid
         self.foodname = foodname
         self.price = price
         self.cartItem_layout = QVBoxLayout(self)
+        self.setFixedHeight(250)
 
         self.img_label = QLabel()
         # pixmap = QPixmap(f"assets/foodimg/{imgfile}")
@@ -177,8 +216,8 @@ class QSimpleCartItem(QFrame) : # refactor this later
         self.img_label.setFixedSize(100,100)
         self.img_label.setScaledContents(True)
         self.cartItem_layout.addWidget(self.img_label, alignment=Qt.AlignmentFlag.AlignCenter)
-
-
+        self.closeButton = QPushButton("x")
+        self.cartItem_layout.addWidget(self.closeButton)
         name_price_layout = QHBoxLayout()
         name_price_layout.addWidget(QLabel(foodname))
         self.price_label = QLabel(f"₱{price:.2f}")
@@ -190,24 +229,25 @@ class QSimpleCartItem(QFrame) : # refactor this later
         
         self.quantityBox = QSpinBox()
         self.quantityBox.setValue(1)
-        self.cartItem_layout.addWidget(self.quantityBox)
-        quantity_layout.addWidget(self.quantityBox)
 
         self.cartItem_layout.addLayout(quantity_layout)
         self.subtotal_label = QLabel(f"Subtotal: ₱{price:.2f}")
         self.cartItem_layout.addWidget(self.subtotal_label)
-
-        self.quantityBox.valueChanged.connect(self.update_subtotal)
+        self.customQuanBox = QCartItemSpinBox()
+        self.cartItem_layout.addWidget(self.customQuanBox)
+        self.customQuanBox.connectOnChangeTo(self.update_subtotal)
 
     def getQuantity(self):
-        return self.quantityBox.value()
+        return self.customQuanBox.getQuantity()
     
-    def update_subtotal(self):
-        subtotal = self.price * self.quantityBox.value()
+    def update_subtotal(self, e = None):
+        subtotal = self.price * self.customQuanBox.getQuantity()
+        print(subtotal)
         self.subtotal_label.setText(f"Subtotal: ₱{subtotal:.2f}")
+        self.recalculate_cb()
         return subtotal
     
     def getSubtotal(self):
-        return self.price * self.quantityBox.value()
+        return self.price * self.customQuanBox.getQuantity()
 
 

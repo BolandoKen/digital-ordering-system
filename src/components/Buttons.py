@@ -283,9 +283,9 @@ class QTakeOutButton(QPushButton):
         """)
 
 class QPlusButton(QPushButton):
-    def __init__(self):
+    def __init__(self, width = 80, height = 60):
         super().__init__("")
-        self.setFixedSize(80, 50)
+        self.setFixedSize(width, height)
         self.setStyleSheet("""
             background: #FFCA40;
             border: none;
@@ -298,9 +298,9 @@ class QPlusButton(QPushButton):
         self.setCursor(Qt.CursorShape.PointingHandCursor)
 
 class QMinusButton(QPushButton):
-    def __init__(self):
+    def __init__(self, width = 80, height = 60):
         super().__init__("")
-        self.setFixedSize(80, 50)
+        self.setFixedSize(width, height)
         self.setStyleSheet("""
             background: transparent;
             border: 2px solid black;
