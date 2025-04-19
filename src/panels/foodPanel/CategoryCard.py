@@ -14,7 +14,7 @@ from PyQt6.QtWidgets import (
 )
 from src.utils.PubSub import pubsub
 from src.database.Categories import deleteCategory
-from src.components.Dialogs import QeditDialog
+from src.components.Dialogs import QeditDialog, QConfirmDialog
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 from src.utils.PixMap import setPixMapOf
@@ -65,13 +65,10 @@ class QCategoryCard(QMenuCard) :
             self.delBtn.hide()
 
     def handleCatDelete(self) :
-        warning = QMessageBox()
-        warning.setIcon(QMessageBox.Icon.Warning)
-        warning.setText("Are you sure you want to delete this category?")   
-        warning.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
-        execute = warning.exec()
-        
-        if execute == QMessageBox.StandardButton.Yes:
+        message = "Are you sure you want to delete this category?"
+        confirm = QConfirmDialog("Confirm", message, self.window())
+
+        if confirm.exec():
             deleteCategory(self.category_id) # published updateCategory was in the function
             pubsub.publish("updateCategory") 
 

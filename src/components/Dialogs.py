@@ -210,8 +210,8 @@ class QeditDialog(QaddDialog) :
 
 
 class QviewOrderDialog(QStyledDialog) :
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent):
+        super().__init__(parent)
         self.viewOrder_layout = QVBoxLayout(self)
         pubsub.subscribe("viewClicked_event", self.setContents)
         
@@ -248,7 +248,7 @@ class QviewOrderDialog(QStyledDialog) :
 
 class QConfirmDialog(QStyledDialog):
     def __init__(self, title, message, parent=None):
-        super().__init__()
+        super().__init__(parent)
         self.setWindowTitle(title)
         self.setFixedSize(400, 200)
         self.result = False

@@ -82,7 +82,7 @@ class QFoodItemCard(QMenuCard) :
         elif self.hasBeenOrdered:
             message = "This item has existing orders in order history. It will be hidden instead of deleted."
 
-        confirm = QConfirmDialog("Confirm", message, self)
+        confirm = QConfirmDialog("Confirm", message, self.window())
         if confirm.exec():  # returns True if "Yes" was clicked
             if typeOf == "delete":
                 deleteFoodItem(self.fooditem_id)
