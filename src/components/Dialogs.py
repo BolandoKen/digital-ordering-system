@@ -120,7 +120,6 @@ class QaddDialog(QStyledDialog) :
 
     def handleClearBtn(self) :
         self.tempImagePath = None 
-        print(self.tempImagePath)
 
     def handleSubmitBtn(self) :
         validated = False
@@ -165,12 +164,14 @@ class QeditDialog(QaddDialog) :
 
     def init_editCategory(self) :
         self.catnameLineEdit.setText(self.catname)
-        self.tempImagePath = setPixMapOf(self.selectImgCard.getLabel(), self.imgfile, "category")["path"]
+        if self.imgfile is not None:
+            self.tempImagePath = setPixMapOf(self.selectImgCard.getLabel(), self.imgfile, "category")["path"]
 
     def init_editFood(self) :
         self.foodnameLineEdit.setText(self.foodname)
         self.foodpriceLineEdit.setText(str(self.price))
-        self.tempImagePath = setPixMapOf(self.selectImgCard.getLabel(), self.imgfile, "food")["path"]
+        if self.imgfile is not None:
+            self.tempImagePath = setPixMapOf(self.selectImgCard.getLabel(), self.imgfile, "food")["path"]
         self.categoryidLabel.show()
         self.categoryidComboBox.show()
         self.categoryidComboBox.setDefaultOption(str(self.category_id))

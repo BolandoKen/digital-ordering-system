@@ -3,17 +3,44 @@ from PyQt6.QtGui import QPixmap
 from PIL import Image
 import shutil
 
+class PixmapRepo() :
+    def __init__(self):
+        self.repo = {}
+    
+    def get_pixmap(self, img_path) :
+        if img_path not in self.repo :
+            self.repo[img_path] = QPixmap(img_path)
+            return self.repo[img_path]
+        return self.repo[img_path]
+    
+    def update_imgPath_key(self, img_path) :
+        self.repo[img_path] = QPixmap(img_path)
+
+    
+    
+
+pixmapRepo = PixmapRepo()
+
+def getImgPath(imgFileName, assetFolder) :
+     return os.path.join(os.path.abspath(f"assets/{assetFolder}"), imgFileName) 
+
+
+
+
+
+
 def setPixMapOf(label, imgFileName, folder) :
     if imgFileName is None:
         destFolder = "icons"
-        imgFileName = "placeholder_img"
+        imgFileName = "placeholder_img.svg"
         path = os.path.join(os.path.abspath(f"assets/{destFolder}"), imgFileName) 
-        pixmap = QPixmap(path)
+
+        pixmap = pixmapRepo.get_pixmap(path)
         label.setPixmap(pixmap)
         label.setFixedSize(125,125)
         label.setScaledContents(True)
         obj = {
-            "path" : path,
+            "path" : None,
             "pixmap" : pixmap,
         }
         return obj
@@ -29,7 +56,10 @@ def setPixMapOf(label, imgFileName, folder) :
         label.setScaledContents(True)
 
     path = os.path.join(os.path.abspath(f"assets/{destFolder}"), imgFileName) 
-    pixmap = QPixmap(path)
+    if folder == "temp" :
+        pixmapRepo.update_imgPath_key(path)
+
+    pixmap = pixmapRepo.get_pixmap(path)
     label.setPixmap(pixmap)
        
     obj = {
@@ -55,12 +85,14 @@ def moveImageToAssets(imgFilePath, panelName, ImgRename) :
         os.makedirs(destPath, exist_ok=True)
         destPath = os.path.join(destPath, ImgRename)
         shutil.move(imgFilePath, destPath)
+        pixmapRepo.update_imgPath_key(destPath)
+
     elif panelName == "food" :
         destPath = os.path.abspath("assets/foodimg")
         os.makedirs(destPath, exist_ok=True)
         destPath = os.path.join(destPath, ImgRename)
         shutil.move(imgFilePath, destPath)
-
+        pixmapRepo.update_imgPath_key(destPath)
 
 def deleteImageOfCategory(catid) :
     destPath = os.path.abspath("assets/categoryimg")
