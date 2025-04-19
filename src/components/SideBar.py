@@ -88,6 +88,8 @@ class QCustomerSideBar(QSideBar) :
         self.sidebar_layout.getLayout().setSpacing(0)
         self.sidebar_layout.getLayout().setAlignment(Qt.AlignmentFlag.AlignTop)
 
+        self.choice = None
+        pubsub.subscribe("choice_clicked", self.setChoice)
 
         self.totalContainer = QFrame()
         self.totalContainer.setStyleSheet("border-top: 1px solid #d9d9d9;padding-top: 30px")
@@ -122,6 +124,9 @@ class QCustomerSideBar(QSideBar) :
         # self.sidebar_layout.addStretch()
         self.submitBtn.setEnabled(len(self.cartItems) > 0)
     
+    def setChoice(self, choice) :
+        self.choice = choice
+
     def handleSubmitOrderClicked(self) :
         if not self.cartItems:
             print("Cart is empty")
@@ -129,6 +134,23 @@ class QCustomerSideBar(QSideBar) :
       
         # valid_items = [(fid, fname, qty, imgfile, price) for fid, fname, qty, imgfile, price in self.cartItems if qty > 0] #chatgpt lessened my code to this bruh
         # orderitem_info = [(qty, fid) for fid, fname, qty, imgfile, price in valid_items]
+        orderitem_info = []
+        for item in self.cartItems :
+            orderitem_info.append((item.getQuantity(), item.foodid))
+        
+        pubsub.publish("submitOrder_clicked", (self.cartItems, self.submitOrderCallback, self.choice)) # should also probably pass cb
+
+        # confirmation = True # placeholder for confirmation dialog
+        # if confirmation :
+        #     addOrder(orderitem_info)
+        #     pubsub.publish("orderSubmitted_event")
+        #     self.init_customerSideBar()
+
+    def submitOrderCallback(self) :
+        if not self.cartItems:
+            print("Cart is empty")
+            return []
+      
         orderitem_info = []
         for item in self.cartItems :
             orderitem_info.append((item.getQuantity(), item.foodid))
@@ -220,7 +242,7 @@ class QCustomerSideBar(QSideBar) :
                 elif item.spacerItem():  
                     layout.removeItem(item)   
     
-    def handleQuantityChanged(self, food_id, new_quantity):
+    def handleQuantityChanged(self, food_id, new_quantity): # not used
         updated_cart = []
         for item in self.cartItems:
             fid, fname, qty, imgfile, price = item
@@ -253,8 +275,8 @@ class QSimpleCartItem(QFrame) : # refactor this later
 
         self.img_label = QLabel()
         # pixmap = QPixmap(f"assets/foodimg/{imgfile}")
-        pixmap = imgfile
-        self.img_label.setPixmap(pixmap)
+        self.pixmap = imgfile
+        self.img_label.setPixmap(self.pixmap)
         self.img_label.setFixedSize(100,100)
         self.img_label.setScaledContents(True)
         self.closeButton = QPushButton("x")
