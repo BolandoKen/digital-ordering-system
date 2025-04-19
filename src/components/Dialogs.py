@@ -32,14 +32,14 @@ import traceback
 
 
 class QStyledDialog(QDialog) :
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent = None):
+        super().__init__(parent)
         self.setStyleSheet("Background-color: white; color: black")
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Dialog)
 
     def showEvent(self, event):
         super().showEvent(event)
-        self.center_screen()
+        # self.center_screen()
 
     def center_screen(self):
         if self.parent():
@@ -55,8 +55,8 @@ class QStyledDialog(QDialog) :
         self.move(QPoint(x, y))
 
 class QaddDialog(QStyledDialog) :
-    def __init__(self, panelName):
-        super().__init__()
+    def __init__(self, panelName, parent):
+        super().__init__(parent)
         self.panelName = panelName
         self.dialog_layout = QGridLayout(self)
         self.tempImagePath = None
@@ -150,8 +150,8 @@ class QaddDialog(QStyledDialog) :
             self.tempImagePath = None
 
 class QeditDialog(QaddDialog) :
-    def __init__(self, panelName, Tuple):
-        super().__init__(panelName)
+    def __init__(self, panelName, Tuple, parent):
+        super().__init__(panelName, parent)
 
         if self.panelName == "category" :
             self.category_id, self.catname, self.imgfile = Tuple                

@@ -32,7 +32,7 @@ class QFoodItemCard(QMenuCard) :
         self.foodCard_layout = QVBoxLayout(self)
         self.hasBeenOrdered = checkFoodHasBeenOrdered(self.fooditem_id)
         if self.pageName == "admin" :
-            self.editFoodDialog = QeditDialog("food", foodTuple)
+            self.editFoodDialog = QeditDialog("food", foodTuple, self.window())
             self.init_adminFoodItemCard()
         elif self.pageName == "customer" :
             self.init_customerFoodItemCard()

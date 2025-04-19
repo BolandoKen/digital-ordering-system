@@ -30,7 +30,7 @@ class QCategoryCard(QMenuCard) :
         self.category_id, self.catname, self.imgfile = catTuple
         self.availableItemCount = fetchCategoryAvailableItemCount(self.category_id) # will show only in admin
         self.unavailableItemCount = fetchCategoryUnavailableItemCount(self.category_id)
-        self.editCatDialog = QeditDialog("category", catTuple)
+        self.editCatDialog = QeditDialog("category", catTuple, self.window())
         self.stackedLists = stackedLists
         self.catCard_layout = QVBoxLayout(self)
         self.catCard_layout.setSpacing(0)
