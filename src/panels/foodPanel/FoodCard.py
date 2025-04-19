@@ -14,7 +14,7 @@ from PyQt6.QtWidgets import (
     QSpinBox,
     QMessageBox
 )
-from src.components.Dialogs import QeditDialog
+from src.components.Dialogs import QeditDialog, QConfirmDialog
 from src.database.FoodItems import deleteFoodItem, reviveFoodItem
 from src.utils.PubSub import pubsub
 from PyQt6.QtCore import Qt
@@ -73,24 +73,20 @@ class QFoodItemCard(QMenuCard) :
     def handleFoodDel(self) :
         # if food is available : delete or hide
         # if food is unavailable : show
-        warning =  QMessageBox()
-        warning.setIcon(QMessageBox.Icon.Warning)
-
         typeOf = "delete"
+        message = "Are you sure you want to delete this food item?"
 
         if self.hasBeenOrdered and not self.is_available:
-            warning.setText("are you sure you want to revive this food item?")
+            message = "Are you sure you want to revive this food item?"
             typeOf = "revive"
-        else:
-            warning.setText("are you sure you want to delete this food item?")
-            if self.hasBeenOrdered:
-                warning.setText("this item has existing orders in order history, set to hidden instead of delete")
-        warning.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
-        execute = warning.exec()
-        if execute == (QMessageBox.StandardButton.Yes):
-            if typeOf == "delete" :
+        elif self.hasBeenOrdered:
+            message = "This item has existing orders in order history. It will be hidden instead of deleted."
+
+        confirm = QConfirmDialog("Confirm", message, self)
+        if confirm.exec():  # returns True if "Yes" was clicked
+            if typeOf == "delete":
                 deleteFoodItem(self.fooditem_id)
-            elif typeOf == "revive" :
+            elif typeOf == "revive":
                 reviveFoodItem(self.fooditem_id)
             pubsub.publish("updateFoodItem")
             pubsub.publish("updateCategory")

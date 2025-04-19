@@ -26,6 +26,8 @@ from PyQt6.QtGui import QPixmap
 from PyQt6.QtGui import QDoubleValidator
 from src.components.Buttons import QPrimaryButton, QSecondaryButton
 from src.database.queries import fetchOrderItemsSubtotalList, fetchOrderItemsTotal
+from PyQt6.QtCore import Qt, QPoint
+from PyQt6.QtGui import QFont
 import traceback
 
 
@@ -33,7 +35,24 @@ class QStyledDialog(QDialog) :
     def __init__(self):
         super().__init__()
         self.setStyleSheet("Background-color: white; color: black")
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Dialog)
 
+    def showEvent(self, event):
+        super().showEvent(event)
+        self.center_screen()
+
+    def center_screen(self):
+        if self.parent():
+            parent_rect = self.parent().geometry()
+            x = parent_rect.x() + (parent_rect.width() - self.width()) // 2
+            y = parent_rect.y() + (parent_rect.height() - self.height()) // 2
+        else:
+            screen = QApplication.primaryScreen()
+            screen_rect = screen.availableGeometry()
+            x = (screen_rect.width() - self.width()) // 2
+            y = (screen_rect.height() - self.height()) // 2
+
+        self.move(QPoint(x, y))
 
 class QaddDialog(QStyledDialog) :
     def __init__(self, panelName):
@@ -228,4 +247,45 @@ class QviewOrderDialog(QStyledDialog) :
                     layout.removeItem(item)   
 
 
-        
+class QConfirmDialog(QStyledDialog):
+    def __init__(self, title, message, parent=None):
+        super().__init__()
+        self.setWindowTitle(title)
+        self.setFixedSize(400, 200)
+        self.result = False
+        font = QFont("Helvetica", 12, QFont.Weight.Bold)
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(20, 20, 20, 20)
+        layout.setSpacing(15)
+        layout.addStretch()
+        self.message_label = QLabel(message)
+        self.message_label.setWordWrap(True)
+        self.message_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.message_label.setFont(font)
+        layout.addWidget(self.message_label)
+        btn_row = QHBoxLayout()
+        self.yes_btn = QPrimaryButton("Confirm")
+        self.no_btn = QSecondaryButton("Cancel")
+        self.yes_btn.setFont(font)
+        self.no_btn.setFont(font)
+        self.yes_btn.clicked.connect(self.accept)
+        self.no_btn.clicked.connect(self.reject)
+        btn_row.addStretch()
+        btn_row.addWidget(self.no_btn)
+        btn_row.addSpacing(10)
+        btn_row.addWidget(self.yes_btn)
+        btn_row.addStretch()
+        layout.addLayout(btn_row)
+        layout.addStretch()
+
+    def exec(self):
+        super().exec()
+        return self.result
+
+    def accept(self):
+        self.result = True
+        super().accept()
+
+    def reject(self):
+        self.result = False
+        super().reject()
