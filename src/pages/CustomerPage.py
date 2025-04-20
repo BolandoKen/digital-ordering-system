@@ -41,6 +41,8 @@ class QCustomerPage(QFrame) :
         
         self.main_layout.addWidget(self.customerPage_stackedWidgets)
         self.customerPage_stackedWidgets.setCurrentIndex(1)
+        pubsub.subscribe("backBtn_clicked", self.customerPage_stackedWidgets.setCurrentIndex)
+    
 
 
         
