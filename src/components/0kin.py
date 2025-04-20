@@ -23,7 +23,6 @@ class QWindow(QMainWindow):
         main_layout = QVBoxLayout()
         delete_button = QDeleteButton()
         back_button = QBackButton()
-        # logo_button = QLogoButton("assets/icons/Logo.png", "M'sKitchen")
         dineIn_button = QDineInButton()
         takeOut_button = QTakeOutButton()
         plus_button = QPlusButton()
