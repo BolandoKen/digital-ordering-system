@@ -32,7 +32,7 @@ class QFoodList(QFrame) :
         self.foodList_layout = QScrollAreaLayout(QFlowLayout, self.scroll_layout)
         self.previousCategory_id = None
         self.showUnavailable = False
-        self.addFoodDialog = QaddDialog("food")
+        self.addFoodDialog = QaddDialog("food", self.window())
         pubsub.subscribe(f"{self.pageName}_catCardClicked", self.update_listContent)
         self.subbedToUpdate = False
         self.subbedToToggle = False
