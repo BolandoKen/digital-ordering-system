@@ -104,14 +104,13 @@ class QEyeButton(QPushButton) :
         elif state == "show" :
             self.setIcon(QIcon("assets/icons/closedeye_icon.svg"))
 
-class QLogoButton(QWidget):
+class QLogoButton(QFrame):
     def __init__(self, logo_path: str, eatery_name: str, pageName):
         super().__init__()
         self.pageName = pageName
-        self.setFixedSize(400, 70)
+        # self.setFixedSize(400, 70)
         self.setStyleSheet("""
             background: transparent;
-            background-color: white;
             padding: 0px;
             color: black;           
         """)

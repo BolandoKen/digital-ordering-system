@@ -13,8 +13,12 @@ from PyQt6.QtWidgets import (
 )
 from src.components.SideBar import QCustomerSideBar
 from src.components.Headers import QLogoHeader
+
 from src.utils.PubSub import pubsub
-from src.components.Buttons import QDineInButton, QTakeOutButton
+from src.components.Buttons import QDineInButton, QTakeOutButton, QLogoButton
+from PyQt6.QtGui import QFont
+from PyQt6.QtCore import Qt
+
 
 
 class QCustomerPage(QFrame) :
@@ -60,6 +64,8 @@ class QCustomerGreetPanel(QFrame) :
         super().__init__()
         self.parent_stackedWidgets = parent_stackedWidgets
         main_layout = QVBoxLayout(self)
+        main_layout.setSpacing(15)
+        main_layout.setContentsMargins(0,0,0,50)
         dineInBtn = QDineInButton()
         takeOutBtn = QTakeOutButton()
         self.setObjectName("Greet")
@@ -70,12 +76,23 @@ class QCustomerGreetPanel(QFrame) :
         takeOutBtn.clicked.connect(lambda: self.handleChoice_clicked("take_out"))
 
         btns_Hbox = QHBoxLayout()
+        btns_Hbox.setSpacing(50)
         
+        btns_Hbox.addStretch()
         btns_Hbox.addWidget(dineInBtn)
         btns_Hbox.addWidget(takeOutBtn)
+        btns_Hbox.addStretch()
 
-        main_layout.addWidget(QLabel("Where will you be eating today?"))
+        greetMsg = QLabel("Where will you be eating today?")
+        greetMsg.setFont(QFont("Helvetica", 30, QFont.Weight.Bold))
+        greetMsg.setStyleSheet("background: transparent;color:white;")
+        greetMsg.setFixedHeight(50)
+
+        main_layout.addStretch()
+        main_layout.addWidget(QLogoButton("assets/icons/pfp_icon.svg", "M'sKitchen", None), alignment=Qt.AlignmentFlag.AlignCenter )
+        main_layout.addWidget(greetMsg, alignment=Qt.AlignmentFlag.AlignCenter)
         main_layout.addLayout(btns_Hbox)
+        main_layout.addStretch()
         
             # dine in takeout options
 
