@@ -107,6 +107,7 @@ def fetchOrderItemsSubtotalList(orderid) :
                    WHERE o.order_id = {orderid};
                    """)
     results = cursor.fetchall()
+    print(results)
     return results
 
 def fetchOrderItemsTotal(orderid) :

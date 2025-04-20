@@ -9,6 +9,7 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QFrame,
 )
+
 from PyQt6.QtCore import Qt
 from src.components.Buttons import QDeleteButton, QBackButton, QLogoButton, QPrimaryButton, QSecondaryButton, QDineInButton, QTakeOutButton, QPlusButton, QMinusButton
 from src.components.SpinBox import QCartItemSpinBox
@@ -31,8 +32,8 @@ class QWindow(QMainWindow):
         main_layout.addWidget(delete_button)
         main_layout.addWidget(back_button)
         # main_layout.addWidget(logo_button)
-        #main_layout.addWidget(dineIn_button)
-        #main_layout.addWidget(takeOut_button)
+        main_layout.addWidget(dineIn_button)
+        # main_layout.addWidget(takeOut_button)
         main_layout.addWidget(plus_button)
         main_layout.addWidget(minus_button)
         main_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)

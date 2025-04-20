@@ -120,7 +120,7 @@ class QOrderHTable(QStyledTable) :
         # fetch all list -> paginate -> organize by date
         # possible feature, sticky headers
         super().__init__() 
-        self.viewDialog = QviewOrderDialog()
+        self.viewDialog = QviewOrderDialog(self.window())
         self.setColumnCount(3)
         self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.setShowGrid(False)
