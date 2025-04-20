@@ -9,6 +9,7 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QFrame,
 )
+
 from PyQt6.QtCore import Qt
 from src.components.Buttons import QDeleteButton, QBackButton, QLogoButton, QPrimaryButton, QSecondaryButton, QDineInButton, QTakeOutButton, QPlusButton, QMinusButton
 from src.components.SpinBox import QCartItemSpinBox
