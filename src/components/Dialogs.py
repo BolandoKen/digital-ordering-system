@@ -28,6 +28,7 @@ from src.components.Buttons import QPrimaryButton, QSecondaryButton
 from src.database.queries import fetchOrderItemsSubtotalList, fetchOrderItemsTotal
 from PyQt6.QtCore import Qt, QPoint
 from PyQt6.QtGui import QFont
+from src.components.ScrollArea import QScrollAreaLayout
 import traceback
 
 
@@ -212,7 +213,42 @@ class QeditDialog(QaddDialog) :
 class QviewOrderDialog(QStyledDialog) :
     def __init__(self, parent):
         super().__init__(parent)
-        self.viewOrder_layout = QVBoxLayout(self)
+        self.main_layout = QVBoxLayout(self)
+        self.setMaximumHeight(400)
+        self.setFixedWidth(325)
+
+        close_btn = QPushButton("x")
+        close_btn.clicked.connect(self.close)
+
+        self.close_hbox = QHBoxLayout()
+        self.close_hbox.addStretch()
+        self.close_hbox.addWidget(close_btn)
+        self.scrollcontainer_widget = QWidget()
+
+        self.o_idLabel = QLabel()
+        self.o_idLabel.setFont(QFont("Helvitica", 15, QFont.Weight.Bold))
+        self.o_idLabel.setStyleSheet("border-top: 1px solid black; border-bottom: 1px solid black;")
+        self.o_idLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.foot_frame = QFrame()
+        self.foot_frame.setObjectName("footframe")
+        self.foot_frame.setStyleSheet("#footframe {border-top: 1px solid black; border-bottom: 1px solid black;}")
+        self.foot_hbox = QHBoxLayout(self.foot_frame)
+        totlam = QLabel("Total amount")
+        totlam.setFont(QFont("Helvitica", 15, QFont.Weight.Bold))
+        self.foot_hbox.addWidget(totlam)
+
+
+        self.foot_hbox.addStretch()
+        self.totalamt_label = QLabel()
+        self.totalamt_label.setFont(QFont("Helvitica", 15, QFont.Weight.Bold))
+        self.foot_hbox.addWidget(self.totalamt_label)
+
+        self.main_layout.addLayout(self.close_hbox)
+        self.main_layout.addWidget(self.o_idLabel)
+        self.viewOrder_layout = QScrollAreaLayout(QVBoxLayout,self.main_layout)
+        self.viewOrder_layout.getLayout().setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.main_layout.addWidget(self.foot_frame)
         pubsub.subscribe("viewClicked_event", self.setContents)
         
     def setContents(self, orderid) :
@@ -222,17 +258,18 @@ class QviewOrderDialog(QStyledDialog) :
     
     def updateContents(self) :
 
-        self.clear_layout(self.viewOrder_layout)
+        self.clear_layout(self.viewOrder_layout.getLayout())
         self.o_id = self.orderItemsSubtotalList[0][0]
-        o_idLabel = QLabel(f"Order #{self.o_id}")
-        self.viewOrder_layout.addWidget(o_idLabel)        
+        self.o_idLabel.setText(f"Order #{self.o_id}")        
         for oiTuple in self.orderItemsSubtotalList :
             _, fname, oiquan, subtotal = oiTuple
             orderitemLabel = QLabel(f"{oiquan}x {fname} ₱{subtotal}")
-            self.viewOrder_layout.addWidget(orderitemLabel)
+            orderitemLabel.setFont(QFont("Helvitica", 13, QFont.Weight.Normal))
+
+            self.viewOrder_layout.getLayout().addWidget(orderitemLabel, alignment = Qt.AlignmentFlag.AlignTop)
         
             pass
-        self.viewOrder_layout.addWidget(QLabel(f"Total Amount: ₱{self.orderItemsTotal}"))
+        self.totalamt_label.setText(f"₱{self.orderItemsTotal}")
     
     def clear_layout(self, layout): 
         print('rerendered viewOrder Dialog')
