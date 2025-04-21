@@ -18,6 +18,7 @@ class QLogoHeader(QFrame) :
     def __init__(self, pageName):
         super().__init__()
         self.main_layout = QHBoxLayout(self) 
+        self.main_layout.setContentsMargins(0,10,0,10)
         self.logo = QLogoButton("assets/icons/pfp_icon.svg", "M'sKitchen", pageName)
         self.logo.connectTo(self.handleLogoClicked)
         self.main_layout.addWidget(self.logo)

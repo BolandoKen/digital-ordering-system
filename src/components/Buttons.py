@@ -117,7 +117,7 @@ class QLogoButton(QFrame):
         self.setCursor(Qt.CursorShape.PointingHandCursor)
 
         layout = QHBoxLayout()
-        layout.setContentsMargins(10, 0, 10, 0) 
+        layout.setContentsMargins(0, 0, 0, 0) 
 
         icon_label = QLabel()
         pixmap = QPixmap(logo_path).scaled(70, 70, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
@@ -194,6 +194,48 @@ class QSecondaryButton(QPushButton) :
             border-radius: 10px;
             border: 2px solid #D9D9D9;
             color: #C8161D;
+            font-style: "Helvetica";
+            font-weight: bold;
+            padding: 5px;
+        """
+        if width is not None :
+            self.setFixedWidth(width)
+        if height is not None :
+            self.setFixedHeight(height)
+        if fontSize is not None :
+            styleString += f"font-size: {fontSize}px;"
+        self.setStyleSheet(styleString)
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+
+class QTertiaryButton(QPushButton) :
+    def __init__(self, text, width=None, height=None, fontSize=None): 
+        super().__init__(text)
+        styleString = """
+            background: #FFCA40;
+            border-radius: 10px;
+            border: none;
+            color: white;
+            font-style: "Helvetica";
+            font-weight: bold;
+            padding: 5px;
+        """
+        if width is not None :
+            self.setFixedWidth(width)
+        if height is not None :
+            self.setFixedHeight(height)
+        if fontSize is not None :
+            styleString += f"font-size: {fontSize}px;"
+        self.setStyleSheet(styleString)
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+
+class QQuaternaryButton(QPushButton) :
+    def __init__(self, text, width=None, height=None, fontSize=None): 
+        super().__init__(text)
+        styleString = """
+            background: transparent;
+            border-radius: 10px;
+            border: 2px solid white;
+            color: white;
             font-style: "Helvetica";
             font-weight: bold;
             padding: 5px;

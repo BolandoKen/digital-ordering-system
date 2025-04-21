@@ -38,7 +38,7 @@ class QCartItemSpinBox(QFrame) :
         self.quantityLineEdit.setFixedWidth(40)
         self.quantityLineEdit.setFont(QFont("Helvetica", 20, QFont.Weight.Bold))
         self.quantityLineEdit.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.quantityLineEdit.setStyleSheet("border:none; border-bottom: 1px solid black;")
+        self.quantityLineEdit.setStyleSheet("border:none;")
         self.quantityLineEdit.setValidator(QIntValidator(1, 99))
         self.quantity = 1
         self.main_layout.addWidget(self.minusBtn)

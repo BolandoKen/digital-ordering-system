@@ -51,6 +51,8 @@ class QAdminSideBar(QSideBar) :
         pubsub.subscribe("backToFoodPanel_clicked", self.handlePanelBtnClicked)
         self.AccPanelBtn = QPushButton("Account")
         self.StatsPanelBtn = QPushButton("Statistics")
+        self.StatsPanelBtn.setStyleSheet("background-color: white; color: black;")
+        self.AccPanelBtn.setStyleSheet("background-color: white; color: black")
         self.AccPanelBtn.clicked.connect(lambda: self.handlePanelBtnClicked(2))
         self.StatsPanelBtn.clicked.connect(lambda: self.handlePanelBtnClicked(1))
         self.sidebar_layout.addItem(QSpacerItem(50,150))
@@ -243,6 +245,7 @@ class QSimpleCartItem(QFrame) : # refactor this later
         self.price = price
         self.state = "cart"
         self.main_layout = QVBoxLayout(self)
+        self.main_layout.setContentsMargins(0,0,0,0)
     
         # self.img_label = QLabel()
         self.pixmap = imgfile 
@@ -266,28 +269,34 @@ class QSimpleCartItem(QFrame) : # refactor this later
         self.foodprice_label = QLabel(f"₱{str(price)}")
         self.customQuanBox = QCartItemSpinBox()
 
-        self.itemDict =  {
+        self.itemDict_cart = {
             "subtotal_label" : self.subtotal_label,
             "closeBtn_cart" : self.closeBtn_cartState,
-            "closeBtn_confirm" : self.closeBtn_confirmState,
             "img_label_cart" : QLabel(),
+            "foodname_label" : QLabel(foodname),
+            "foodprice_label" : QLabel(f"₱{str(price)}"),
+            "customQuanBox" : self.customQuanBox,
+        }
+        self.itemDict_confirm = {
+            "closeBtn_confirm" : self.closeBtn_confirmState,
             "img_label_confirm" : QLabel(),
             "foodname_label" : QLabel(foodname),
             "foodprice_label" : QLabel(f"₱{str(price)}"),
             "customQuanBox" : self.customQuanBox,
         }
+        
 
-        self.itemDict["img_label_cart"].setPixmap(self.pixmap)
-        self.itemDict["img_label_cart"].setFixedSize(100,100)
-        self.itemDict["img_label_cart"].setScaledContents(True)
+        self.itemDict_cart["img_label_cart"].setPixmap(self.pixmap)
+        self.itemDict_cart["img_label_cart"].setFixedSize(100,100)
+        self.itemDict_cart["img_label_cart"].setScaledContents(True)
 
-        self.itemDict["img_label_confirm"].setPixmap(self.pixmap)
-        self.itemDict["img_label_confirm"].setFixedSize(100,100)
-        self.itemDict["img_label_confirm"].setScaledContents(True)
+        self.itemDict_confirm["img_label_confirm"].setPixmap(self.pixmap)
+        self.itemDict_confirm["img_label_confirm"].setFixedSize(100,100)
+        self.itemDict_confirm["img_label_confirm"].setScaledContents(True)
 
-        self.cart_cartState_widget = QCart_cartState(self.itemDict)
+        self.cart_cartState_widget = QCart_cartState(self.itemDict_cart)
         self.cart_cartState_widget.addSpinBox()
-        self.cart_confirmState_widget = QCart_confirmState(self.itemDict)
+        self.cart_confirmState_widget = QCart_confirmState(self.itemDict_confirm)
         self.cart_confirmState_widget.hide()
 
         self.main_layout.addWidget(self.cart_cartState_widget)
@@ -356,12 +365,17 @@ class QCart_confirmState(QFrame) :
         self.itemDict = itemDict
         self.main_layout = QHBoxLayout(self) 
         self.main_layout.setContentsMargins(0,0,0,0)
+        self.setStyleSheet("background:transparent; color: white;")
 
         self.foodname_price_vbox = QVBoxLayout()
+        self.foodname_price_vbox.addStretch()
         self.foodname_price_vbox.addWidget(self.itemDict["foodname_label"])
         self.foodname_price_vbox.addWidget(self.itemDict["foodprice_label"])
+        self.foodname_price_vbox.addStretch()
+
 
         self.placeholder_layout = QHBoxLayout()
+        self.placeholder_layout.setContentsMargins(0,0,0,0)
 
         self.main_layout.addWidget(self.itemDict["img_label_confirm"])
         self.main_layout.addLayout(self.foodname_price_vbox)

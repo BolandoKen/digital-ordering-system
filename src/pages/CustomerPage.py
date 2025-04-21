@@ -10,12 +10,13 @@ from PyQt6.QtWidgets import (
     QLabel,
     QFrame,
     QGridLayout,
+    QSpacerItem,
 )
 from src.components.SideBar import QCustomerSideBar
 from src.components.Headers import QLogoHeader
 
 from src.utils.PubSub import pubsub
-from src.components.Buttons import QDineInButton, QTakeOutButton, QLogoButton
+from src.components.Buttons import QDineInButton, QTakeOutButton, QLogoButton, QTertiaryButton, QQuaternaryButton
 from src.components.ScrollArea import QScrollAreaLayout
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
@@ -57,7 +58,7 @@ class QCustomerFoodMenuPanel(QFrame) :
         self.logoHeader = QLogoHeader("customer")
         self.customer_layout = QGridLayout(self)
         self.customer_layout.setSpacing(0)
-        self.customer_layout.setContentsMargins(0,0,0,0)
+        self.customer_layout.setContentsMargins(30,0,0,0)
         self.customer_layout.addWidget(self.logoHeader, 0,0)
         self.customer_layout.addWidget(self.foodPanel, 1, 0)
         self.customer_layout.addWidget(self.sideBar, 0, 1, 2, 1)
@@ -107,29 +108,61 @@ class QCustomerConfirmOrderPanel(QFrame) :
     def __init__(self, parent_stackedWidgets):
         super().__init__()
         self.setObjectName("Confirm")
-        self.setStyleSheet("#Confirm {background-color:#C8161D; }")
+        self.setStyleSheet("""
+                           #Confirm {
+                           background-color:#C8161D; 
+                           }
+                           #Confirm > * {
+                           background: transparent;
+                           color : white;
+                           }
+                           """)
         self.parent_stackedWidgets = parent_stackedWidgets
 
         self.main_layout = QVBoxLayout(self)
-        
-        self.buttons_layout = QHBoxLayout()
-        self.confirmBtn = QPushButton("confirm")
-        self.cancelBtn = QPushButton("cancel")
+        self.main_layout.setContentsMargins(30,0,35,35)
+        self.main_layout.setSpacing(0)
+
+        self.confirmBtn = QTertiaryButton("Checkout",300, 60, 35)
+        self.cancelBtn = QQuaternaryButton("Back to Menu",300, 60, 35 )
         self.confirmBtn.clicked.connect(self.handleConfirm_clicked)
         self.cancelBtn.clicked.connect(self.handleCancel_clicked)
-        self.buttons_layout.addWidget(self.confirmBtn)
-        self.buttons_layout.addWidget(self.cancelBtn)
+ 
 
         self.choice_label = QLabel()
+        self.choice_label.setFont(QFont("Helvitica", 25, QFont.Weight.Bold))
         self.total_label = QLabel()
+        self.total_label.setFont(QFont("Helvitica", 25, QFont.Weight.Bold))
+
+
+        self.footer_layout = QHBoxLayout()
+        self.footer_layout.setContentsMargins(0,20,0,0)
+        self.leftFoot_layout = QVBoxLayout()
+        self.rightFoot_layout = QVBoxLayout()
+        self.rightFoot_layout.setSpacing(20)
+
+        self.footer_layout.addLayout(self.leftFoot_layout)
+        self.footer_layout.addStretch()
+        self.footer_layout.addLayout(self.rightFoot_layout)
+
+        self.leftFoot_layout.setSpacing(0)
+        self.leftFoot_layout.addSpacerItem(QSpacerItem(50,50))
+        self.leftFoot_layout.addWidget(QLabel("Total : "), alignment=Qt.AlignmentFlag.AlignBottom)
+        self.leftFoot_layout.addWidget(self.total_label, alignment=Qt.AlignmentFlag.AlignBottom)
+
+        self.rightFoot_layout.addWidget(self.confirmBtn)
+        self.rightFoot_layout.addWidget(self.cancelBtn)
 
       
+        self.main_layout.addWidget(QLogoHeader("customer"))
         self.main_layout.addWidget(self.choice_label)
-        self.scroll_arealayout = QScrollAreaLayout(QVBoxLayout, self.main_layout)
-        self.scroll_arealayout.setStyleSheet("background: transparent")
+        self.scroll_arealayout = QScrollAreaLayout(QVBoxLayout, self.main_layout, "confirm")
+        self.scroll_arealayout.getLayout().setContentsMargins(0,0,0,0)
+        # self.scroll_arealayout.setStyleSheet("background: transparent;")
 
-        self.main_layout.addWidget(self.total_label)
-        self.main_layout.addLayout(self.buttons_layout)
+
+        self.main_layout.addLayout(self.footer_layout)
+
         self.cartItemsArr = None
         pubsub.subscribe("submitOrder_clicked", self.handleSubmitOrder_clicked)
         pubsub.subscribe("cartItem_deleted", self.updateCartItems)
@@ -142,10 +175,12 @@ class QCustomerConfirmOrderPanel(QFrame) :
         self.setContent()        
 
     def setContent(self) :
-        self.choice_label.setText(f"Confirm Order - {self.choice}")
+        if self.choice == "dine_in" :
+            choicestr = "Dine in"
+        else :
+            choicestr = "Take out"
+        self.choice_label.setText(f"Confirm Order - {choicestr}")
         for item in self.cartItemsArr :
-            label = QLabel(f"{item.foodname} {item.getQuantity()}")
-            label.setFixedHeight(100)
             self.sidebar_layout.getLayout().removeWidget(item)
             item.transitionState()
             self.scroll_arealayout.getLayout().addWidget(item, alignment = Qt.AlignmentFlag.AlignTop)
@@ -158,8 +193,6 @@ class QCustomerConfirmOrderPanel(QFrame) :
         print(len(self.cartItemsArr))
 
         for item in self.cartItemsArr :
-            label = QLabel(f"{item.foodname} {item.getQuantity()}")
-            label.setFixedHeight(100)
             self.scroll_arealayout.getLayout().removeWidget(item)
             item.transitionState()
             self.sidebar_layout.addWidget(item)
