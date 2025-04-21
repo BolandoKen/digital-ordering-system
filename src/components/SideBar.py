@@ -173,7 +173,10 @@ class QCustomerSideBar(QSideBar) :
 
         self.cartItems.append(new_cartItem)
 
+        self.sidebar_layout.container.hide()
         self.sidebar_layout.addWidget(new_cartItem)
+        self.sidebar_layout.container.show()
+
         self.recalculate_total()
         self.submitBtn.setEnabled(len(self.cartItems) > 0)
 
@@ -189,7 +192,8 @@ class QCustomerSideBar(QSideBar) :
                 continue
             newCartItem.append(item)
         self.cartItems = newCartItem 
-        self.sidebar_layout.getLayout().removeWidget(widgetToRemove)
+        # self.sidebar_layout.getLayout().removeWidget(widgetToRemove)
+        widgetToRemove.hide()
         widgetToRemove.deleteLater()
         self.recalculate_total()
         pubsub.publish("cartItem_deleted", self.cartItems)
