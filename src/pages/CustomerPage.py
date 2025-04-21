@@ -11,6 +11,7 @@ from PyQt6.QtWidgets import (
     QFrame,
     QGridLayout,
     QSpacerItem,
+    QSizePolicy
 )
 from src.components.SideBar import QCustomerSideBar
 from src.components.Headers import QLogoHeader
@@ -18,9 +19,10 @@ from src.components.Headers import QLogoHeader
 from src.utils.PubSub import pubsub
 from src.components.Buttons import QDineInButton, QTakeOutButton, QLogoButton, QTertiaryButton, QQuaternaryButton
 from src.components.ScrollArea import QScrollAreaLayout
+from src.database.queries import fetchLatest_orderid
 from PyQt6.QtGui import QFont
-from PyQt6.QtCore import Qt
-
+from PyQt6.QtCore import Qt, QTimer
+import threading
 
 
 class QCustomerPage(QFrame) :
@@ -157,7 +159,7 @@ class QCustomerConfirmOrderPanel(QFrame) :
         self.main_layout.addWidget(QLogoHeader("customer"))
         self.main_layout.addWidget(self.choice_label)
         self.scroll_arealayout = QScrollAreaLayout(QVBoxLayout, self.main_layout, "confirm")
-        self.scroll_arealayout.getLayout().setContentsMargins(0,0,0,0)
+        self.scroll_arealayout.getLayout().setContentsMargins(0,0,15,0)
         # self.scroll_arealayout.setStyleSheet("background: transparent;")
 
 
@@ -205,6 +207,8 @@ class QCustomerConfirmOrderPanel(QFrame) :
             return
         self.submitorder_callback()
         self.parent_stackedWidgets.setCurrentIndex(3)
+        pubsub.publish("orderConfirmed_event")
+
         # in print panel, just fetch the latest order...
         self.clear_layout(self.scroll_arealayout.getLayout())
 
@@ -228,12 +232,95 @@ class QCustomerPrintingPanel(QFrame) :
     def __init__(self, parent_stackedWidgets):
         super().__init__()
         self.parent_stackedWidgets = parent_stackedWidgets
+        self.setObjectName("Print")
+        self.setStyleSheet("""
+                           #Print {
+                           background-color:#C8161D; 
+                           }
+                           #Print > * {
+                           background: transparent;
+                           color : white;
+                           }
+                           """)
+        
         self.main_layout = QVBoxLayout(self)
-        self.main_layout.addWidget(QLabel("Your receipt for your order is currently printing, please wait!"))
-        newOrderBtn = QPushButton("new order")
-        self.main_layout.addWidget(newOrderBtn)
+        self.main_layout.setSpacing(40)
+        
+        self.msg_label = QLabel("Thank you! Your order has been placed!")
+        self.msg_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.msg_label.setWordWrap(True)
+        self.msg_label.setFixedSize(500,100)
+        self.msg_label.setFont(QFont("Helvitica", 25, QFont.Weight.Bold))
+
+        self.msg2_label = QLabel('Your receipt is printing. Please hand it to the counter for food preparation.')
+        self.msg2_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.msg2_label.setWordWrap(True)
+        self.msg2_label.setFixedSize(500,100)
+        self.msg2_label.setFont(QFont("Helvitica", 15, QFont.Weight.Normal))
+
+        self.orderno_label = QLabel()
+        self.orderno_label.setStyleSheet("color: #FFCA40")
+        self.orderno_label.setWordWrap(True)
+        self.orderno_label.setFont(QFont("Helvitica", 25, QFont.Weight.Bold))
+
+        self.msg3_label = QLabel("Returning to Home in 5")
+        self.msg3_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.msg3_label.setWordWrap(True)
+        self.msg3_label.setFixedSize(500,100)
+        self.msg3_label.setFont(QFont("Helvitica", 15, QFont.Weight.Normal))
+
+        newOrderBtn = QQuaternaryButton("Start New Order", 300, 60, 35)
+        
+        self.orderno_labellabel = QLabel("Order No:")
+        self.orderno_labellabel.setFont(QFont("Helvitica", 25, QFont.Weight.Bold))
+
+        orderno_vbox =QVBoxLayout()
+        orderno_vbox.setContentsMargins(0,0,0,0)
+        orderno_vbox.setSpacing(0)
+        orderno_vbox.addWidget(self.orderno_labellabel, alignment=Qt.AlignmentFlag.AlignCenter)
+        orderno_vbox.addWidget(self.orderno_label, alignment=Qt.AlignmentFlag.AlignCenter)
+
+        btn_timer_vbox = QVBoxLayout()
+        btn_timer_vbox.setContentsMargins(0,0,0,0)
+        btn_timer_vbox.setSpacing(0)
+        btn_timer_vbox.addWidget(newOrderBtn, alignment=Qt.AlignmentFlag.AlignCenter)
+        btn_timer_vbox.addWidget(self.msg3_label, alignment=Qt.AlignmentFlag.AlignCenter)
+
+        self.main_layout.addStretch()
+        self.main_layout.addWidget(QLogoButton("assets/icons/pfp_icon.svg", "M'sKitchen", None), alignment=Qt.AlignmentFlag.AlignCenter)
+        self.main_layout.addWidget(self.msg_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.main_layout.addWidget(self.msg2_label, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.main_layout.addLayout(orderno_vbox)
+        self.main_layout.addLayout(btn_timer_vbox)
+       
+        self.main_layout.addStretch()
         newOrderBtn.clicked.connect(self.handleNewOrder_clicked)
+        pubsub.subscribe("orderConfirmed_event", self.setText_OrderId)
 
     def handleNewOrder_clicked(self) :
         self.parent_stackedWidgets.setCurrentIndex(1)
+        self.mytimer.stop()
+        self.mytimer.timeout.disconnect()
+
+    
+    def setText_OrderId(self, e = None) :
+        self.mytimer = QTimer()
+        self.mytimer.setSingleShot(True)
+        self.mytimer.timeout.connect(lambda: self.timeRecurse) # set up to disconnect
+        self.orderno = str(fetchLatest_orderid())
+        self.orderno_label.setText(self.orderno)
+
+
+        # should only start after printing ends..
+        self.timeRecurse(5)
+    
+    def timeRecurse(self, seconds) :
+        self.msg3_label.setText(f"Returning to Home in {seconds}")
+        if seconds == 0 :
+            self.parent_stackedWidgets.setCurrentIndex(1)
+            return
+        seconds -= 1
+        self.mytimer.start(1000)
+        self.mytimer.timeout.disconnect()
+        self.mytimer.timeout.connect(lambda:self.timeRecurse(seconds))
 

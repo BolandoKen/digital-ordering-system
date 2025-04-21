@@ -68,7 +68,7 @@ class QScrollAreaLayout(QScrollArea) :
         #styles derived from https://forum.qt.io/topic/41040/pyqt-custom-scrollbar-design-solved/5
         self.setStyleSheet(stylestr)
 
-        if isinstance(QLayoutType, QVBoxLayout) : # whats this for?
+        if isinstance(QLayoutType, QVBoxLayout) : # whats this for? automatically sets margins
             self.myLayout = QLayoutType(self.container, alignment=Qt.AlignmentFlag.AlignCenter)
             QLayoutType.setContentsMargins(0,0,0,0) 
         else :
