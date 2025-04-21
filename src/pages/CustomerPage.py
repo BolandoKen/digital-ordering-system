@@ -120,16 +120,20 @@ class QCustomerConfirmOrderPanel(QFrame) :
         self.buttons_layout.addWidget(self.confirmBtn)
         self.buttons_layout.addWidget(self.cancelBtn)
 
-        self.contents_layout = QVBoxLayout() 
-        # self.contents_layout.addWidget(QLabel(f"confirm order - {self.choice} "))
-        self.contents_layout.addWidget(QLabel("confirm oder - "))
+        self.choice_label = QLabel()
+        self.total_label = QLabel()
 
-        self.main_layout.addLayout(self.contents_layout)
-        self.scroll_layout = QScrollAreaLayout(QVBoxLayout, self.main_layout)
+      
+        self.main_layout.addWidget(self.choice_label)
+        self.scroll_arealayout = QScrollAreaLayout(QVBoxLayout, self.main_layout)
+        self.scroll_arealayout.setStyleSheet("background: transparent")
+
+        self.main_layout.addWidget(self.total_label)
         self.main_layout.addLayout(self.buttons_layout)
         self.cartItemsArr = None
         pubsub.subscribe("submitOrder_clicked", self.handleSubmitOrder_clicked)
         pubsub.subscribe("cartItem_deleted", self.updateCartItems)
+        pubsub.subscribe("recalculate_total", self.update_totalText)
     
     def handleSubmitOrder_clicked(self, submitParams) :
         self.cartItemsArr, self.submitorder_callback, self.choice, self.sidebar_layout = submitParams
@@ -138,13 +142,14 @@ class QCustomerConfirmOrderPanel(QFrame) :
         self.setContent()        
 
     def setContent(self) :
+        self.choice_label.setText(f"Confirm Order - {self.choice}")
         for item in self.cartItemsArr :
             label = QLabel(f"{item.foodname} {item.getQuantity()}")
             label.setFixedHeight(100)
             self.sidebar_layout.getLayout().removeWidget(item)
             item.transitionState()
-            self.scroll_layout.getLayout().addWidget(item, alignment = Qt.AlignmentFlag.AlignTop)
-            self.scroll_layout.getLayout().setAlignment(Qt.AlignmentFlag.AlignTop)
+            self.scroll_arealayout.getLayout().addWidget(item, alignment = Qt.AlignmentFlag.AlignTop)
+            self.scroll_arealayout.getLayout().setAlignment(Qt.AlignmentFlag.AlignTop)
             # self.scroll_layout.addWidget(label)
 
         # confirm order, set contents function
@@ -155,20 +160,26 @@ class QCustomerConfirmOrderPanel(QFrame) :
         for item in self.cartItemsArr :
             label = QLabel(f"{item.foodname} {item.getQuantity()}")
             label.setFixedHeight(100)
-            self.scroll_layout.getLayout().removeWidget(item)
+            self.scroll_arealayout.getLayout().removeWidget(item)
             item.transitionState()
             self.sidebar_layout.addWidget(item)
 
         self.parent_stackedWidgets.setCurrentIndex(0)
     
     def handleConfirm_clicked(self) :
+        if not self.cartItemsArr :
+            print("cart is empty")
+            return
         self.submitorder_callback()
         self.parent_stackedWidgets.setCurrentIndex(3)
         # in print panel, just fetch the latest order...
-        self.clear_layout(self.scroll_layout.getLayout())
+        self.clear_layout(self.scroll_arealayout.getLayout())
 
     def updateCartItems(self, newCartItems) :
         self.cartItemsArr = newCartItems
+
+    def update_totalText(self, totalText) :
+        self.total_label.setText(totalText)
 
     def clear_layout(self, layout): 
         if layout is not None:

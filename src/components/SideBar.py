@@ -133,23 +133,17 @@ class QCustomerSideBar(QSideBar) :
             print("Cart is empty")
             return []
       
-        # valid_items = [(fid, fname, qty, imgfile, price) for fid, fname, qty, imgfile, price in self.cartItems if qty > 0] #chatgpt lessened my code to this bruh
-        # orderitem_info = [(qty, fid) for fid, fname, qty, imgfile, price in valid_items]
         orderitem_info = []
         for item in self.cartItems :
             orderitem_info.append((item.getQuantity(), item.foodid))
         
         pubsub.publish("submitOrder_clicked", (self.cartItems, self.submitOrderCallback, self.choice, self.sidebar_layout)) # should also probably pass cb
 
-        # confirmation = True # placeholder for confirmation dialog
-        # if confirmation :
-        #     addOrder(orderitem_info)
-        #     pubsub.publish("orderSubmitted_event")
-        #     self.init_customerSideBar()
-
     def submitOrderCallback(self) :
+        # called back from confirm panel
         if not self.cartItems:
             print("Cart is empty")
+            # error or just disable?
             return []
       
         orderitem_info = []
@@ -157,11 +151,12 @@ class QCustomerSideBar(QSideBar) :
             orderitem_info.append((item.getQuantity(), item.foodid))
         
 
-        confirmation = True # placeholder for confirmation dialog
+        confirmation = True # placeholder for confirmation dialog,
         if confirmation :
             addOrder(orderitem_info)
             pubsub.publish("orderSubmitted_event")
             self.init_customerSideBar()
+        return True
 
     def handleFoodAddToCart(self, foodTuple) :
         fooditem_id, foodname, imgfile, price = foodTuple
@@ -175,12 +170,7 @@ class QCustomerSideBar(QSideBar) :
         new_cartItem.closeBtn_confirmState.clicked.connect(lambda _, foodid= fooditem_id: self.removeItemFromCart(foodid))
 
         self.cartItems.append(new_cartItem)
-        # for item in self.cartItems:
-        #     if item[0] == fooditem_id:
-        #         print(f"{foodname} already in cart")
-        #         return
-        # self.cartItems.append((fooditem_id, foodname, quantity, imgfile, price))
-        # self.init_customerSideBar() 
+
         self.sidebar_layout.addWidget(new_cartItem)
         self.recalculate_total()
         self.submitBtn.setEnabled(len(self.cartItems) > 0)
@@ -205,11 +195,13 @@ class QCustomerSideBar(QSideBar) :
     def recalculate_total(self, e =None) :
         if not self.cartItems:
             self.total_label.setText("₱0.00") 
+            pubsub.publish("recalculate_total", f"₱0.00" )
             return
         total = 0
         for item in self.cartItems :
             total += item.getSubtotal()
         self.total_label.setText(f"₱{total:.2f}")
+        pubsub.publish("recalculate_total", f"₱{total:.2f}" )
         self.total = total
 
     def renderCartItems(self) :
@@ -224,18 +216,7 @@ class QCustomerSideBar(QSideBar) :
             total += item.getSubTotal()
         
         self.total_label.setText(f"Total: ₱{total:.2f}")
-        # total = 0
-        # for f_item in self.cartItems:
-        #     foodid, foodname, item_quantity, imgfile, price = f_item
-        #     f_item_widget = QSimpleCartItem(foodid, foodname, imgfile, price)
-        #     f_item_widget.quantityBox.setValue(item_quantity)
-        #     f_item_widget.quantityBox.valueChanged.connect(
-        #         lambda val, fid=foodid: self.handleQuantityChanged(fid, val)
-        #     )
-        #     self.sidebar_layout.addWidget(f_item_widget)
-        #     total += f_item_widget.getSubtotal()
-            
-        # self.total_label.setText(f"Total: ₱{total:.2f}")
+
 
     def clear_layout(self, layout): 
         if layout is not None:
@@ -245,18 +226,6 @@ class QCustomerSideBar(QSideBar) :
                     item.widget().deleteLater()
                 elif item.spacerItem():  
                     layout.removeItem(item)   
-    
-    def handleQuantityChanged(self, food_id, new_quantity): # not used
-        updated_cart = []
-        for item in self.cartItems:
-            fid, fname, qty, imgfile, price = item
-            if fid == food_id:
-                updated_cart.append((fid, fname, new_quantity, imgfile, price))
-            else:
-                updated_cart.append(item)
-        self.cartItems = updated_cart
-        self.init_customerSideBar()
-        self.submitBtn.setEnabled(len(self.cartItems) > 0)
 
 class QSimpleCartItem(QFrame) : # refactor this later
     def __init__(self, foodid, foodname, imgfile, price, recalculate_cb):
