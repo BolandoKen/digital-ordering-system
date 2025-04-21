@@ -11,7 +11,8 @@ from PyQt6.QtWidgets import (
     QFrame,
     QSpinBox,
     QHBoxLayout,
-    QSpacerItem
+    QSpacerItem,
+    QLayout
 )
 from src.utils.PubSub import pubsub
 from src.database.Orders import addOrder
@@ -138,7 +139,7 @@ class QCustomerSideBar(QSideBar) :
         for item in self.cartItems :
             orderitem_info.append((item.getQuantity(), item.foodid))
         
-        pubsub.publish("submitOrder_clicked", (self.cartItems, self.submitOrderCallback, self.choice)) # should also probably pass cb
+        pubsub.publish("submitOrder_clicked", (self.cartItems, self.submitOrderCallback, self.choice, self.sidebar_layout)) # should also probably pass cb
 
         # confirmation = True # placeholder for confirmation dialog
         # if confirmation :
@@ -170,7 +171,9 @@ class QCustomerSideBar(QSideBar) :
                 print(f"{foodname} already in cart")
                 return
         new_cartItem = QSimpleCartItem(fooditem_id, foodname, imgfile, price, self.recalculate_total)
-        new_cartItem.closeButton.clicked.connect(lambda _, foodid= fooditem_id: self.removeItemFromCart(foodid))
+        new_cartItem.closeBtn_cartState.clicked.connect(lambda _, foodid= fooditem_id: self.removeItemFromCart(foodid))
+        new_cartItem.closeBtn_confirmState.clicked.connect(lambda _, foodid= fooditem_id: self.removeItemFromCart(foodid))
+
         self.cartItems.append(new_cartItem)
         # for item in self.cartItems:
         #     if item[0] == fooditem_id:
@@ -197,6 +200,7 @@ class QCustomerSideBar(QSideBar) :
         self.sidebar_layout.getLayout().removeWidget(widgetToRemove)
         widgetToRemove.deleteLater()
         self.recalculate_total()
+        pubsub.publish("cartItem_deleted", self.cartItems)
     
     def recalculate_total(self, e =None) :
         if not self.cartItems:
@@ -263,47 +267,65 @@ class QSimpleCartItem(QFrame) : # refactor this later
                             border-bottom: 1px solid #D9D9D9;
                            padding: 5px;
                            }
-                           #cartItem > *{background-color: white; color: black; border: none;}""")
+                           #cartItem *{background-color: white; color: black; border: none;}""")
         self.setObjectName("cartItem") 
         self.foodid = foodid
         self.foodname = foodname
         self.price = price
-        self.cartItem_layout = QVBoxLayout(self)
-        self.cartItem_layout.setContentsMargins(0,0,0,0)
-        self.cartItem_layout.setSpacing(0)
-        self.cartItem_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.state = "cart"
+        self.main_layout = QVBoxLayout(self)
+    
+        # self.img_label = QLabel()
+        self.pixmap = imgfile 
+        # # imgfile is reused pixmap passed by food card, should just setpixmapof since memoized
+        # self.img_label.setPixmap(self.pixmap)
+        # self.img_label.setFixedSize(100,100)
+        # self.img_label.setScaledContents(True)
+        
+        self.closeBtn_cartState = QPushButton("x")
+        self.closeBtn_cartState.setFixedWidth(50)
+        self.closeBtn_cartState.setCursor(Qt.CursorShape.PointingHandCursor)
 
-        self.img_label = QLabel()
-        # pixmap = QPixmap(f"assets/foodimg/{imgfile}")
-        self.pixmap = imgfile
-        self.img_label.setPixmap(self.pixmap)
-        self.img_label.setFixedSize(100,100)
-        self.img_label.setScaledContents(True)
-        self.closeButton = QPushButton("x")
-        self.closeButton.setFixedWidth(50)
-        self.closeButton.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.closeBtn_confirmState = QPushButton("trash")
+        self.closeBtn_confirmState.setFixedWidth(50)
+        self.closeBtn_confirmState.setCursor(Qt.CursorShape.PointingHandCursor)
 
-        # self.setFixedWidth(50)
-        self.price_close_hbox = QHBoxLayout()
         self.subtotal_label = QLabel(f"₱{price:.2f}")
         self.subtotal_label.setStyleSheet("margin: 10px")
-        self.price_close_hbox.addWidget(self.subtotal_label)
-        self.price_close_hbox.addStretch()
-        self.price_close_hbox.addWidget(self.closeButton)
 
-
-        self.cartItem_layout.addLayout(self.price_close_hbox)
-        self.cartItem_layout.addWidget(self.img_label, alignment=Qt.AlignmentFlag.AlignCenter)
-
-        
-        self.quantityBox = QSpinBox()
-        self.quantityBox.setValue(1)
-
-        self.cartItem_layout.addWidget(QLabel(foodname), alignment=Qt.AlignmentFlag.AlignCenter)
-        self.cartItem_layout.addWidget(QLabel(f"₱{str(price)}"), alignment=Qt.AlignmentFlag.AlignCenter)
+        self.foodname_label = QLabel(foodname)
+        self.foodprice_label = QLabel(f"₱{str(price)}")
         self.customQuanBox = QCartItemSpinBox()
-        self.cartItem_layout.addWidget(self.customQuanBox, alignment=Qt.AlignmentFlag.AlignCenter)
+
+        self.itemDict =  {
+            "subtotal_label" : self.subtotal_label,
+            "closeBtn_cart" : self.closeBtn_cartState,
+            "closeBtn_confirm" : self.closeBtn_confirmState,
+            "img_label_cart" : QLabel(),
+            "img_label_confirm" : QLabel(),
+            "foodname_label" : QLabel(foodname),
+            "foodprice_label" : QLabel(f"₱{str(price)}"),
+            "customQuanBox" : self.customQuanBox,
+        }
+
+        self.itemDict["img_label_cart"].setPixmap(self.pixmap)
+        self.itemDict["img_label_cart"].setFixedSize(100,100)
+        self.itemDict["img_label_cart"].setScaledContents(True)
+
+        self.itemDict["img_label_confirm"].setPixmap(self.pixmap)
+        self.itemDict["img_label_confirm"].setFixedSize(100,100)
+        self.itemDict["img_label_confirm"].setScaledContents(True)
+
+        self.cart_cartState_widget = QCart_cartState(self.itemDict)
+        self.cart_cartState_widget.addSpinBox()
+        self.cart_confirmState_widget = QCart_confirmState(self.itemDict)
+        self.cart_confirmState_widget.hide()
+
+        self.main_layout.addWidget(self.cart_cartState_widget)
+        self.main_layout.addWidget(self.cart_confirmState_widget)
+
         self.customQuanBox.connectOnChangeTo(self.update_subtotal)
+
 
     def getQuantity(self):
         return self.customQuanBox.getQuantity()
@@ -317,4 +339,69 @@ class QSimpleCartItem(QFrame) : # refactor this later
     def getSubtotal(self):
         return self.price * self.customQuanBox.getQuantity()
 
+    def transitionState(self, e = None) :
+        if self.state == "cart" :
+            self.cart_cartState_widget.hide()
+            self.cart_cartState_widget.removeSpinBox()
+            self.cart_confirmState_widget.addSpinBox()
+            self.cart_confirmState_widget.show()
+            self.state = "confirm"
+        elif self.state == "confirm" :
+            self.cart_confirmState_widget.hide()
+            self.cart_confirmState_widget.removeSpinBox()
+            self.cart_cartState_widget.addSpinBox()
+            self.cart_cartState_widget.show()
+            self.state = "cart"
 
+
+class QCart_cartState(QFrame) :
+    def __init__(self, itemDict):
+        super().__init__()
+        self.itemDict = itemDict
+        self.main_layout = QVBoxLayout(self)
+        self.main_layout.setContentsMargins(0,0,0,0)
+
+        self.subtotal_close_hbox = QHBoxLayout()
+        self.subtotal_close_hbox.addWidget(self.itemDict["subtotal_label"])
+        self.subtotal_close_hbox.addStretch()
+        self.subtotal_close_hbox.addWidget(self.itemDict["closeBtn_cart"])
+
+        self.placeholder_layout = QHBoxLayout()
+
+        self.main_layout.addLayout(self.subtotal_close_hbox)
+        self.main_layout.addWidget(self.itemDict["img_label_cart"], alignment=Qt.AlignmentFlag.AlignCenter)
+        self.main_layout.addWidget(self.itemDict["foodname_label"], alignment=Qt.AlignmentFlag.AlignCenter)
+        self.main_layout.addWidget(self.itemDict["foodprice_label"], alignment=Qt.AlignmentFlag.AlignCenter)
+        self.main_layout.addLayout(self.placeholder_layout)
+
+
+    def addSpinBox(self) :
+        self.placeholder_layout.addWidget(self.itemDict["customQuanBox"], alignment=Qt.AlignmentFlag.AlignCenter)
+    
+    def removeSpinBox(self) :
+        self.placeholder_layout.removeWidget(self.itemDict["customQuanBox"])
+
+class QCart_confirmState(QFrame) :
+    def __init__(self, itemDict):
+        super().__init__()
+        self.itemDict = itemDict
+        self.main_layout = QHBoxLayout(self) 
+        self.main_layout.setContentsMargins(0,0,0,0)
+
+        self.foodname_price_vbox = QVBoxLayout()
+        self.foodname_price_vbox.addWidget(self.itemDict["foodname_label"])
+        self.foodname_price_vbox.addWidget(self.itemDict["foodprice_label"])
+
+        self.placeholder_layout = QHBoxLayout()
+
+        self.main_layout.addWidget(self.itemDict["img_label_confirm"])
+        self.main_layout.addLayout(self.foodname_price_vbox)
+        self.main_layout.addStretch()
+        self.main_layout.addLayout(self.placeholder_layout)
+        self.main_layout.addWidget(self.itemDict["closeBtn_confirm"])
+
+    def addSpinBox(self) :
+        self.placeholder_layout.addWidget(self.itemDict["customQuanBox"], alignment=Qt.AlignmentFlag.AlignCenter)
+    
+    def removeSpinBox(self) :
+        self.placeholder_layout.removeWidget(self.itemDict["customQuanBox"])

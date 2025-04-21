@@ -16,6 +16,7 @@ from src.components.Headers import QLogoHeader
 
 from src.utils.PubSub import pubsub
 from src.components.Buttons import QDineInButton, QTakeOutButton, QLogoButton
+from src.components.ScrollArea import QScrollAreaLayout
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
 
@@ -65,14 +66,13 @@ class QCustomerGreetPanel(QFrame) :
     def __init__(self, parent_stackedWidgets):
         super().__init__()
         self.parent_stackedWidgets = parent_stackedWidgets
-        main_layout = QVBoxLayout(self)
-        main_layout.setSpacing(15)
-        main_layout.setContentsMargins(0,0,0,50)
+        self.main_layout = QVBoxLayout(self)
+        self.main_layout.setSpacing(15)
+        self.main_layout.setContentsMargins(0,0,0,50)
         dineInBtn = QDineInButton()
         takeOutBtn = QTakeOutButton()
         self.setObjectName("Greet")
         self.setStyleSheet("#Greet {background-color:#C8161D; }")
-
 
         dineInBtn.clicked.connect(lambda: self.handleChoice_clicked("dine_in"))
         takeOutBtn.clicked.connect(lambda: self.handleChoice_clicked("take_out"))
@@ -90,11 +90,11 @@ class QCustomerGreetPanel(QFrame) :
         greetMsg.setStyleSheet("background: transparent;color:white;")
         greetMsg.setFixedHeight(50)
 
-        main_layout.addStretch()
-        main_layout.addWidget(QLogoButton("assets/icons/pfp_icon.svg", "M'sKitchen", None), alignment=Qt.AlignmentFlag.AlignCenter )
-        main_layout.addWidget(greetMsg, alignment=Qt.AlignmentFlag.AlignCenter)
-        main_layout.addLayout(btns_Hbox)
-        main_layout.addStretch()
+        self.main_layout.addStretch()
+        self.main_layout.addWidget(QLogoButton("assets/icons/pfp_icon.svg", "M'sKitchen", None), alignment=Qt.AlignmentFlag.AlignCenter )
+        self.main_layout.addWidget(greetMsg, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.main_layout.addLayout(btns_Hbox)
+        self.main_layout.addStretch()
         
             # dine in takeout options
 
@@ -106,10 +106,12 @@ class QCustomerGreetPanel(QFrame) :
 class QCustomerConfirmOrderPanel(QFrame) : 
     def __init__(self, parent_stackedWidgets):
         super().__init__()
+        self.setObjectName("Confirm")
+        self.setStyleSheet("#Confirm {background-color:#C8161D; }")
         self.parent_stackedWidgets = parent_stackedWidgets
 
         self.main_layout = QVBoxLayout(self)
-
+        
         self.buttons_layout = QHBoxLayout()
         self.confirmBtn = QPushButton("confirm")
         self.cancelBtn = QPushButton("cancel")
@@ -119,32 +121,54 @@ class QCustomerConfirmOrderPanel(QFrame) :
         self.buttons_layout.addWidget(self.cancelBtn)
 
         self.contents_layout = QVBoxLayout() 
+        # self.contents_layout.addWidget(QLabel(f"confirm order - {self.choice} "))
+        self.contents_layout.addWidget(QLabel("confirm oder - "))
 
         self.main_layout.addLayout(self.contents_layout)
+        self.scroll_layout = QScrollAreaLayout(QVBoxLayout, self.main_layout)
         self.main_layout.addLayout(self.buttons_layout)
         self.cartItemsArr = None
         pubsub.subscribe("submitOrder_clicked", self.handleSubmitOrder_clicked)
+        pubsub.subscribe("cartItem_deleted", self.updateCartItems)
     
     def handleSubmitOrder_clicked(self, submitParams) :
-        self.cartItemsArr, self.submitorder_callback, self.choice = submitParams
+        self.cartItemsArr, self.submitorder_callback, self.choice, self.sidebar_layout = submitParams
         self.parent_stackedWidgets.setCurrentIndex(2) 
+
         self.setContent()        
 
     def setContent(self) :
-        self.contents_layout.addWidget(QLabel(f"confirm order - {self.choice} "))
         for item in self.cartItemsArr :
-            self.contents_layout.addWidget(QLabel(f"{item.foodname} {item.getQuantity()}"))
+            label = QLabel(f"{item.foodname} {item.getQuantity()}")
+            label.setFixedHeight(100)
+            self.sidebar_layout.getLayout().removeWidget(item)
+            item.transitionState()
+            self.scroll_layout.getLayout().addWidget(item, alignment = Qt.AlignmentFlag.AlignTop)
+            self.scroll_layout.getLayout().setAlignment(Qt.AlignmentFlag.AlignTop)
+            # self.scroll_layout.addWidget(label)
 
         # confirm order, set contents function
     def handleCancel_clicked(self) :
-        self.clear_layout(self.contents_layout)
+        # self.clear_layout(self.scroll_layout.getLayout())
+        print(len(self.cartItemsArr))
+
+        for item in self.cartItemsArr :
+            label = QLabel(f"{item.foodname} {item.getQuantity()}")
+            label.setFixedHeight(100)
+            self.scroll_layout.getLayout().removeWidget(item)
+            item.transitionState()
+            self.sidebar_layout.addWidget(item)
+
         self.parent_stackedWidgets.setCurrentIndex(0)
     
     def handleConfirm_clicked(self) :
         self.submitorder_callback()
         self.parent_stackedWidgets.setCurrentIndex(3)
         # in print panel, just fetch the latest order...
-        self.clear_layout(self.contents_layout)
+        self.clear_layout(self.scroll_layout.getLayout())
+
+    def updateCartItems(self, newCartItems) :
+        self.cartItemsArr = newCartItems
 
     def clear_layout(self, layout): 
         if layout is not None:

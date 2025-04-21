@@ -18,6 +18,8 @@ class QScrollAreaLayout(QScrollArea) :
         self.setWidgetResizable(True)
         self.container = QWidget()
         self.setWidget(self.container)
+        mywidth = "10px"
+        borderradius = "5px"
         if component == "list" : 
             mywidth = "10px"
             borderradius = "5px"
