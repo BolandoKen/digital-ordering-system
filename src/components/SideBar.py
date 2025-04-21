@@ -21,6 +21,7 @@ from PyQt6.QtGui import QPixmap, QFont
 from src.components.ScrollArea import QScrollAreaLayout
 from src.components.Buttons import QPrimaryButton
 from src.components.SpinBox import QCartItemSpinBox
+from src.components.Dialogs import QConfirmDialog
 import traceback
 
 class QSideBar(QFrame) :
@@ -183,20 +184,22 @@ class QCustomerSideBar(QSideBar) :
         print(fooditem_id,foodname,price, " added to cart")
     
     def removeItemFromCart(self, foodid) :
-        print(foodid)
-        newCartItem = []
-        widgetToRemove = None
-        for item in self.cartItems :
-            if item.foodid == foodid :
-                widgetToRemove = item
-                continue
-            newCartItem.append(item)
-        self.cartItems = newCartItem 
-        # self.sidebar_layout.getLayout().removeWidget(widgetToRemove)
-        widgetToRemove.hide()
-        widgetToRemove.deleteLater()
-        self.recalculate_total()
-        pubsub.publish("cartItem_deleted", self.cartItems)
+        widget_remove = None
+        for item in self.cartItems:
+            if item.foodid == foodid:
+                message = f"Are you sure you want to delete order {item.getQuantity()}x {item.foodname}?"
+                dialog = QConfirmDialog("Confirm Delete", message)
+                if not dialog.exec():
+                    return 
+                widget_remove = item
+                break
+
+        if widget_remove:
+            self.cartItems.remove(widget_remove)
+            self.sidebar_layout.getLayout().removeWidget(widget_remove)
+            widget_remove.deleteLater()
+            self.recalculate_total()
+            pubsub.publish("cartItem_deleted", self.cartItems)
     
     def recalculate_total(self, e =None) :
         if not self.cartItems:
