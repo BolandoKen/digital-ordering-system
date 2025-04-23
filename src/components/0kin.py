@@ -14,18 +14,26 @@ from PyQt6.QtWidgets import (
 
 )
 from PyQt6.QtCore import Qt
-from src.components.Buttons import QDeleteButton, QBackButton, QLogoButton, QPrimaryButton, QSecondaryButton, QDineInButton, QTakeOutButton, QPlusButton, QMinusButton
-from src.components.SpinBox import QCartItemSpinBox
-from PyQt6.QtGui import QPixmap, QMouseEvent, QFont, QIntValidator, QShortcut, QKeySequence
-from PyQt6.QtGui import QFont, QColor
+from PyQt6.QtGui import QShortcut, QKeySequence
+from src.components.ComboBox import QFilterButton  
 
 class QWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("QGridLayout Example")
-        self.setGeometry(0,0,1280, 720)
+        self.setGeometry(0, 0, 1280, 720)
 
         main_layout = QVBoxLayout()
+        
+        center_layout = QHBoxLayout()
+        center_layout.addStretch() 
+        
+        self.filter_button = QFilterButton(self)
+        center_layout.addWidget(self.filter_button, alignment=Qt.AlignmentFlag.AlignCenter)
+        
+        center_layout.addStretch() 
+        
+        main_layout.addLayout(center_layout)
+        main_layout.addSpacing(20)
         delete_button = QDeleteButton()
         back_button = QBackButton()
         # logo_button = QLogoButton("assets/icons/Logo.png", "M'sKitchen")
@@ -52,15 +60,13 @@ class QWindow(QMainWindow):
 
         
         main_centralwidget = QWidget()
-        #main_centralwidget.setStyleSheet("background: #C8161D;")
-        main_centralwidget.setStyleSheet("background: white;color: black")
+        main_centralwidget.setStyleSheet("background: white; color: black")
         main_centralwidget.setLayout(main_layout)
         self.setCentralWidget(main_centralwidget)
 
         exit_shortcut = QShortcut(QKeySequence('esc'), self)
         exit_shortcut.activated.connect(self.close)
-        
-
+    
 
 if __name__ == "__main__":
     app = QApplication([])
