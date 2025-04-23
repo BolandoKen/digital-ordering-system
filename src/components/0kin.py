@@ -8,11 +8,16 @@ from PyQt6.QtWidgets import (
     QWidget,
     QHBoxLayout,
     QFrame,
+    QDialog,
+    QGraphicsDropShadowEffect,
+    QPushButton
+
 )
 from PyQt6.QtCore import Qt
 from src.components.Buttons import QDeleteButton, QBackButton, QLogoButton, QPrimaryButton, QSecondaryButton, QDineInButton, QTakeOutButton, QPlusButton, QMinusButton
 from src.components.SpinBox import QCartItemSpinBox
 from PyQt6.QtGui import QPixmap, QMouseEvent, QFont, QIntValidator, QShortcut, QKeySequence
+from PyQt6.QtGui import QFont, QColor
 
 class QWindow(QMainWindow):
     def __init__(self):
@@ -28,6 +33,8 @@ class QWindow(QMainWindow):
         takeOut_button = QTakeOutButton()
         plus_button = QPlusButton()
         minus_button = QMinusButton()
+        primbotn = QPrimaryButton("hi primary", 400)
+        btn = QPushButton("al;dksfj;laj")
 
         main_layout.addWidget(delete_button)
         main_layout.addWidget(back_button)
@@ -38,7 +45,8 @@ class QWindow(QMainWindow):
         main_layout.addWidget(minus_button)
         main_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        main_layout.addWidget(QPrimaryButton("hi primary", 400))
+        main_layout.addWidget(btn)
+        main_layout.addWidget(primbotn)
         main_layout.addWidget(QSecondaryButton("hi secondary", 400))
         main_layout.addWidget(QCartItemSpinBox())
 

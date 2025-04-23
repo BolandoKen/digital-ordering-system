@@ -33,22 +33,30 @@ from src.components.ScrollArea import QScrollAreaLayout
 import traceback
 from PyQt6 import QtWidgets
 
+
+class QDialogShadowFrame(QFrame) :
+    def __init__(self, child_main_layout) :
+        super().__init__()
+        self.setObjectName("dshadow")
+        self.setStyleSheet("#dshadow{ border-radius:10px;}")
+        self.setLayout(child_main_layout)
+        shadow = QGraphicsDropShadowEffect(self)
+        shadow.setBlurRadius(15)
+        shadow.setXOffset(1)
+        shadow.setYOffset(1)
+        shadow.setColor(QColor(0, 0, 0, 180))
+        self.setGraphicsEffect(shadow)
+        shadow.setEnabled(True)
+        self.raise_()
+
+
+
 class QStyledDialog(QDialog) :
     def __init__(self, parent = None):
         super().__init__(parent)
-        # self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setStyleSheet("Background-color: white; color: black")
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Dialog)
-
-        # shadow = QGraphicsDropShadowEffect(self)
-        # shadow.setBlurRadius(30)
-        # shadow.setXOffset(0)
-        # shadow.setYOffset(0)
-        # shadow.setColor(QColor(0, 0, 0, 180))
-        # self.setGraphicsEffect(shadow)
-        # shadow.setEnabled(True)
-        # self.raise_()
-
 
     def showEvent(self, event):
         super().showEvent(event)
@@ -72,8 +80,14 @@ class QaddDialog(QStyledDialog) :
     def __init__(self, panelName, parent):
         super().__init__(parent)
         self.panelName = panelName
-        self.dialog_layout = QGridLayout(self)
+        self.main_layout = QVBoxLayout(self)
+
+        self.dialog_layout = QGridLayout()
         self.tempImagePath = None
+        self.shadw = QDialogShadowFrame(self.dialog_layout)
+        self.shadw.setObjectName("addshadow")
+        self.shadw.setStyleSheet("#addshadow {padding:20px;border-radius:10px;}")
+        self.main_layout.addWidget(self.shadw)
 
         if panelName == "category" :
             self.init_addCategory()
@@ -226,9 +240,12 @@ class QeditDialog(QaddDialog) :
 class QviewOrderDialog(QStyledDialog) :
     def __init__(self, parent):
         super().__init__(parent)
-        self.main_layout = QVBoxLayout(self)
+        self.mainmain_layout = QVBoxLayout(self)
+
+        self.main_layout = QVBoxLayout()
+        self.mainmain_layout.addWidget(QDialogShadowFrame(self.main_layout))
         self.setFixedHeight(400)
-        self.setFixedWidth(325)
+        # self.setFixedWidth(325)
 
         close_btn = QPushButton("x")
         close_btn.clicked.connect(self.close)
@@ -315,7 +332,10 @@ class QConfirmDialog(QStyledDialog):
         self.setFixedSize(400, 200)
         self.result = False
         font = QFont("Helvetica", 12, QFont.Weight.Bold)
-        layout = QVBoxLayout(self)
+        self.main_layout = QVBoxLayout(self)
+        layout = QVBoxLayout()
+        self.main_layout.addWidget(QDialogShadowFrame(layout))
+
         layout.setContentsMargins(20, 20, 20, 20)
         layout.setSpacing(15)
         layout.addStretch()
