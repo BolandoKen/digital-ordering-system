@@ -17,27 +17,40 @@ class QScrollAreaLayout(QScrollArea) :
         super().__init__()
         self.setWidgetResizable(True)
         self.container = QWidget()
+        self.container.setStyleSheet("background: transparent")
         self.setWidget(self.container)
+        mywidth = "10px"
+        borderradius = "5px"
+        bgcolor = "white"
         if component == "list" : 
             mywidth = "10px"
             borderradius = "5px"
         elif component == "sidebar" :
             mywidth = "8px"
             borderradius = "4px"
-        #styles derived from https://forum.qt.io/topic/41040/pyqt-custom-scrollbar-design-solved/5
-        self.setStyleSheet(f"""QScrollBar:vertical {{
+        elif component == "confirm" :
+            bgcolor = "#b6151b"
+        stylestr = f"""QScrollBar:vertical {{
                             width: {mywidth};
                             margin: 0;
                            border: none;
-
+                           background: transparent;
+                           background-color:{bgcolor};
+                            border-radius: 5px;
                         }}
+
                         QScrollBar::handle:vertical {{
                             min-height: 10px;
                             border: none;
                            background-color: #D9D9D9;
                            border-radius: {borderradius};
+                           
                         }}
-                        QScrollArea {{
+                        QScrollArea > * {{
+                            background: transparent;
+                        }}
+
+                        QScrollArea  {{
                            padding: 0px;
                            border:none;
                            }}
@@ -48,9 +61,14 @@ class QScrollAreaLayout(QScrollArea) :
                            background: none;
                             height: 0px; 
                             width: 0px                              
-                        }}""")
+                        }}"""
 
-        if isinstance(QLayoutType, QVBoxLayout) : # whats this for?
+
+
+        #styles derived from https://forum.qt.io/topic/41040/pyqt-custom-scrollbar-design-solved/5
+        self.setStyleSheet(stylestr)
+
+        if isinstance(QLayoutType, QVBoxLayout) : # whats this for? automatically sets margins
             self.myLayout = QLayoutType(self.container, alignment=Qt.AlignmentFlag.AlignCenter)
             QLayoutType.setContentsMargins(0,0,0,0) 
         else :

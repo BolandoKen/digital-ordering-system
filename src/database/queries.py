@@ -121,3 +121,9 @@ def fetchOrderItemsTotal(orderid) :
                    """)
     results = cursor.fetchone()[0]
     return results
+
+def fetchLatest_orderid() :
+    cursor.execute(f"""SELECT order_id FROM Orders ORDER BY order_datetime DESC """)
+    latestorder = cursor.fetchone()[0]
+    cursor.fetchall()
+    return latestorder

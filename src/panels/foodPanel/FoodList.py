@@ -79,12 +79,15 @@ class QFoodList(QFrame) :
             self.catname = catname
             self.previousCategory_id = self.category_id
 
+        self.foodList_layout.myLayout.invalidate()
         self.clear_layout(self.foodList_layout.getLayout()) 
         if self.pageName == "admin" :
             self.unavailableCountStatus = "show" if fetchCategoryUnavailableItemCount(self.category_id) > 0 else "hide"
             self.init_adminFoodList()
         elif self.pageName == "customer" :
             self.init_customerFoodList()
+        self.foodList_layout.myLayout.activate()
+
         
         # updates the list content
 

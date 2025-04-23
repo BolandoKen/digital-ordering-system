@@ -18,6 +18,7 @@ class QLogoHeader(QFrame) :
     def __init__(self, pageName):
         super().__init__()
         self.main_layout = QHBoxLayout(self) 
+        self.main_layout.setContentsMargins(0,10,0,10)
         self.logo = QLogoButton("assets/icons/pfp_icon.svg", "M'sKitchen", pageName)
         self.logo.connectTo(self.handleLogoClicked)
         self.main_layout.addWidget(self.logo)
@@ -102,7 +103,8 @@ class QFoodPanelHeader(QFrame) :
         self.init_category()
 
     def init_category(self) :
-        self.backBtn.hide()
+        if self.pageName == "admin" :
+            self.backBtn.hide()
         self.headerLabel.setText("Categories")
         self.showUnBtn.hide()
 
@@ -116,9 +118,12 @@ class QFoodPanelHeader(QFrame) :
         self.init_food()
     
     def handleBackBtn(self) :
-        self.state = "category"
-        pubsub.publish(f"{self.pageName}_backToCatClicked", None)
-        self.init_category()
+        if self.state == "food" :
+            self.state = "category"
+            pubsub.publish(f"{self.pageName}_backToCatClicked", None)
+            self.init_category()
+        elif self.state == "category" :
+            pubsub.publish("backBtn_clicked", 1)
     
     def handleToggleUnBtn(self) :
         pubsub.publish(f"admin_toggleShowUnavailable", None)

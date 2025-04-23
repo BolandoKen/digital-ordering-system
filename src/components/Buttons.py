@@ -25,13 +25,12 @@ from src.utils.PixMap import setPixMapOf
 
 class QDeleteButton(QPushButton):
 
-    def __init__(self):
+    def __init__(self, state=None):
         super().__init__("")
         self.setFixedSize(25, 25)
        
         self.setStyleSheet("""
             background: transparent;
-            background-color: white;
             border: none;
             padding: 0px;      
         """)
@@ -39,6 +38,9 @@ class QDeleteButton(QPushButton):
         self.setIcon(QIcon("assets/icons/delete_icon.svg"))
         self.setIconSize(QSize(20, 20))
         self.setCursor(Qt.CursorShape.PointingHandCursor)
+        if state == "confirm" :
+            self.setIcon(QIcon("assets/icons/delete_icon2.svg"))
+
     
     def setState(self, state) :
         if state == "delete" :
@@ -104,21 +106,20 @@ class QEyeButton(QPushButton) :
         elif state == "show" :
             self.setIcon(QIcon("assets/icons/closedeye_icon.svg"))
 
-class QLogoButton(QWidget):
+class QLogoButton(QFrame):
     def __init__(self, logo_path: str, eatery_name: str, pageName):
         super().__init__()
         self.pageName = pageName
-        self.setFixedSize(400, 70)
+        # self.setFixedSize(400, 70)
         self.setStyleSheet("""
             background: transparent;
-            background-color: white;
             padding: 0px;
             color: black;           
         """)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
 
         layout = QHBoxLayout()
-        layout.setContentsMargins(10, 0, 10, 0) 
+        layout.setContentsMargins(0, 0, 0, 0) 
 
         icon_label = QLabel()
         pixmap = QPixmap(logo_path).scaled(70, 70, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
@@ -195,6 +196,48 @@ class QSecondaryButton(QPushButton) :
             border-radius: 10px;
             border: 2px solid #D9D9D9;
             color: #C8161D;
+            font-style: "Helvetica";
+            font-weight: bold;
+            padding: 5px;
+        """
+        if width is not None :
+            self.setFixedWidth(width)
+        if height is not None :
+            self.setFixedHeight(height)
+        if fontSize is not None :
+            styleString += f"font-size: {fontSize}px;"
+        self.setStyleSheet(styleString)
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+
+class QTertiaryButton(QPushButton) :
+    def __init__(self, text, width=None, height=None, fontSize=None): 
+        super().__init__(text)
+        styleString = """
+            background: #FFCA40;
+            border-radius: 10px;
+            border: none;
+            color: white;
+            font-style: "Helvetica";
+            font-weight: bold;
+            padding: 5px;
+        """
+        if width is not None :
+            self.setFixedWidth(width)
+        if height is not None :
+            self.setFixedHeight(height)
+        if fontSize is not None :
+            styleString += f"font-size: {fontSize}px;"
+        self.setStyleSheet(styleString)
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+
+class QQuaternaryButton(QPushButton) :
+    def __init__(self, text, width=None, height=None, fontSize=None): 
+        super().__init__(text)
+        styleString = """
+            background: transparent;
+            border-radius: 10px;
+            border: 2px solid white;
+            color: white;
             font-style: "Helvetica";
             font-weight: bold;
             padding: 5px;

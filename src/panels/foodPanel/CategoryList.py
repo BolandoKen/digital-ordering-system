@@ -61,7 +61,9 @@ class QCategoryList(QFrame) :
     def update_categoryList(self, e = None) :
         print("updated",self.pageName)
         self.clear_layout(self.catList_Layout.getLayout())
+        self.catList_Layout.myLayout.invalidate()
         self.init_catList()
+        self.catList_Layout.myLayout.invalidate()
 
     def clear_layout(self, layout): 
         print('rerendered category list from ', self.pageName)

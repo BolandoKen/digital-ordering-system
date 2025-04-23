@@ -6,7 +6,7 @@ from PyQt6.QtCore import Qt
 
 
 class QFlowLayout(QtWidgets.QLayout):
-    def __init__(self, parent=None, margin=-1, hspacing=-1, vspacing=-1):
+    def __init__(self, parent=None, margin=-1, hspacing=15, vspacing=15):
         super().__init__(parent)
         self._hspacing = hspacing
         self._vspacing = vspacing
