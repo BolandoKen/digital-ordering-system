@@ -7,52 +7,37 @@ from PyQt6.QtWidgets import (
     QMainWindow,
     QWidget,
     QHBoxLayout,
-    QFrame,
 )
-
 from PyQt6.QtCore import Qt
-from src.components.Buttons import QDeleteButton, QBackButton, QLogoButton, QPrimaryButton, QSecondaryButton, QDineInButton, QTakeOutButton, QPlusButton, QMinusButton
-from src.components.SpinBox import QCartItemSpinBox
-from PyQt6.QtGui import QPixmap, QMouseEvent, QFont, QIntValidator, QShortcut, QKeySequence
+from PyQt6.QtGui import QShortcut, QKeySequence
+from src.components.ComboBox import QFilterButton  
 
 class QWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("QGridLayout Example")
-        self.setGeometry(0,0,1280, 720)
+        self.setGeometry(0, 0, 1280, 720)
 
         main_layout = QVBoxLayout()
-        delete_button = QDeleteButton()
-        back_button = QBackButton()
-        dineIn_button = QDineInButton()
-        takeOut_button = QTakeOutButton()
-        plus_button = QPlusButton()
-        minus_button = QMinusButton()
-
-        main_layout.addWidget(delete_button)
-        main_layout.addWidget(back_button)
-        # main_layout.addWidget(logo_button)
-        main_layout.addWidget(dineIn_button)
-        # main_layout.addWidget(takeOut_button)
-        main_layout.addWidget(plus_button)
-        main_layout.addWidget(minus_button)
-        main_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        main_layout.addWidget(QPrimaryButton("hi primary", 400))
-        main_layout.addWidget(QSecondaryButton("hi secondary", 400))
-        main_layout.addWidget(QCartItemSpinBox())
-
+        
+        center_layout = QHBoxLayout()
+        center_layout.addStretch() 
+        
+        self.filter_button = QFilterButton(self)
+        center_layout.addWidget(self.filter_button, alignment=Qt.AlignmentFlag.AlignCenter)
+        
+        center_layout.addStretch() 
+        
+        main_layout.addLayout(center_layout)
+        main_layout.addSpacing(20)
         
         main_centralwidget = QWidget()
-        #main_centralwidget.setStyleSheet("background: #C8161D;")
-        main_centralwidget.setStyleSheet("background: white;color: black")
+        main_centralwidget.setStyleSheet("background: white; color: black")
         main_centralwidget.setLayout(main_layout)
         self.setCentralWidget(main_centralwidget)
 
         exit_shortcut = QShortcut(QKeySequence('esc'), self)
         exit_shortcut.activated.connect(self.close)
-        
-
+    
 
 if __name__ == "__main__":
     app = QApplication([])
