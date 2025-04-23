@@ -16,6 +16,15 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QShortcut, QKeySequence
 from src.components.ComboBox import QFilterButton  
+from src.components.Buttons import (QDeleteButton,
+                                    QBackButton,
+                                    QDineInButton,
+                                    QTakeOutButton,
+                                    QPlusButton,
+                                    QMinusButton,
+                                    QPrimaryButton,
+                                    QSecondaryButton,)
+from src.components.SpinBox import QCartItemSpinBox
 
 class QWindow(QMainWindow):
     def __init__(self):

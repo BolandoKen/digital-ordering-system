@@ -74,15 +74,16 @@ class QFilterButton(QPushButton):
                                      """)
         popup_layout.addWidget(category_label)
         
-        self.combo_box = QComboBox()
-        self.combo_box.addItems(["All", "Food", "Beverages", "Desserts"])
-        self.combo_box.setFixedWidth(160)
-        self.combo_box.setFixedHeight(30)
-        self.combo_box.setStyleSheet("""
+        self.catComboBox = QCatComboBox("stat")
+        # self.combo_box.addItems(["All", "Food", "Beverages", "Desserts"])
+        self.catComboBox.setFixedWidth(160)
+        self.catComboBox.setFixedHeight(30)
+        self.catComboBox.setStyleSheet(
+            """
             QComboBox {
                 color: black;
                 border: 2px solid #D9D9D9;
-                padding: 5px;  
+                padding-left: 5px;  
             }
             QComboBox::drop-down {
                 width: 20px;
@@ -98,7 +99,10 @@ class QFilterButton(QPushButton):
                 outline: 0px;
                 margin: 0px;
                 padding: 0px;
+                padding-top: 5px;
+                padding-bottom: 5px;
                 border: none;
+                border-radius: 6px;
             }                
             QComboBox QAbstractItemView::item {
             background-color: transparent;
@@ -107,8 +111,12 @@ class QFilterButton(QPushButton):
             border: none;
     }
         """)
-        self.combo_box.currentTextChanged.connect(self.update_icon)
-        popup_layout.addWidget(self.combo_box)
+        view = self.catComboBox.view()
+        view.parent().setObjectName("viewpare")
+        view.parent().setStyleSheet("#viewpare{background-color: transparent;}")
+ 
+        self.catComboBox.currentTextChanged.connect(self.update_icon)
+        popup_layout.addWidget(self.catComboBox)
         
         popup_layout.setContentsMargins(20, 25, 20, 25)
         self.popup.setLayout(popup_layout)
