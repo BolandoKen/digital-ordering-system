@@ -26,7 +26,7 @@ class QMenuCard(QFrame) :
             color: black;
             border-radius: 10px;
             border: 2px solid #D9D9D9;
-            padding: 0px;  
+            padding: 0px;
             }
                            
             #MenuCard * 

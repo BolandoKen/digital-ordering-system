@@ -265,7 +265,7 @@ class QSimpleCartItem(QFrame) : # refactor this later
         self.closeBtn_cartState.setFixedWidth(50)
         self.closeBtn_cartState.setCursor(Qt.CursorShape.PointingHandCursor)
 
-        self.closeBtn_confirmState = QDeleteButton()
+        self.closeBtn_confirmState = QDeleteButton("confirm")
         self.closeBtn_confirmState.setFixedWidth(50)
         self.closeBtn_confirmState.setCursor(Qt.CursorShape.PointingHandCursor)
 
@@ -337,6 +337,7 @@ class QSimpleCartItem(QFrame) : # refactor this later
             self.cart_cartState_widget.addSpinBox()
             self.cart_cartState_widget.show()
             self.state = "cart"
+        self.customQuanBox.setState(self.state)
 
 
 class QCart_cartState(QFrame) :

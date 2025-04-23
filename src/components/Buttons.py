@@ -25,7 +25,7 @@ from src.utils.PixMap import setPixMapOf
 
 class QDeleteButton(QPushButton):
 
-    def __init__(self):
+    def __init__(self, state=None):
         super().__init__("")
         self.setFixedSize(25, 25)
        
@@ -38,6 +38,9 @@ class QDeleteButton(QPushButton):
         self.setIcon(QIcon("assets/icons/delete_icon.svg"))
         self.setIconSize(QSize(20, 20))
         self.setCursor(Qt.CursorShape.PointingHandCursor)
+        if state == "confirm" :
+            self.setIcon(QIcon("assets/icons/delete_icon2.svg"))
+
     
     def setState(self, state) :
         if state == "delete" :
