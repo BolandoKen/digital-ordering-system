@@ -19,7 +19,7 @@ from src.database.Orders import addOrder
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap, QFont
 from src.components.ScrollArea import QScrollAreaLayout
-from src.components.Buttons import QPrimaryButton
+from src.components.Buttons import QPrimaryButton, QDeleteButton
 from src.components.SpinBox import QCartItemSpinBox
 from src.components.Dialogs import QConfirmDialog
 import traceback
@@ -188,7 +188,7 @@ class QCustomerSideBar(QSideBar) :
         for item in self.cartItems:
             if item.foodid == foodid:
                 message = f"Are you sure you want to delete order {item.getQuantity()}x {item.foodname}?"
-                dialog = QConfirmDialog("Confirm Delete", message)
+                dialog = QConfirmDialog("Confirm Delete", message, self.window())
                 if not dialog.exec():
                     return 
                 widget_remove = item
@@ -265,7 +265,7 @@ class QSimpleCartItem(QFrame) : # refactor this later
         self.closeBtn_cartState.setFixedWidth(50)
         self.closeBtn_cartState.setCursor(Qt.CursorShape.PointingHandCursor)
 
-        self.closeBtn_confirmState = QPushButton("trash")
+        self.closeBtn_confirmState = QDeleteButton()
         self.closeBtn_confirmState.setFixedWidth(50)
         self.closeBtn_confirmState.setCursor(Qt.CursorShape.PointingHandCursor)
 

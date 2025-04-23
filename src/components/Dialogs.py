@@ -12,7 +12,8 @@ from PyQt6.QtWidgets import (
     QFrame,
     QDialog,
     QLineEdit,
-    QFileDialog
+    QFileDialog,
+    QGraphicsDropShadowEffect
 )
 from src.utils.PubSub import pubsub
 from src.utils.FormValid import formValidated
@@ -26,21 +27,33 @@ from PyQt6.QtGui import QPixmap
 from PyQt6.QtGui import QDoubleValidator
 from src.components.Buttons import QPrimaryButton, QSecondaryButton
 from src.database.queries import fetchOrderItemsSubtotalList, fetchOrderItemsTotal
-from PyQt6.QtCore import Qt, QPoint
-from PyQt6.QtGui import QFont
+from PyQt6.QtCore import Qt, QPoint, QTimer
+from PyQt6.QtGui import QFont, QColor
 from src.components.ScrollArea import QScrollAreaLayout
 import traceback
-
+from PyQt6 import QtWidgets
 
 class QStyledDialog(QDialog) :
     def __init__(self, parent = None):
         super().__init__(parent)
+        # self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setStyleSheet("Background-color: white; color: black")
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Dialog)
+
+        # shadow = QGraphicsDropShadowEffect(self)
+        # shadow.setBlurRadius(30)
+        # shadow.setXOffset(0)
+        # shadow.setYOffset(0)
+        # shadow.setColor(QColor(0, 0, 0, 180))
+        # self.setGraphicsEffect(shadow)
+        # shadow.setEnabled(True)
+        # self.raise_()
+
 
     def showEvent(self, event):
         super().showEvent(event)
         # self.center_screen()
+
 
     def center_screen(self):
         if self.parent():
@@ -214,7 +227,7 @@ class QviewOrderDialog(QStyledDialog) :
     def __init__(self, parent):
         super().__init__(parent)
         self.main_layout = QVBoxLayout(self)
-        self.setMaximumHeight(400)
+        self.setFixedHeight(400)
         self.setFixedWidth(325)
 
         close_btn = QPushButton("x")
@@ -263,10 +276,20 @@ class QviewOrderDialog(QStyledDialog) :
         self.o_idLabel.setText(f"Order #{self.o_id}")        
         for oiTuple in self.orderItemsSubtotalList :
             _, fname, oiquan, subtotal = oiTuple
-            orderitemLabel = QLabel(f"{oiquan}x {fname} ₱{subtotal}")
-            orderitemLabel.setFont(QFont("Helvitica", 13, QFont.Weight.Normal))
 
-            self.viewOrder_layout.getLayout().addWidget(orderitemLabel, alignment = Qt.AlignmentFlag.AlignTop)
+            labelframe = QFrame()
+            labelh = QHBoxLayout(labelframe)
+            labelh.setContentsMargins(0,0,0,0)
+
+            orderitemLabel = QLabel(f"{oiquan}x {fname}")
+            orderpricelabel = QLabel(f"₱{subtotal}")
+            orderitemLabel.setFont(QFont("Helvitica", 13, QFont.Weight.Normal))
+            orderpricelabel.setFont(QFont("Helvitica", 13, QFont.Weight.Normal))
+
+            labelh.addWidget(orderitemLabel)
+            labelh.addStretch()
+            labelh.addWidget(orderpricelabel)
+            self.viewOrder_layout.getLayout().addWidget(labelframe, alignment=Qt.AlignmentFlag.AlignTop)
         
             pass
         self.totalamt_label.setText(f"₱{self.orderItemsTotal}")
@@ -281,6 +304,8 @@ class QviewOrderDialog(QStyledDialog) :
                     item.widget().deleteLater()
                 elif item.spacerItem():  
                     layout.removeItem(item)   
+                elif item.layout() :
+                    item.layout().deleteLater()
 
 
 class QConfirmDialog(QStyledDialog):

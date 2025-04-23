@@ -8,7 +8,10 @@ from PyQt6.QtWidgets import (
     QStackedWidget,
     QLabel,
     QFrame,
+    QGraphicsDropShadowEffect
+
 )
+from PyQt6.QtGui import QPixmap, QColor
 
 class QMenuCard(QFrame) :
     def __init__(self):
@@ -32,4 +35,10 @@ class QMenuCard(QFrame) :
             color:black;
             }
         """)
+        shadow = QGraphicsDropShadowEffect(self)
+        shadow.setBlurRadius(5)
+        shadow.setXOffset(1)
+        shadow.setYOffset(1)
+        shadow.setColor(QColor(0, 0, 0, 180))
+        self.setGraphicsEffect(shadow)
 # make class card for add buttons
