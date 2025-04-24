@@ -10,7 +10,9 @@ from PyQt6.QtWidgets import (
     QFrame,
     QDialog,
     QGraphicsDropShadowEffect,
-    QPushButton
+    QPushButton,
+    QCalendarWidget,
+    QDateEdit
 
 )
 from PyQt6.QtCore import Qt
@@ -25,6 +27,9 @@ from src.components.Buttons import (QDeleteButton,
                                     QPrimaryButton,
                                     QSecondaryButton,)
 from src.components.SpinBox import QCartItemSpinBox
+from src.components.Calendar import QCalendarFilter
+from PyQt6.QtCore import QDate
+
 
 class QWindow(QMainWindow):
     def __init__(self):
@@ -40,7 +45,11 @@ class QWindow(QMainWindow):
         center_layout.addWidget(self.filter_button, alignment=Qt.AlignmentFlag.AlignCenter)
         
         center_layout.addStretch() 
-        
+        date_edit = QDateEdit()
+        date_edit.setFixedWidth(100)
+        date_edit.setCalendarPopup(True)  # enables the calendar popup
+        date_edit.setDate(QDate.currentDate())
+        main_layout.addWidget(date_edit)
         main_layout.addLayout(center_layout)
         main_layout.addSpacing(20)
         delete_button = QDeleteButton()
@@ -52,7 +61,7 @@ class QWindow(QMainWindow):
         minus_button = QMinusButton()
         primbotn = QPrimaryButton("hi primary", 400)
         btn = QPushButton("al;dksfj;laj")
-
+        main_layout.addWidget(QCalendarFilter(), alignment=Qt.AlignmentFlag.AlignCenter)
         main_layout.addWidget(delete_button)
         main_layout.addWidget(back_button)
         # main_layout.addWidget(logo_button)

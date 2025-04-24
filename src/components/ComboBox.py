@@ -18,17 +18,14 @@ import sys
 from PyQt6.QtWidgets import QPushButton, QComboBox, QWidget, QVBoxLayout, QLabel
 from PyQt6.QtCore import Qt, QPoint, QSize
 from PyQt6.QtGui import QIcon
-
-class QFilterButton(QPushButton):
+ 
+class QPopupButton(QPushButton) : 
     def __init__(self, parent=None):
         super().__init__(parent)
         
         self.setFixedSize(40, 40)
         
-        self.Inactive_icon = QIcon("assets/icons/filter_inactive_icon.svg")
-        self.Active_icon = QIcon("assets/icons/filter_active_icon.svg")
-        self.setIcon(self.Inactive_icon)
-        self.setIconSize(QSize(24, 24))
+
         self.setStyleSheet("""
             QPushButton{
                 background: none;
@@ -44,7 +41,6 @@ class QFilterButton(QPushButton):
         
         self.popup = QWidget(flags=Qt.WindowType.Popup | Qt.WindowType.FramelessWindowHint | Qt.WindowType.NoDropShadowWindowHint)
         self.popup.setWindowFlags(Qt.WindowType.Popup | Qt.WindowType.FramelessWindowHint | Qt.WindowType.NoDropShadowWindowHint)
-        self.popup.setFixedSize(193, 126)
         self.popup.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.popup.setObjectName("popup")
         self.popup.setStyleSheet("""
@@ -54,16 +50,32 @@ class QFilterButton(QPushButton):
             outline: none;}
         """)
 
-        container = QWidget(self.popup)
-        container.setGeometry(0, 0, 193, 126)
-        container.setStyleSheet("""
+        self.container = QWidget(self.popup)
+        self.popup.setFixedSize(193, 126)
+        self.container.setGeometry(0, 0, 193, 126)
+        self.container.setStyleSheet("""
             background-color: white; 
             border: 2px solid #D9D9D9; 
             border-radius: 10px;
         """)
         
-        popup_layout = QVBoxLayout()
-        
+        self.popup_layout = QVBoxLayout(self.popup)
+        self.clicked.connect(self.toggle_popup)
+
+    def toggle_popup(self):
+        if self.popup.isVisible():
+            self.popup.hide()
+        else:
+            button_pos = self.mapToGlobal(QPoint(-152, self.height()))
+            self.popup.move(button_pos)
+            self.popup.show()
+
+class QFilterButton(QPopupButton):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.popup.setFixedSize(193, 126)
+        self.container.setGeometry(0, 0, 193, 126)
         category_label = QLabel("Category")
         category_label.setStyleSheet("""
                                      background-color: white;
@@ -73,30 +85,23 @@ class QFilterButton(QPushButton):
                                      border: none;
                                      border-radius: 0px;
                                      """)
-        popup_layout.addWidget(category_label)
+        self.popup_layout.addWidget(category_label)
         
         self.catComboBox = QCatComboBox("stat")
-        # self.combo_box.addItems(["All", "Food", "Beverages", "Desserts"])
-        
  
-        self.catComboBox.currentTextChanged.connect(self.update_icon)
-        popup_layout.addWidget(self.catComboBox)
+        self.catComboBox.currentIndexChanged.connect(self.update_icon)
+        self.popup_layout.addWidget(self.catComboBox)
         
-        popup_layout.setContentsMargins(20, 25, 20, 25)
-        self.popup.setLayout(popup_layout)
-    
-        self.clicked.connect(self.toggle_popup)
-    
-    def toggle_popup(self):
-        if self.popup.isVisible():
-            self.popup.hide()
-        else:
-            button_pos = self.mapToGlobal(QPoint(-152, self.height()))
-            self.popup.move(button_pos)
-            self.popup.show()
+        self.popup_layout.setContentsMargins(20, 25, 20, 25)
 
-    def update_icon(self, text):
-        if text == "All":
+        self.Inactive_icon = QIcon("assets/icons/filter_inactive_icon.svg")
+        self.Active_icon = QIcon("assets/icons/filter_active_icon.svg")
+        self.setIcon(self.Inactive_icon)
+        self.setIconSize(QSize(24, 24))
+    
+    def update_icon(self, idx):
+        innerdata = self.catComboBox.itemData(idx)
+        if innerdata == -1:
             self.setIcon(self.Inactive_icon)
         else:
             self.setIcon(self.Active_icon)
@@ -151,7 +156,7 @@ class QCatComboBox(QStyledComboBox) :
         super().__init__()
         self.catList = fetchCatList("admin") 
         if typeOf == "stat" :
-            self.addItem("no filter")
+            self.addItem("All", -1)
         for cat in self.catList : 
             self.addItem(cat[1], cat[0])
         # this should listen to any category updates (not yet implemented)

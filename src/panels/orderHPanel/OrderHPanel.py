@@ -17,7 +17,7 @@ from PyQt6.QtWidgets import (
 
 from src.database.queries import fetchOrderHistory
 
-class QOrderHPanel(QFrame) :
+class QOrderHPanel(QFrame) : # not used
     def __init__(self):
         super().__init__()
         self.order_layout = QVBoxLayout(self)

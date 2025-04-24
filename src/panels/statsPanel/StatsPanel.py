@@ -66,7 +66,7 @@ class QStatsPanel(QFrame) :
 
     def update_table(self):
         category_id = self.catFilter.catComboBox.itemData(self.catFilter.catComboBox.currentIndex())
-        if category_id == None or category_id == "no filter":
+        if category_id == None or category_id == -1:
             category_id = None
         
         self.table.updateStatsTable(category_id, self.mostordered)

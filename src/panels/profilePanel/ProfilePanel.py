@@ -7,6 +7,7 @@ from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import (
     QApplication,
     QVBoxLayout,
+    QHBoxLayout,
     QMainWindow,
     QWidget,
     QPushButton,
@@ -14,13 +15,14 @@ from PyQt6.QtWidgets import (
     QLabel,
     QFrame,
     QVBoxLayout,
-    QScrollArea
+    QScrollArea,
 )
 from src.utils.PixMap import setPixMapOf
 from src.components.Headers import QOtherPanelHeader
 from src.components.Table import QOrderHTable
 from src.panels.profilePanel.ProfileEditSection import QProfile, QProfileViewState
 from PyQt6.QtCore import Qt
+from src.components.Calendar import QCalendarFilter
 
 class QProfilePanel(QFrame) :
     def __init__(self):
@@ -31,9 +33,14 @@ class QProfilePanel(QFrame) :
         history_label = QLabel("Order History")
         contentsVLayout = QVBoxLayout()
         contentsVLayout.setContentsMargins(10,10,0,10)
+        self.calendarfilter = QCalendarFilter()
+        self.label_filter_hbox = QHBoxLayout()
+        self.label_filter_hbox.addWidget(history_label)
+        self.label_filter_hbox.addStretch()
+        self.label_filter_hbox.addWidget(self.calendarfilter)
 
         self.orderHTable = QOrderHTable()
-        contentsVLayout.addWidget(history_label)
+        contentsVLayout.addLayout(self.label_filter_hbox)
         contentsVLayout.addWidget(self.orderHTable)
         contentsVLayout.addWidget(self.orderHTable.pageNav, alignment=Qt.AlignmentFlag.AlignCenter )
 
