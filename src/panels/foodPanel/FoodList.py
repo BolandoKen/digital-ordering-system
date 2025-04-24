@@ -87,6 +87,7 @@ class QFoodList(QFrame) :
         elif self.pageName == "customer" :
             self.init_customerFoodList()
         self.foodList_layout.myLayout.activate()
+        self.foodList_layout.container.adjustSize()
 
         
         # updates the list content
@@ -106,6 +107,7 @@ class QFoodList(QFrame) :
             for i in reversed(range(layout.count())): # reverse, because deletion fills gaps
                 item = layout.takeAt(i) 
                 if item.widget(): 
+                    item.widget().hide()
                     item.widget().deleteLater()
                 elif item.spacerItem():  
                     layout.removeItem(item)     

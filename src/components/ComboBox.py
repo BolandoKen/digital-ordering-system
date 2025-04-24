@@ -46,11 +46,12 @@ class QFilterButton(QPushButton):
         self.popup.setWindowFlags(Qt.WindowType.Popup | Qt.WindowType.FramelessWindowHint | Qt.WindowType.NoDropShadowWindowHint)
         self.popup.setFixedSize(193, 126)
         self.popup.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.popup.setObjectName("popup")
         self.popup.setStyleSheet("""
-            background-color: white; 
+            #popup{background-color: white; 
             border: 2px solid #D9D9D9; 
             border-radius: 10px;
-            outline: none;
+            outline: none;}
         """)
 
         container = QWidget(self.popup)
@@ -76,44 +77,7 @@ class QFilterButton(QPushButton):
         
         self.catComboBox = QCatComboBox("stat")
         # self.combo_box.addItems(["All", "Food", "Beverages", "Desserts"])
-        self.catComboBox.setFixedWidth(160)
-        self.catComboBox.setFixedHeight(30)
-        self.catComboBox.setStyleSheet(
-            """
-            QComboBox {
-                color: black;
-                border: 2px solid #D9D9D9;
-                padding-left: 5px;  
-            }
-            QComboBox::drop-down {
-                width: 20px;
-                background-color: transparent;
-            }                   
-            QComboBox::down-arrow {
-                image: url(assets/icons/dropdown_icon.svg);
-                background-color: transparent;
-                border: none;
-            }
-            QComboBox QAbstractItemView {
-                background-color: white;
-                outline: 0px;
-                margin: 0px;
-                padding: 0px;
-                padding-top: 5px;
-                padding-bottom: 5px;
-                border: none;
-                border-radius: 6px;
-            }                
-            QComboBox QAbstractItemView::item {
-            background-color: transparent;
-            color: black;
-            padding: 5px;
-            border: none;
-    }
-        """)
-        view = self.catComboBox.view()
-        view.parent().setObjectName("viewpare")
-        view.parent().setStyleSheet("#viewpare{background-color: transparent;}")
+        
  
         self.catComboBox.currentTextChanged.connect(self.update_icon)
         popup_layout.addWidget(self.catComboBox)
@@ -137,7 +101,52 @@ class QFilterButton(QPushButton):
         else:
             self.setIcon(self.Active_icon)
 
-class QCatComboBox(QComboBox) :
+class QStyledComboBox(QComboBox) :
+    def __init__(self):
+        super().__init__()
+        self.setFixedWidth(160)
+        self.setFixedHeight(30)
+        self.setStyleSheet(
+            """
+            QComboBox {
+                background-color: white; 
+                color: black;
+                border: 2px solid #D9D9D9;
+                border-radius: 10px;
+                padding-left: 5px;  
+            }
+            QComboBox::drop-down {
+                width: 20px;
+                background-color: transparent;
+            }                   
+            QComboBox::down-arrow {
+                image: url(assets/icons/dropdown_icon.svg);
+                background-color: transparent;
+                border: none;
+            }
+            QComboBox QAbstractItemView {
+                background-color: white;
+                outline: 0px;
+                margin: 0px;
+                padding: 0px;
+                padding-top: 5px;
+                padding-bottom: 5px;
+                border: 2px solid #D9D9D9; 
+                border-radius: 10px;
+
+            }                
+            QComboBox QAbstractItemView::item {
+            background-color: transparent;
+            color: black;
+            padding: 5px;
+            border: none;
+    }
+        """)
+        view = self.view()
+        view.parent().setObjectName("viewpare")
+        view.parent().setStyleSheet("#viewpare{background-color: transparent;}")
+
+class QCatComboBox(QStyledComboBox) :
     def __init__(self, typeOf = None):
         super().__init__()
         self.catList = fetchCatList("admin") 
