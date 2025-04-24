@@ -51,8 +51,9 @@ class QStatsPanel(QFrame) :
     
         contentsVLayout.addLayout(queryBarHLayout)
         contentsVLayout.addWidget(self.table)
+        contentsVLayout.addWidget(self.table.pageNav, alignment=Qt.AlignmentFlag.AlignCenter)
         self.stats_layout.addLayout(contentsVLayout)
-        self.update_table()
+        # self.update_table()
     
     def changeorder(self):
         self.mostordered = not self.mostordered

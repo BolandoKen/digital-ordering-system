@@ -13,10 +13,12 @@ from PyQt6.QtWidgets import (
     QTableWidgetItem,
     QHeaderView,
 )
+import math
 from src.database.queries import fetchStatistics, fetchOrderHistory
 from src.components.Dialogs import QviewOrderDialog
 from src.utils.PubSub import pubsub
-from src.utils.listOrganizer import organizeByDate
+from src.utils.listOrganizer import organizeByDate, getPage
+from src.components.PageNav import QPageNav
 
 
 class QStyledTable(QTableWidget) :
@@ -74,7 +76,7 @@ class QStatsTable(QStyledTable) :
         self.setColumnCount(4)
         self.setHorizontalHeaderLabels(["#","Food", "Category", "Times Ordered"])
         self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-        self.statistics_table()    
+        self.getList() 
         self.setShowGrid(False)
         self.verticalHeader().setVisible(False)
         self.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)
@@ -86,34 +88,44 @@ class QStatsTable(QStyledTable) :
         pubsub.subscribe("orderSubmitted_event", self.statistics_table)
         pubsub.subscribe("updateFoodItem", self.statistics_table)
 
+        self.rows = 20
+        self.curr_lastPage = math.ceil(len(self.stats_data)/self.rows)
+        self.pageNav = QPageNav(self.curr_lastPage, self.renderPage )
+        self.renderPage()
+
     def setOrderBy(self, orderby) :
         self.orderBy_mostOrdered = orderby
         self.statistics_table()
 
-    def updateStatsTable(self, category_id=None, mostordered=True):
-        order = ("DESC" if mostordered else "ASC")
-        stats = fetchStatistics(order, category_id)
-        self.setRowCount(len(stats))
-        count = 1 
+    def renderPage(self) :
+        paginatedArr = getPage(self.stats_data, self.pageNav.currentPage, self.rows)
+        self.renderList(paginatedArr)
 
-        for row_id, row_data in enumerate(stats):
-            food, category, times = row_data
-            self.setItem(row_id, 0, QTableWidgetItem(str(count)))
-            self.setItem(row_id, 1, QTableWidgetItem(food)) 
-            self.setItem(row_id, 2, QTableWidgetItem(category))
-            self.setItem(row_id, 3, QTableWidgetItem(str(times)))
-            count += 1 #i might change this later, muni gi suggest sa chatgpt, ako orig code kay somehow na shift to the left tanan values after nako i-change ang category
+    def renderList(self, list) :
+        self.setRowCount(len(list)) 
+        count = (self.pageNav.currentPage - 1) * self.rows + 1
 
-    def statistics_table(self, e = None): 
-        stats_data = fetchStatistics('DESC' if self.orderBy_mostOrdered else 'ASC')
-        self.setRowCount(len(stats_data))
-        count = 1
-        for row, (food, category, times) in enumerate(stats_data): 
+        for row, (food, category, times) in enumerate(list):
             self.setItem(row, 0, QTableWidgetItem(str(count)))
-            self.setItem(row, 1, QTableWidgetItem(food))
+            self.setItem(row, 1, QTableWidgetItem(food)) 
             self.setItem(row, 2, QTableWidgetItem(category))
             self.setItem(row, 3, QTableWidgetItem(str(times)))
-            count+=1
+            count += 1  
+
+    def getList(self) :
+        self.stats_data = fetchStatistics('DESC' if self.orderBy_mostOrdered else 'ASC')
+
+
+    def updateStatsTable(self, category_id=None, mostordered=True): 
+        order = ("DESC" if mostordered else "ASC")
+        self.stats_data = fetchStatistics(order, category_id)
+        self.pageNav.updateNav(self.stats_data, self.rows)
+        self.renderPage()
+
+    def statistics_table(self, e = None): # redundant with function above?
+        self.stats_data = fetchStatistics('DESC' if self.orderBy_mostOrdered else 'ASC')
+        self.pageNav.updateNav(self.stats_data, self.rows)
+        self.renderPage()
     
 class QOrderHTable(QStyledTable) :
     def __init__(self) :
