@@ -354,3 +354,25 @@ class QMinusButton(QPushButton):
         self.setIcon(QIcon("assets/icons/minus_icon.svg"))
         self.setIconSize(QSize(15, 15))
         self.setCursor(Qt.CursorShape.PointingHandCursor)
+
+
+class QAdminButton(QPushButton):
+    def __init__(self, text, width = 80, height = 60):
+        super().__init__(text)
+        self.styleString = """
+            background-color: white;
+            color: black;
+            font-style: "Helvetica";
+            font-size: 20px;
+            font-weight: 450;
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #d9d9d9;
+            """
+        self.setStyleSheet(self.styleString)
+
+    def setClickedState(self, bool) :
+        styleString = self.styleString
+        if bool :
+            styleString += "background-color:#D9D9D9;"
+        self.setStyleSheet(styleString)

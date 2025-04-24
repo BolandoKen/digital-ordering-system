@@ -19,7 +19,7 @@ from src.database.Orders import addOrder
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap, QFont
 from src.components.ScrollArea import QScrollAreaLayout
-from src.components.Buttons import QPrimaryButton, QDeleteButton
+from src.components.Buttons import QPrimaryButton, QDeleteButton, QAdminButton
 from src.components.SpinBox import QCartItemSpinBox
 from src.components.Dialogs import QConfirmDialog
 import traceback
@@ -50,10 +50,8 @@ class QAdminSideBar(QSideBar) :
     def init_adminSideBar(self) :
         self.currindex = 0 
         pubsub.subscribe("backToFoodPanel_clicked", self.handlePanelBtnClicked)
-        self.AccPanelBtn = QPushButton("Account")
-        self.StatsPanelBtn = QPushButton("Statistics")
-        self.StatsPanelBtn.setStyleSheet("background-color: white; color: black;")
-        self.AccPanelBtn.setStyleSheet("background-color: white; color: black")
+        self.AccPanelBtn = QAdminButton("Account")
+        self.StatsPanelBtn = QAdminButton("Statistics")
         self.AccPanelBtn.clicked.connect(lambda: self.handlePanelBtnClicked(2))
         self.StatsPanelBtn.clicked.connect(lambda: self.handlePanelBtnClicked(1))
         self.sidebar_layout.addItem(QSpacerItem(50,150))
@@ -63,12 +61,12 @@ class QAdminSideBar(QSideBar) :
         self.sidebar_layout.addStretch()
 
     def handlePanelBtnClicked(self, index) :
-        self.StatsPanelBtn.setStyleSheet("background-color: white; color: black;")
-        self.AccPanelBtn.setStyleSheet("background-color: white; color: black")
+        self.AccPanelBtn.setClickedState(False)
+        self.StatsPanelBtn.setClickedState(False)
         if index == 1 : 
-            self.StatsPanelBtn.setStyleSheet("background-color: #a1a1a1; color: black")
+            self.StatsPanelBtn.setClickedState(True)
         elif index == 2 :
-            self.AccPanelBtn.setStyleSheet("background-color: #a1a1a1; color: black")
+            self.AccPanelBtn.setClickedState(True)
         self.switchPage(index)
     
     def handleLogoutClicked(self) :
