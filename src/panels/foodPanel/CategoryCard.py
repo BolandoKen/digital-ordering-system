@@ -71,7 +71,7 @@ class QCategoryCard(QMenuCard) :
             self.delBtn.hide()
 
     def handleCatDelete(self) :
-        message = "Are you sure you want to delete this category?"
+        message = f"Are you sure you want to delete this category? {self.catname}"
         confirm = QConfirmDialog("Confirm", message, self.window())
 
         if confirm.exec():

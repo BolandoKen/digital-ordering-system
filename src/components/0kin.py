@@ -12,10 +12,12 @@ from PyQt6.QtWidgets import (
     QGraphicsDropShadowEffect,
     QPushButton,
     QCalendarWidget,
-    QDateEdit
-
+    QDateEdit,
+    QLabel,
+    QListView,
+    QLineEdit
 )
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QPoint
 from PyQt6.QtGui import QShortcut, QKeySequence
 from src.components.ComboBox import QFilterButton  
 from src.components.Buttons import (QDeleteButton,
@@ -29,7 +31,45 @@ from src.components.Buttons import (QDeleteButton,
                                     QPreviousButton,)
 from src.components.SpinBox import QCartItemSpinBox
 from src.components.Calendar import QCalendarFilter
-from PyQt6.QtCore import QDate
+from PyQt6.QtCore import QDate, QTimer
+from src.components.LineEdit import QSearchArea
+from src.utils.PubSub import pubsub
+class TestFrame(QFrame) :
+    def __init__(self, floater = None):
+        super().__init__()
+        self.floater = floater
+        print(self.window())
+        self.floater = QLabel("hi")
+        # QTimer.singleShot(0, lambda: self.floater.setParent(self.window()))
+        main_layout = QHBoxLayout(self)
+        self.lineedit = QLineEdit(self)
+        self.lineedit.setFixedHeight(40)
+        print(self.lineedit.pos().x(), self.lineedit.pos().y())
+        globalpos = self.lineedit.mapToGlobal(QPoint(0,0))
+
+        self.floater.setStyleSheet("background-color: red; color: white;")
+        self.floater.setFixedSize(300,250)
+        print(globalpos.x(), globalpos.y())
+        main_layout.addWidget(self.lineedit)
+        QTimer.singleShot(0, self.get_global_position)
+
+
+    def get_global_position(self):
+        # Now that the layout has been applied, get the global position
+        xpos = self.lineedit.pos().x()
+        ypos = self.lineedit.pos().y()
+        self.floater.setParent(self.window())
+        print(self.window())
+        xoffset = 0
+        yoffset = self.lineedit.height()
+        globalpos = self.lineedit.mapToGlobal(QPoint(xoffset,yoffset))
+        print("Global Position:", globalpos)
+        self.floater.move(globalpos)
+        self.floater.show()
+        print(self.floater.pos().x(), self.floater.pos().y())
+        # self.floater.move(globalpos)
+        # self.floater.move(0,0)
+        self.floater.raise_()
 
 
 class QWindow(QMainWindow):
@@ -41,7 +81,7 @@ class QWindow(QMainWindow):
         
         center_layout = QHBoxLayout()
         center_layout.addStretch() 
-        
+        print(self.window())
         self.filter_button = QFilterButton(self)
         center_layout.addWidget(self.filter_button, alignment=Qt.AlignmentFlag.AlignCenter)
         
@@ -60,9 +100,16 @@ class QWindow(QMainWindow):
         main_layout.addWidget(QCalendarFilter(), alignment=Qt.AlignmentFlag.AlignCenter)
         main_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        main_layout.addWidget(QSecondaryButton("hi secondary", 400))
-        main_layout.addWidget(QCartItemSpinBox())
+        # main_layout.addWidget(btn)
+        # main_layout.addWidget(primbotn)
+        # main_layout.addWidget(QSecondaryButton("hi secondary", 400))
+        # main_layout.addWidget(QCartItemSpinBox())
+        # self.floater = QLabel("hi", self.window())
 
+        # testframe = TestFrame(self.floater)
+        # testframe = TestFrame()
+        # main_layout.addWidget(testframe)
+        main_layout.addWidget(QSearchArea())
         
         main_centralwidget = QWidget()
         main_centralwidget.setStyleSheet("background: white; color: black")
@@ -71,7 +118,13 @@ class QWindow(QMainWindow):
 
         exit_shortcut = QShortcut(QKeySequence('esc'), self)
         exit_shortcut.activated.connect(self.close)
+
+        # self.floater.raise_()
+        # testframe.floater.raise_()
     
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        pubsub.publish("resize_event")
 
 if __name__ == "__main__":
     app = QApplication([])

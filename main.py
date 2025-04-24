@@ -58,7 +58,11 @@ class QWindow(QMainWindow) :
         else:
             self.switchBtn.setText("logout")
             self.AdminPage.switchPage(0)
-
+    
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        print('alsdihfa;')
+        
 
 if __name__ == "__main__" :
     app = QApplication([])
