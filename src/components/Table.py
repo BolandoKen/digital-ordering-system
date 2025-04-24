@@ -76,7 +76,7 @@ class QStatsTable(QStyledTable) :
         self.setColumnCount(4)
         self.setHorizontalHeaderLabels(["#","Food", "Category", "Times Ordered"])
         self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-        self.getList() 
+        self.init_list() 
         self.setShowGrid(False)
         self.verticalHeader().setVisible(False)
         self.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)
@@ -88,7 +88,7 @@ class QStatsTable(QStyledTable) :
         pubsub.subscribe("orderSubmitted_event", self.statistics_table)
         pubsub.subscribe("updateFoodItem", self.statistics_table)
 
-        self.rows = 20
+        self.rows = 25
         self.curr_lastPage = math.ceil(len(self.stats_data)/self.rows)
         self.pageNav = QPageNav(self.curr_lastPage, self.renderPage )
         self.renderPage()
@@ -101,18 +101,18 @@ class QStatsTable(QStyledTable) :
         paginatedArr = getPage(self.stats_data, self.pageNav.currentPage, self.rows)
         self.renderList(paginatedArr)
 
-    def renderList(self, list) :
-        self.setRowCount(len(list)) 
+    def renderList(self, mylist) :
+        self.setRowCount(len(mylist)) 
         count = (self.pageNav.currentPage - 1) * self.rows + 1
 
-        for row, (food, category, times) in enumerate(list):
+        for row, (food, category, times) in enumerate(mylist):
             self.setItem(row, 0, QTableWidgetItem(str(count)))
             self.setItem(row, 1, QTableWidgetItem(food)) 
             self.setItem(row, 2, QTableWidgetItem(category))
             self.setItem(row, 3, QTableWidgetItem(str(times)))
             count += 1  
 
-    def getList(self) :
+    def init_list(self) :
         self.stats_data = fetchStatistics('DESC' if self.orderBy_mostOrdered else 'ASC')
 
 
@@ -136,7 +136,7 @@ class QOrderHTable(QStyledTable) :
         self.setColumnCount(3)
         self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.setShowGrid(False)
-        self.order_table()
+        self.init_list()
         self.verticalHeader().setVisible(False)
 
         self.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)
@@ -146,18 +146,23 @@ class QOrderHTable(QStyledTable) :
         self.horizontalHeader().setStyleSheet("margin-right: 10px")
         self.viewport().setStyleSheet("margin-right: 10px")
         pubsub.subscribe("orderSubmitted_event", self.order_table)
-        
 
-    def order_table(self, e = None): 
-        self.clearTable()
-        self.setHorizontalHeaderLabels(["Date", "OrderID", ""])
-        orders = fetchOrderHistory()
-        organizedOrders = organizeByDate(orders)
+        self.rows = 25
+        self.curr_lastPage = math.ceil(len(self.orders_list)/self.rows)
+        self.pageNav = QPageNav(self.curr_lastPage, self.order_table )
+        self.order_table()
+
+    def organizePage(self, mylist) :
+        paginatedOrders = getPage(mylist, self.pageNav.currentPage, self.rows)
+        organizedOrders = organizeByDate(paginatedOrders)
+        return organizedOrders
+
+    def renderList(self, mylist) :
         count = 1
-        self.setRowCount(len(organizedOrders))
+        mylist = self.organizePage(mylist)
+        self.setRowCount(len(mylist))
 
-
-        for row, item in enumerate(organizedOrders):
+        for row, item in enumerate(mylist):
             is_header = item["is_header"]
             if not is_header :
                 order = item["content"]
@@ -176,6 +181,19 @@ class QOrderHTable(QStyledTable) :
                 self.setSpan(row, 0,1,3)
                 pass
     
+
+    def order_table(self, e = None): 
+        self.clearTable()
+        self.setHorizontalHeaderLabels(["Date", "OrderID", ""])
+        self.orders_list = fetchOrderHistory()
+        self.renderList(self.orders_list)
+    
+    def init_list(self) :
+        self.orders_list = fetchOrderHistory()
+
+    # for filter by date range, and display by # of rows,
+    #  dont forget to call updateNav
+
     def publishToDialog(self, orderid) :
         pubsub.publish("viewClicked_event", orderid)
         self.viewDialog.exec()

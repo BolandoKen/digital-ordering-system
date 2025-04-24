@@ -35,6 +35,7 @@ class QProfilePanel(QFrame) :
         self.orderHTable = QOrderHTable()
         contentsVLayout.addWidget(history_label)
         contentsVLayout.addWidget(self.orderHTable)
+        contentsVLayout.addWidget(self.orderHTable.pageNav, alignment=Qt.AlignmentFlag.AlignCenter )
 
         self.order_layout.addWidget(QOtherPanelHeader("Profile"))
         self.order_layout.addWidget(QProfile(), alignment=Qt.AlignmentFlag.AlignTop)

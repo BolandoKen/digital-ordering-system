@@ -11,7 +11,7 @@ def getPage(arr, pageNumber, rows) :
     start = end - rows
     return arr[start : end]
 
-def organizeByDate(orderList) :
+def organizeByDate(orderList) : # paginate -> organize
     orderListArr = [] 
 
     previousDate = datetime(1,1,1,1,1,1)
