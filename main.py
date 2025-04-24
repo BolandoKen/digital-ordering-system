@@ -46,13 +46,18 @@ class QWindow(QMainWindow) :
         exit_shortcut = QShortcut(QKeySequence('esc'), self)
         exit_shortcut.activated.connect(self.close)
 
-    def switchPage(self, e = None) :
+    def switchPage(self, e=None):
         curr = self.stackedPages.currentIndex()
-        self.stackedPages.setCurrentIndex( (curr+1) %2)
-        if self.stackedPages.currentIndex() == 0 :
+        new_index = (curr + 1) % 2
+        self.stackedPages.setCurrentIndex(new_index)
+
+        if new_index == 0:
             self.switchBtn.setText("login")
-        else :
+            self.CustomerPage.customerFoodMenuPanel.sideBar.resetSidebar()
+            self.CustomerPage.customerPage_stackedWidgets.setCurrentIndex(1)
+        else:
             self.switchBtn.setText("logout")
+            self.AdminPage.switchPage(0)
 
 if __name__ == "__main__" :
     app = QApplication([])
