@@ -234,6 +234,14 @@ class QCustomerSideBar(QSideBar) :
                 elif item.spacerItem():  
                     layout.removeItem(item)   
 
+    def resetSidebar(self):
+        self.clear_layout(self.sidebar_layout.getLayout())  # assuming you pass self.cartLayout
+        self.cartItems.clear()
+        self.totalAmount = 0
+        self.total_label.setText("Total: ₱0.00")
+        self.cart_state = "cart"
+        self.submitBtn.setText("Done")
+
 class QSimpleCartItem(QFrame) : # refactor this later
     def __init__(self, foodid, foodname, imgfile, price, recalculate_cb):
         super().__init__()
