@@ -383,8 +383,10 @@ class QPreviousButton(QPushButton):
         self.setFixedSize(32, 32)
 
         self.setStyleSheet("""
-            background-color: transparent;
-            padding: 0px;                 
+            background-color: white;
+            padding: 0px;      
+            border: none;          
+           
         """)
         
         self.setIcon(QIcon("assets/icons/previous_icon.svg"))
@@ -397,8 +399,9 @@ class QNextButton(QPushButton):
         self.setFixedSize(32, 32)
 
         self.setStyleSheet("""
-            background-color: transparent;
-            padding: 0px;                 
+            background-color: white;
+            padding: 0px;       
+            border: none;          
         """)
         
         self.setIcon(QIcon("assets/icons/next_icon.svg"))

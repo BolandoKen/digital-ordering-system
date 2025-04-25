@@ -38,7 +38,8 @@ class QSelectImageCard(QFrame) :
         self.imageCard_layout.addWidget(self.clearButton, alignment=Qt.AlignmentFlag.AlignRight)
         self.imageCard_layout.addWidget(self.imageButton)
         setPixMapOf(self.imageButton, "addCircle.svg", "icon")
-        self.imageButton.setFixedSize(125,125)
+        self.imageButton.setFixedSize(150,150)
+        self.imageButton.setScaledContents(True)
 
     def connectTo(self, callback) :
         self.imageButton.connectTo(callback)

@@ -42,7 +42,7 @@ class QFoodItemCard(QMenuCard) :
         self.foodLabel = QLabel(self.foodname)
         self.foodimg = QLabel()
         self.foodimgpixmap = setPixMapOf(self.foodimg, self.imgfile, "food")["pixmap"]
-        self.priceLabel = QLabel(str(self.price))   
+        self.priceLabel = QLabel(f"₱{str(self.price)}")   
              
         self.foodCard_layout.addWidget(self.foodimg, alignment=Qt.AlignmentFlag.AlignCenter) 
         self.foodCard_layout.addWidget(self.foodLabel, alignment=Qt.AlignmentFlag.AlignCenter)   

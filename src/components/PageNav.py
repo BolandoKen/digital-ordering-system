@@ -6,6 +6,7 @@ from PyQt6.QtWidgets import (
     )
 from PyQt6.QtGui import QIntValidator, QCursor
 from PyQt6.QtCore import Qt
+from src.components.Buttons import QPreviousButton, QNextButton
 import math
 
 class QPageNav(QFrame) :
@@ -20,8 +21,8 @@ class QPageNav(QFrame) :
         self.setLayout(self.main_layout)
 
     def init_ui(self) :
-        self.leftNav = QPushButton('<')
-        self.rightNav = QPushButton('>')
+        self.leftNav = QPreviousButton()
+        self.rightNav = QNextButton()
         self.lineNav = QLineEdit(f"{self.currentPage}")
 
         self.leftNav.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
