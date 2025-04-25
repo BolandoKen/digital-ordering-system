@@ -52,9 +52,11 @@ class QOtherPanelHeader(QFrame) :
 
     def init_ProfilePanel(self) :
         self.header_layout.addStretch()
-        self.editBtn = QPushButton("edit")
+        self.editBtn = QPushButton("Edit")
+        self.editBtn.setStyleSheet("background-color: white; color: #72CEFF; border-radius: 5px; padding: 5px; font-size: 15px;")
         self.editBtn.clicked.connect(self.handleEditProfile)
-        self.saveBtn = QPushButton("save") 
+        self.saveBtn = QPushButton("Save")
+        self.saveBtn.setStyleSheet("background-color: white; color: #72CEFF; border-radius: 5px; padding: 5px; font-size: 15px;")
         self.saveBtn.clicked.connect(self.handleSaveProfile)
         self.header_layout.addWidget(self.editBtn)
         self.header_layout.addWidget(self.saveBtn)
