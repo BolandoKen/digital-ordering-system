@@ -91,7 +91,7 @@ class QFoodPanelHeader(QFrame) :
 
         if self.pageName == "admin" : 
             pubsub.subscribe("initHeaderUnBtn_event", self.setShowUnavailableBtn)
-
+        pubsub.subscribe("logout_Event", self.handleBackBtn)
         self.headerLabel = QLabel()
         self.headerLabel.setFont(QFont("Helvitica", 25, QFont.Weight.Bold))
 
@@ -119,7 +119,7 @@ class QFoodPanelHeader(QFrame) :
         self.state = "food"
         self.init_food()
     
-    def handleBackBtn(self) :
+    def handleBackBtn(self, e = None) :
         if self.state == "food" :
             self.state = "category"
             pubsub.publish(f"{self.pageName}_backToCatClicked", None)

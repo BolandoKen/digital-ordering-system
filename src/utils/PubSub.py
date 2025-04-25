@@ -8,6 +8,7 @@ class Pubsub(object) :
             self.events[eventName] = [callback]
         else :
             self.events[eventName].append(callback)
+            
 
     def publish(self, eventName, params = None) :
         if eventName in self.events :

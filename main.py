@@ -50,14 +50,15 @@ class QWindow(QMainWindow) :
         curr = self.stackedPages.currentIndex()
         new_index = (curr + 1) % 2
         self.stackedPages.setCurrentIndex(new_index)
-
         if new_index == 0:
             self.switchBtn.setText("login")
             self.CustomerPage.customerFoodMenuPanel.sideBar.resetSidebar()
             self.CustomerPage.customerPage_stackedWidgets.setCurrentIndex(1)
+            self.CustomerPage.customerFoodMenuPanel.foodPanel.menuListCont.switchToCatPanel()
         else:
             self.switchBtn.setText("logout")
             self.AdminPage.switchPage(0)
+
 
 if __name__ == "__main__" :
     app = QApplication([])
