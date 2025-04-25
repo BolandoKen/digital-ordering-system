@@ -15,10 +15,12 @@ from PyQt6.QtWidgets import (
     QDateEdit,
     QLabel,
     QListView,
-    QLineEdit
+    QLineEdit,
+    QGraphicsDropShadowEffect
+
 )
 from PyQt6.QtCore import Qt, QPoint
-from PyQt6.QtGui import QShortcut, QKeySequence
+from PyQt6.QtGui import QShortcut, QKeySequence, QColor
 from src.components.ComboBox import QFilterButton  
 from src.components.Buttons import (QDeleteButton,
                                     QBackButton,
@@ -33,26 +35,31 @@ from src.components.Calendar import QCalendarFilter
 from PyQt6.QtCore import QDate, QTimer
 from PyQt6.QtCore import QEvent
 from src.utils.PubSub import pubsub
+from src.database.queries import fetchSubStrNames
+from src.components.ScrollArea import QScrollAreaLayout
 
 class QSearchArea(QFrame) :
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent = None):
+        super().__init__(parent)
         self.main_layout = QVBoxLayout(self)
         self.floatArea = QFloatArea()
         self.searchbar = QLineEdit(self)
+        self.setFixedHeight(40)
         self.searchbar.textChanged.connect(self.floatArea.renderArea)
         self.searchbar.installEventFilter(self)
-        self.searchbar.setFixedSize(300,30)
-
-        self.main_layout.addWidget(self.searchbar)
+        self.searchbar.setFixedSize(450,30)
+        self.temp = [0]
+        self.main_layout.addWidget(self.searchbar, Qt.AlignmentFlag.AlignRight)
 
         QTimer.singleShot(0, self.moveFloater_toPos)
         pubsub.subscribe("resize_event", self.moveFloater_toPos)
         self.floatArea.hide()
+        self.searchbar.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
 
     def eventFilter(self, watched, event):
         if watched == self.searchbar:
             if event.type() == QEvent.Type.FocusIn:
+                self.moveFloater_toPos()
                 self.floatArea.show()
             elif event.type() == QEvent.Type.FocusOut:
                 self.floatArea.hide()
@@ -65,25 +72,65 @@ class QSearchArea(QFrame) :
         self.floatArea.move(globalpos)
         self.floatArea.raise_()
 
+
+
 class QFloatArea(QFrame) :
     def __init__(self):
         super().__init__()
-        self.setStyleSheet("background-color: transparent;")
-        self.setFixedSize(300,200)
+        self.setObjectName("floatarea")
+        self.setStyleSheet("""#floatarea{
+                           background-color: white;
+                            border: 1px solid #D9D9D9; 
+                            border-radius: 10px;
+                           padding:3px;}""")
+        self.setFixedSize(450,100)
         # self.setFixedWidth(300)
         self.setMaximumHeight(0)
-        self.main_layout = QVBoxLayout(self) # make layout to be scrollarea
+        self.mainmain_layout = QVBoxLayout(self)
+        self.main_layout = QScrollAreaLayout(QVBoxLayout, self.mainmain_layout) # make layout to be scrollarea
+        self.main_layout.myLayout.setContentsMargins(0,0,0,0)
+        self.main_layout.myLayout.setSpacing(0)
+        self.main_layout.myLayout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.mainmain_layout.setContentsMargins(0,0,0,0)
         self.main_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         self.main_layout.setContentsMargins(0,0,0,0)
-        self.main_layout.addWidget(QSearchRowItem())
-        self.main_layout.addWidget(QSearchRowItem())
-        self.main_layout.addWidget(QSearchRowItem())
+        self.contentCount = 0
+        self.setFixedHeight(0)
+  
+        shadow = QGraphicsDropShadowEffect(self)
+        shadow.setBlurRadius(5)
+        shadow.setXOffset(1)
+        shadow.setYOffset(1)
+        shadow.setColor(QColor(0, 0, 0, 180))
+        self.setGraphicsEffect(shadow)
 
     def renderArea(self, text) :
         #clear layout everytime
+        self.clear_layout(self.main_layout.getLayout())
         print(text)
+        if text.strip() == "" : 
+            self.contentCount = 0
+            self.setFixedHeight(0)
+            return
+        listResults = fetchSubStrNames(text)
+        self.contentCount = len(listResults)
+        print(listResults)
+        height = 100
+        if self.contentCount == 0 :  # WHY IS SIZING NOT CONSISTENT? its impossible with min(formula, 100) >:(())
+            height = 0 
+        elif self.contentCount == 1 :
+            height = 40 
+        elif self.contentCount == 2 :
+            height = 70
+        
+        self.setFixedHeight(height)
+        
+        for tuple in listResults :
+            self.main_layout.addWidget(QSearchRowItem(tuple))
+        
+
         # based on the text, get all items with matching text, only name: substr,
-        # preferably with matching substr bold
+        # preferably with matching substr bold, no ty
 
         # get list
 
@@ -99,15 +146,22 @@ class QFloatArea(QFrame) :
                     layout.removeItem(item)   
 
 class QSearchRowItem(QFrame) :
-    def __init__(self):
+    def __init__(self, rowTuple):
         super().__init__()
-        self.setFixedSize(300,40)
-        self.setStyleSheet("background-color:red")
+        self.rowTuple =rowTuple
+        self.foodid , self.foodname, self.isavailable, self.catid, self.catname = rowTuple
+        self.setFixedSize(400,30)
+        self.setStyleSheet("background-color:white; border-radius:2px; ")
+        self.main_layout = QHBoxLayout(self)
+        self.main_layout.setContentsMargins(0,0,0,0)
+        self.main_layout.addWidget(QLabel(f"{self.foodname} - {self.catname}"))
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
-            print("Left button clicked!")
+            print("Left button clicked!", self.foodname)
+        pubsub.publish("foodSearched_event", self.rowTuple )
         return super().mousePressEvent(event)
+
     
         # if chosen card is category,
 

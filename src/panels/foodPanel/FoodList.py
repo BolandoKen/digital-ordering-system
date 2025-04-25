@@ -20,6 +20,8 @@ from src.components.ScrollArea import QScrollAreaLayout
 from src.components.FlowLayout import QFlowLayout
 from src.database.queries import fetchCategoryUnavailableItemCount
 from src.components.Buttons import QAddButton
+from PyQt6.QtCore import QTimer
+import traceback
 
 class QFoodList(QFrame) :
 
@@ -40,9 +42,26 @@ class QFoodList(QFrame) :
         # make separete subscribe function? like init_subscribe
 
         # will listen to search, subscribe food searched
+        if pageName == "admin" :
+            pubsub.subscribe("foodSearched_event", self.getFoodCardMap)
         # food id will be passed down, as well as the catTuple (parameter for updateList)
         # using foodcard map we ensure visible the card
         # updatelist -> redirect (setindex) -> ensure visible
+
+    def getFoodCardMap(self, rowTuple = None) :
+        foodid, foodname, isavailable, catid, catname = rowTuple
+        pubsub.publish("admin_catCardClicked", (catid, catname))
+        if isavailable == False :
+            if self.showUnavailable == False :
+                self.toggleShowUnavailable()
+        QTimer.singleShot(30, lambda: self.goToView(foodid))
+        
+    
+    def goToView(self, id) :
+        print(self.foodCardMap[str(id)])
+        foodcard_widget = self.foodCardMap[str(id)]
+        self.foodList_layout.ensureWidgetVisible(foodcard_widget, xMargin=0,yMargin=300)
+        # do highlight animation on food card
 
     def init_customerFoodList(self) :
         foodlist = fetchFoodUnderCatList(self.category_id, self.showUnavailable)
@@ -50,7 +69,7 @@ class QFoodList(QFrame) :
             foodCard = QFoodItemCard(foodTuple, self.pageName)
             self.foodCardMap[str(foodTuple[0])] = foodCard
             self.foodList_layout.addWidget(foodCard)
-        
+
         # no plus sign, unable to add
 
     def init_adminFoodList(self) :

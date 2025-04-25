@@ -19,6 +19,7 @@ class QScrollAreaLayout(QScrollArea) :
         self.container = QWidget()
         self.container.setStyleSheet("background: transparent")
         self.setWidget(self.container)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         mywidth = "10px"
         borderradius = "5px"
         bgcolor = "white"
