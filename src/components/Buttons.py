@@ -346,7 +346,7 @@ class QMinusButton(QPushButton):
         self.setFixedSize(width, height)
         self.setStyleSheet("""
             background: transparent;
-            border: 2px solid black;
+            border: 2px solid #D9D9D9;
             border-radius: 10px;
             padding: 0px;      
         """)
@@ -376,3 +376,31 @@ class QAdminButton(QPushButton):
         if bool :
             styleString += "background-color:#D9D9D9;"
         self.setStyleSheet(styleString)
+
+class QPreviousButton(QPushButton):
+    def __init__(self):
+        super().__init__("")
+        self.setFixedSize(32, 32)
+
+        self.setStyleSheet("""
+            background-color: transparent;
+            padding: 0px;                 
+        """)
+        
+        self.setIcon(QIcon("assets/icons/previous_icon.svg"))
+        self.setIconSize(QSize(32, 32))
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+
+class QNextButton(QPushButton):
+    def __init__(self):
+        super().__init__("")
+        self.setFixedSize(32, 32)
+
+        self.setStyleSheet("""
+            background-color: transparent;
+            padding: 0px;                 
+        """)
+        
+        self.setIcon(QIcon("assets/icons/next_icon.svg"))
+        self.setIconSize(QSize(32, 32))
+        self.setCursor(Qt.CursorShape.PointingHandCursor)

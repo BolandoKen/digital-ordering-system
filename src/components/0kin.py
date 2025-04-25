@@ -25,7 +25,8 @@ from src.components.Buttons import (QDeleteButton,
                                     QPlusButton,
                                     QMinusButton,
                                     QPrimaryButton,
-                                    QSecondaryButton,)
+                                    QSecondaryButton,
+                                    QPreviousButton,)
 from src.components.SpinBox import QCartItemSpinBox
 from src.components.Calendar import QCalendarFilter
 from PyQt6.QtCore import QDate
@@ -49,7 +50,10 @@ class QWindow(QMainWindow):
         date_edit.setFixedWidth(100)
         date_edit.setCalendarPopup(True)  # enables the calendar popup
         date_edit.setDate(QDate.currentDate())
+        previous_button = QPreviousButton()
+
         #main_layout.addWidget(date_edit)
+        main_layout.addWidget(previous_button, alignment=Qt.AlignmentFlag.AlignCenter)
         main_layout.addLayout(center_layout)
         main_layout.addSpacing(20)
    
