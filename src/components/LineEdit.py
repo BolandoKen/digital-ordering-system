@@ -121,5 +121,5 @@ class QSearchRowItem(QFrame) :
                     # ensure the food card is visible (autoscroll)
 
         # possible workarounds :
-            # - each panel will have map of their cards, key of id, value of the obj
+            # - each panel/list will have map of their cards, key of id, value of the obj
 

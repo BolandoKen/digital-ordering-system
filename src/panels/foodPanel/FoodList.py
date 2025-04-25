@@ -27,6 +27,7 @@ class QFoodList(QFrame) :
         super().__init__()
         self.pageName = pageName
         self.stackedLists = stackedLists
+        self.foodCardMap = {}
         self.scroll_layout = QVBoxLayout(self)
         self.scroll_layout.setContentsMargins(0,0,0,0)
         self.foodList_layout = QScrollAreaLayout(QFlowLayout, self.scroll_layout)
@@ -37,10 +38,17 @@ class QFoodList(QFrame) :
         self.subbedToUpdate = False
         self.subbedToToggle = False
         # make separete subscribe function? like init_subscribe
+
+        # will listen to search, subscribe food searched
+        # food id will be passed down, as well as the catTuple (parameter for updateList)
+        # using foodcard map we ensure visible the card
+        # updatelist -> redirect (setindex) -> ensure visible
+
     def init_customerFoodList(self) :
         foodlist = fetchFoodUnderCatList(self.category_id, self.showUnavailable)
         for foodTuple in foodlist :
             foodCard = QFoodItemCard(foodTuple, self.pageName)
+            self.foodCardMap[str(foodTuple[0])] = foodCard
             self.foodList_layout.addWidget(foodCard)
         
         # no plus sign, unable to add
@@ -103,6 +111,7 @@ class QFoodList(QFrame) :
         self.update_listContent()
 
     def clear_layout(self, layout): 
+        self.foodCardMap = {}
         print('rerender foodlist from', self.pageName)
         if layout is not None:
             for i in reversed(range(layout.count())): # reverse, because deletion fills gaps
