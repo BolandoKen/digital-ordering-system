@@ -19,7 +19,7 @@ from src.database.Orders import addOrder
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QPixmap, QFont, QIcon
 from src.components.ScrollArea import QScrollAreaLayout
-from src.components.Buttons import QPrimaryButton, QDeleteButton, QAdminButton
+from src.components.Buttons import QPrimaryButton, QDeleteButton, QAdminButton, QCloseButton
 from src.components.SpinBox import QCartItemSpinBox
 from src.components.Dialogs import QConfirmDialog
 import traceback
@@ -267,14 +267,9 @@ class QSimpleCartItem(QFrame) : # refactor this later
         # self.img_label.setFixedSize(100,100)
         # self.img_label.setScaledContents(True)
         
-        self.closeBtn_cartState = QPushButton()
+        self.closeBtn_cartState = QCloseButton()
         self.closeBtn_cartState.setFixedWidth(52)
-        
-        xIcon = QIcon ("assets/icons/x_icon.svg")
-        self.closeBtn_cartState.setIcon(xIcon)
-        self.closeBtn_cartState.setIconSize(QSize(16, 16))
 
-        self.closeBtn_cartState.setCursor(Qt.CursorShape.PointingHandCursor)
 
         self.closeBtn_confirmState = QDeleteButton("confirm")
         self.closeBtn_confirmState.setFixedWidth(50)

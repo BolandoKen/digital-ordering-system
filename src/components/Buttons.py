@@ -404,3 +404,18 @@ class QNextButton(QPushButton):
         self.setIcon(QIcon("assets/icons/next_icon.svg"))
         self.setIconSize(QSize(32, 32))
         self.setCursor(Qt.CursorShape.PointingHandCursor)
+
+class QCloseButton(QPushButton) :
+    def __init__(self) :
+        super().__init__()
+        xIcon = QIcon ("assets/icons/x_icon.svg")
+
+        self.setStyleSheet("""
+            background-color: transparent;
+            padding: 0px;       
+            border: none;          
+        """)
+        self.setIcon(xIcon)
+        self.setIconSize(QSize(16, 16))
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+

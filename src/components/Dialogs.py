@@ -25,7 +25,7 @@ from src.components.ImageCard import QSelectImageCard
 from src.components.ComboBox import QCatComboBox
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtGui import QDoubleValidator
-from src.components.Buttons import QPrimaryButton, QSecondaryButton
+from src.components.Buttons import QPrimaryButton, QSecondaryButton, QCloseButton
 from src.database.queries import fetchOrderItemsSubtotalList, fetchOrderItemsTotal
 from PyQt6.QtCore import Qt, QPoint, QTimer
 from PyQt6.QtGui import QFont, QColor
@@ -144,10 +144,12 @@ class QaddDialog(QStyledDialog) :
         if file_path:
             print(checkImgSize(file_path)) #check for filesize bfore compress
             self.tempImagePath = saveImageToLocalTemp(file_path, "temp.png")
-            setPixMapOf(self.selectImgCard.getLabel(), "temp.png", "temp")            
+            setPixMapOf(self.selectImgCard.getLabel(), "temp.png", "temp")  
+            self.selectImgCard.clearButton.show()          
 
     def handleClearBtn(self) :
         self.tempImagePath = None 
+        self.selectImgCard.clearButton.hide()
 
     def handleSubmitBtn(self) :
         validated = False
@@ -247,7 +249,7 @@ class QviewOrderDialog(QStyledDialog) :
         self.setFixedHeight(400)
         # self.setFixedWidth(325)
 
-        close_btn = QPushButton("x")
+        close_btn = QCloseButton()
         close_btn.clicked.connect(self.close)
 
         self.close_hbox = QHBoxLayout()

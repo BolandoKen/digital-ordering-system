@@ -12,7 +12,7 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QFileDialog
 )
-from src.components.Buttons import QImageButton
+from src.components.Buttons import QImageButton, QCloseButton
 from PyQt6.QtGui import QPixmap
 from src.utils.PixMap import setPixMapOf
 from PyQt6.QtCore import Qt
@@ -21,14 +21,21 @@ class QSelectImageCard(QFrame) :
     def __init__(self, handleClearBtnCallback):
         super().__init__()
         self.setObjectName("imageCard")
-        self.setStyleSheet("#imageCard{border: 1px solid black; border-radius: 10px}")
+        self.setStyleSheet("#imageCard{border: 1px solid black; border-radius: 10px; padding-bottom: 25px}")
         self.callback = handleClearBtnCallback
         self.imageCard_layout = QVBoxLayout(self)
-        self.clearButton = QPushButton("X")
+        self.clearButton = QCloseButton()
+        self.clearButton.setFixedWidth(20)
+        self.clearButton.hide()
+
+        closepolicy = self.clearButton.sizePolicy()
+        closepolicy.setRetainSizeWhenHidden(True)
+        self.clearButton.setSizePolicy(closepolicy)
+
         self.clearButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.clearButton.clicked.connect(self.clearImg)
         self.imageButton = QImageButton("+")
-        self.imageCard_layout.addWidget(self.clearButton)
+        self.imageCard_layout.addWidget(self.clearButton, alignment=Qt.AlignmentFlag.AlignRight)
         self.imageCard_layout.addWidget(self.imageButton)
         setPixMapOf(self.imageButton, "addCircle.svg", "icon")
         self.imageButton.setFixedSize(125,125)
