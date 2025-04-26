@@ -192,12 +192,10 @@ class QOrderHTable(QStyledTable) :
             self.filter = e
         else:
             self.filter = None
-
+        
         self.clearTable()
         self.setHorizontalHeaderLabels(["Date", "OrderID", ""])
-
         self.orders_list = fetchOrderHistory(self.filter)
-
         self.pageNav.updateNav(self.orders_list, self.rows)
         self.renderList(self.orders_list)
     

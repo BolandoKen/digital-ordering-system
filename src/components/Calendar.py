@@ -66,8 +66,6 @@ class QCalendarFilter(QPopupButton) :
 
         self.apply.clicked.connect(self.apply_filter)
 
-        #self.clicked.connect(self.emit_date_selected)
-
     def handleComboBoxChanged(self, text) :
         self.specdate.hide() 
         self.daterange.hide()
@@ -91,16 +89,13 @@ class QCalendarFilter(QPopupButton) :
         if selected_filter == "Specific Date":
             selected_date = self.specdate.dateedit.date()
             self.dateSelected.emit(selected_date)
-            print(f"Specific date selected: {selected_date.toString()}")
         elif selected_filter == "Date Range":
             start_date = self.daterange.fromdateedit.date()
             end_date = self.daterange.todateedit.date()
             self.dateSelected.emit((start_date, end_date))
-            print(f"Date range selected: {start_date.toString()} to {end_date.toString()}")
           
         else:
             self.dateSelected.emit(None)
-            print("No filter selected.")
 
 class QSpecDate(QFrame) :
     def __init__(self) :

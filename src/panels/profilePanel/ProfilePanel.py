@@ -1,6 +1,5 @@
 import sys
 import os
-from inspect import getmro
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import (
@@ -47,21 +46,7 @@ class QProfilePanel(QFrame) :
         self.order_layout.addWidget(QProfile(), alignment=Qt.AlignmentFlag.AlignTop)
         self.order_layout.addLayout(contentsVLayout)
 
-        try:
-            self.calendarfilter.dateSelected.connect(self.filterOrdersByDate)
-            print("Signal connected successfully")
-        except Exception as e:
-            print(f"Connection failed: {str(e)}")
-
+        self.calendarfilter.dateSelected.connect(self.filterOrdersByDate)
 
     def filterOrdersByDate(self, date):
-        if date is None:
-            print("Received date: None (no filter)")
-        elif isinstance(date, tuple):
-            start, end = date
-            print(f"Received date range: {start.toString()} to {end.toString()}")
-        else:
-            print(f"Received date: {date.toString()}")
-
-
         self.orderHTable.set_filter(date)
