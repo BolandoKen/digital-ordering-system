@@ -1,4 +1,5 @@
 from src.database.init_db import get_dbCursor
+from PyQt6.QtCore import QDate
 import traceback
 
 cursor = get_dbCursor()
@@ -92,8 +93,25 @@ def fetchStatistics(order='DESC', category_id=None):
     results = cursor.fetchall()
     return results
 
-def fetchOrderHistory() :
-    cursor.execute(f"""SELECT * FROM Orders ORDER BY order_datetime DESC """)
+def fetchOrderHistory(date_filter=None):
+    print(f"Called fetchOrderHistory with date_filter: {date_filter}")
+
+    if date_filter is None:
+        cursor.execute("SELECT * FROM Orders ORDER BY order_datetime DESC")
+
+    elif isinstance(date_filter, QDate):
+        date_str = date_filter.toString("yyyy-MM-dd")
+        cursor.execute("SELECT * FROM Orders WHERE DATE(order_datetime) = %s ORDER BY order_datetime DESC", (date_str,))
+
+    elif isinstance(date_filter, str):
+        cursor.execute("SELECT * FROM Orders WHERE DATE(order_datetime) = %s ORDER BY order_datetime DESC", (date_filter,))
+
+    elif isinstance(date_filter, tuple):
+        start, end = date_filter
+        if isinstance(start, QDate): start = start.toString("yyyy-MM-dd")
+        if isinstance(end, QDate): end = end.toString("yyyy-MM-dd")
+        cursor.execute("SELECT * FROM Orders WHERE DATE(order_datetime) BETWEEN %s AND %s ORDER BY order_datetime DESC", (start, end))
+
     results = cursor.fetchall()
     return results
 
