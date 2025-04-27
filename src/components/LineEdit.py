@@ -55,6 +55,7 @@ class QSearchArea(QFrame) :
         pubsub.subscribe("resize_event", self.moveFloater_toPos)
         self.floatArea.hide()
         self.searchbar.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
+        pubsub.subscribe("foodSearched_event", self.set_searchbarText)
 
     def eventFilter(self, watched, event):
         if watched == self.searchbar:
@@ -68,10 +69,12 @@ class QSearchArea(QFrame) :
     def moveFloater_toPos(self, e = None) :
         self.floatArea.setParent(self.window())
         globalpos = self.searchbar.mapToGlobal(QPoint(0, self.searchbar.height()))
-        print(globalpos)
         self.floatArea.move(globalpos)
         self.floatArea.raise_()
 
+    def set_searchbarText(self, tuple) :
+        foodname = tuple[1]
+        self.searchbar.setText(foodname)
 
 
 class QFloatArea(QFrame) :
@@ -107,14 +110,12 @@ class QFloatArea(QFrame) :
     def renderArea(self, text) :
         #clear layout everytime
         self.clear_layout(self.main_layout.getLayout())
-        print(text)
         if text.strip() == "" : 
             self.contentCount = 0
             self.setFixedHeight(0)
             return
         listResults = fetchSubStrNames(text)
         self.contentCount = len(listResults)
-        print(listResults)
         height = 100
         if self.contentCount == 0 :  # WHY IS SIZING NOT CONSISTENT? its impossible with min(formula, 100) >:(())
             height = 0 

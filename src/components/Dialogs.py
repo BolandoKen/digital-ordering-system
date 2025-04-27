@@ -145,7 +145,7 @@ class QaddDialog(QStyledDialog) :
             print(checkImgSize(file_path)) #check for filesize bfore compress
             self.tempImagePath = saveImageToLocalTemp(file_path, "temp.png")
             setPixMapOf(self.selectImgCard.getLabel(), "temp.png", "temp")  
-            self.selectImgCard.clearButton.show()          
+            self.selectImgCard.clearButton.show()        
 
     def handleClearBtn(self) :
         self.tempImagePath = None 
@@ -190,6 +190,7 @@ class QeditDialog(QaddDialog) :
             self.fooditem_id, self.foodname, self.price, self.imgfile, self.is_available, self.category_id = Tuple
             self.init_editFood()
         self.submitBtn.setText(f"Save")
+        self.selectImgCard.getLabel().setFixedSize(150,150)
 
 
     def init_editCategory(self) :

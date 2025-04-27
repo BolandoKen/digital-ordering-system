@@ -61,7 +61,6 @@ class QWindow(QMainWindow) :
     
     def resizeEvent(self, event):
         super().resizeEvent(event)
-        print('alsdihfa;')
         
 
 if __name__ == "__main__" :
