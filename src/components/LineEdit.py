@@ -178,3 +178,62 @@ class QSearchRowItem(QFrame) :
         # possible workarounds :
             # - each panel/list will have map of their cards, key of id, value of the obj
 
+
+class QFormLineEdit(QLineEdit) :
+    def __init__(self, parent = None) :
+        super().__init__(parent)
+        self.setFixedSize(300,30)
+        self.styleStr = """
+                background-color: white; 
+                border: 2px solid #D9D9D9; 
+                border-radius: 10px;
+                outline: none;
+                padding: 2px;                
+            """
+        self.setStyleSheet(self.styleStr)
+        self.mypopup = QLineEditPopup()
+        # QTimer.singleShot(100, self.setState)
+        # self.setStateInvalid("necessary field!")
+        # self.installEventFilter(self)
+        # self.setStateInvalid()
+        self.textChanged.connect(self.setStateInit)
+
+    def eventFilter(self, watched, event):
+        if watched == self:
+            if event.type() == QEvent.Type.FocusIn:
+                self.setStateInit()
+        return super().eventFilter(watched, event)
+
+    def moveFloater_toPos(self, typeOf = None) :
+        self.mypopup.setParent(self.window())
+        globalpos = self.mapToGlobal(QPoint(self.width() - self.mypopup.width() - 10, 0 - self.height()))
+        self.mypopup.move(globalpos)
+        self.mypopup.raise_()
+        if typeOf == "valid" :
+            self.mypopup.hide() 
+        else :
+            self.mypopup.show()
+    
+    def setStateInvalid(self, text) :
+        if text is None : 
+            return
+        invalidstyle = self.styleStr + "border:2px solid red;"
+        self.setStyleSheet(invalidstyle)
+        self.mypopup.setText(text)
+        self.mypopup.adjustSize()
+        QTimer.singleShot(100, self.moveFloater_toPos)
+    
+    def setStateInit(self) :
+        self.setStyleSheet(self.styleStr)
+        self.mypopup.hide()
+
+
+class QLineEditPopup (QLabel) :
+    def __init__(self) :
+        super().__init__()
+        # self.setFixedSize(150,30)
+        self.setFixedHeight(30)
+        self.setText("Warning, invalid")
+        self.setStyleSheet("background-color:red; border-top-left-radius: 10px; border-top-right-radius: 10px; padding:3px; color:white")
+
+

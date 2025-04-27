@@ -32,13 +32,13 @@ from src.components.Buttons import (QDeleteButton,
 from src.components.SpinBox import QCartItemSpinBox
 from src.components.Calendar import QCalendarFilter
 from PyQt6.QtCore import QDate, QTimer
-from src.components.LineEdit import QSearchArea
+from src.components.LineEdit import QSearchArea, QFormLineEdit
 from src.utils.PubSub import pubsub
 class TestFrame(QFrame) :
     def __init__(self, floater = None):
         super().__init__()
         self.floater = floater
-        print(self.window())
+        print("testframe", self.window())
         self.floater = QLabel("hi")
         # QTimer.singleShot(0, lambda: self.floater.setParent(self.window()))
         main_layout = QHBoxLayout(self)
@@ -59,7 +59,7 @@ class TestFrame(QFrame) :
         xpos = self.lineedit.pos().x()
         ypos = self.lineedit.pos().y()
         self.floater.setParent(self.window())
-        print(self.window())
+        print("testframe2", self.window())
         xoffset = 0
         yoffset = self.lineedit.height()
         globalpos = self.lineedit.mapToGlobal(QPoint(xoffset,yoffset))
@@ -120,9 +120,22 @@ class QWindow(QMainWindow):
         # self.floater = QLabel("hi", self.window())
 
         # testframe = TestFrame(self.floater)
-        # testframe = TestFrame()
-        # main_layout.addWidget(testframe)
+        testframe = TestFrame()
+        main_layout.addWidget(testframe)
         main_layout.addWidget(QSearchArea())
+        self.formlineedit = QFormLineEdit(self)
+        main_layout.addWidget(self.formlineedit)
+
+
+        # floater = QLabel("warning", self)
+        # floater.setParent(self.window())
+        # print(self.window())
+        # floater.setStyleSheet("background-color:red")
+        # floater.show()
+        # floater.move(0,0)
+        # main_layout.addWidget(floater)
+
+
         
         main_centralwidget = QWidget()
         main_centralwidget.setStyleSheet("background: white; color: black")
@@ -132,8 +145,9 @@ class QWindow(QMainWindow):
         exit_shortcut = QShortcut(QKeySequence('esc'), self)
         exit_shortcut.activated.connect(self.close)
 
-        # self.floater.raise_()
+        # floater.raise_()
         # testframe.floater.raise_()
+        self.formlineedit.mypopup.raise_()
     
     def resizeEvent(self, event):
         super().resizeEvent(event)
