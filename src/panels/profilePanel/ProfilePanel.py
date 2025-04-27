@@ -1,7 +1,5 @@
 import sys
 import os
-from src.panels.orderHPanel.OrderHPanel import QOrderHPanel
-
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import (
@@ -48,3 +46,7 @@ class QProfilePanel(QFrame) :
         self.order_layout.addWidget(QProfile(), alignment=Qt.AlignmentFlag.AlignTop)
         self.order_layout.addLayout(contentsVLayout)
 
+        self.calendarfilter.dateSelected.connect(self.filterOrdersByDate)
+
+    def filterOrdersByDate(self, date):
+        self.orderHTable.set_filter(date)

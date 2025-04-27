@@ -138,6 +138,7 @@ class QOrderHTable(QStyledTable) :
         self.setShowGrid(False)
         self.init_list()
         self.verticalHeader().setVisible(False)
+        self.filter = None
 
         self.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)
         self.setColumnWidth(2, 50)
@@ -151,6 +152,8 @@ class QOrderHTable(QStyledTable) :
         self.curr_lastPage = math.ceil(len(self.orders_list)/self.rows)
         self.pageNav = QPageNav(self.curr_lastPage, self.order_table )
         self.order_table()
+
+        self.set_filter(None)
 
     def organizePage(self, mylist) :
         paginatedOrders = getPage(mylist, self.pageNav.currentPage, self.rows)
@@ -183,9 +186,17 @@ class QOrderHTable(QStyledTable) :
     
 
     def order_table(self, e = None): 
+        if isinstance(e, str):
+            self.filter = e
+        elif isinstance(e, tuple):
+            self.filter = e
+        else:
+            self.filter = None
+        
         self.clearTable()
         self.setHorizontalHeaderLabels(["Date", "OrderID", ""])
-        self.orders_list = fetchOrderHistory()
+        self.orders_list = fetchOrderHistory(self.filter)
+        self.pageNav.updateNav(self.orders_list, self.rows)
         self.renderList(self.orders_list)
     
     def init_list(self) :
@@ -205,6 +216,13 @@ class QOrderHTable(QStyledTable) :
                 if widget is not None :
                     widget.deleteLater()
         self.setRowCount(0)
+
+    def set_filter(self, date_filter):
+        self.filter = date_filter
+        self.clearTable() 
+        self.orders_list = fetchOrderHistory(date_filter)
+        self.pageNav.updateNav(self.orders_list, self.rows)
+        self.renderList(self.orders_list)
 
   
     

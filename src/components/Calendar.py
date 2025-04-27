@@ -20,7 +20,7 @@ from PyQt6.QtWidgets import QPushButton, QSpacerItem, QSizePolicy
 from PyQt6.QtGui import QIcon
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QPixmap, QMouseEvent, QFont
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, pyqtSignal
 from src.components.MenuCards import QMenuCard
 from src.utils.PixMap import setPixMapOf
 from src.components.ComboBox import QPopupButton, QStyledComboBox
@@ -33,6 +33,8 @@ class QMyDateEdit(QDateEdit) :
         self.setCalendarPopup(True)
 
 class QCalendarFilter(QPopupButton) :
+    dateSelected = pyqtSignal(object) #fix suggested by gpt, to use object instead of QDate
+    print(f"Signal defined in {__file__}")
     def __init__(self) :
         super().__init__()
         self.popup_layout.setContentsMargins(10,10,10,10)
@@ -61,7 +63,9 @@ class QCalendarFilter(QPopupButton) :
         self.combobox.currentTextChanged.connect(self.handleComboBoxChanged)
         self.specdate.hide() 
         self.daterange.hide()
-    
+
+        self.apply.clicked.connect(self.apply_filter)
+
     def handleComboBoxChanged(self, text) :
         self.specdate.hide() 
         self.daterange.hide()
@@ -76,6 +80,22 @@ class QCalendarFilter(QPopupButton) :
             self.popup.setFixedHeight(160)
             self.container.setFixedHeight(160)
 
+    def emit_date_selected(self, selected_date):
+        selected_date = self.mycalendar.selectedDate()
+        self.dateSelected.emit(selected_date)
+
+    def apply_filter(self):
+        selected_filter = self.combobox.currentText()
+        if selected_filter == "Specific Date":
+            selected_date = self.specdate.dateedit.date()
+            self.dateSelected.emit(selected_date)
+        elif selected_filter == "Date Range":
+            start_date = self.daterange.fromdateedit.date()
+            end_date = self.daterange.todateedit.date()
+            self.dateSelected.emit((start_date, end_date))
+          
+        else:
+            self.dateSelected.emit(None)
 
 class QSpecDate(QFrame) :
     def __init__(self) :

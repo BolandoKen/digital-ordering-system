@@ -36,4 +36,4 @@ class QOrderHPanel(QFrame) : # not used
             order_id, order_datetime = order
             self.table.setItem(row, 1, QTableWidgetItem(str(order_datetime)))
             self.table.setItem(row, 0, QTableWidgetItem(str(order_id)))
-        
+    
