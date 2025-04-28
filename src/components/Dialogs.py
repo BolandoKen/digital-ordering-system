@@ -30,6 +30,7 @@ from src.database.queries import fetchOrderItemsSubtotalList, fetchOrderItemsTot
 from PyQt6.QtCore import Qt, QPoint, QTimer
 from PyQt6.QtGui import QFont, QColor
 from src.components.ScrollArea import QScrollAreaLayout
+from src.components.LineEdit import QFormLineEdit
 import traceback
 from PyQt6 import QtWidgets
 
@@ -96,7 +97,7 @@ class QaddDialog(QStyledDialog) :
     
     def init_addCategory(self) :
         self.catnameLabel = QLabel("category name : ")
-        self.catnameLineEdit = QLineEdit()
+        self.catnameLineEdit = QFormLineEdit()
         self.selectImgCard = QSelectImageCard(self.handleClearBtn)
         self.selectImgCard.connectTo(self.open_file)
         self.submitBtn = QPrimaryButton("Add", 70, 30 )
@@ -112,9 +113,9 @@ class QaddDialog(QStyledDialog) :
     def init_addFood(self) :
         self.category_id = None
         self.foodnameLabel = QLabel("food name : ")
-        self.foodnameLineEdit = QLineEdit()
+        self.foodnameLineEdit = QFormLineEdit()
         self.foodpriceLabel = QLabel("food price : ")
-        self.foodpriceLineEdit = QLineEdit()
+        self.foodpriceLineEdit = QFormLineEdit()
         foodpricevalidator = QDoubleValidator(0.00,1000.00,2) #1000 lang ako gi maximum, 0 minimum for like maybe if mag set sila og free stuff cuz event
         foodpricevalidator.setNotation(QDoubleValidator.Notation.StandardNotation)
         self.foodpriceLineEdit.setValidator(foodpricevalidator)
@@ -145,7 +146,7 @@ class QaddDialog(QStyledDialog) :
             print(checkImgSize(file_path)) #check for filesize bfore compress
             self.tempImagePath = saveImageToLocalTemp(file_path, "temp.png")
             setPixMapOf(self.selectImgCard.getLabel(), "temp.png", "temp")  
-            self.selectImgCard.clearButton.show()          
+            self.selectImgCard.clearButton.show()        
 
     def handleClearBtn(self) :
         self.tempImagePath = None 
@@ -156,17 +157,22 @@ class QaddDialog(QStyledDialog) :
         if self.panelName == "category" :
             hasImg = self.tempImagePath is not None # checks if an img is appended
             catTupleToAdd = (self.catnameLineEdit.text(), None)
-            if formValidated(catTupleToAdd, self.panelName) :
+            error_dict = formValidated(catTupleToAdd, self.panelName)
+            if error_dict["final"]  :
                 imgfileName = addCategory(catTupleToAdd, hasImg)
                 if hasImg: # if it has an img, move temp to assets renamed
                     moveImageToAssets(self.tempImagePath, self.panelName, imgfileName)
                 pubsub.publish("updateCategory")
                 print("added category : ", catTupleToAdd)
                 validated = True
+            else : 
+                self.catnameLineEdit.setStateInvalid(error_dict["category_name"])
+
         elif self.panelName == "food" :
             hasImg = self.tempImagePath is not None
             foodTupleToAdd = (self.foodnameLineEdit.text(), self.foodpriceLineEdit.text(), None, self.category_id)
-            if formValidated(foodTupleToAdd, self.panelName) :
+            error_dict = formValidated(foodTupleToAdd, self.panelName)
+            if error_dict["final"]  :
                 imgfileName = addFoodItem(foodTupleToAdd, hasImg)
                 if hasImg : 
                     moveImageToAssets(self.tempImagePath, self.panelName, imgfileName)
@@ -174,6 +180,9 @@ class QaddDialog(QStyledDialog) :
                 pubsub.publish("updateCategory")
                 print("added food item : ", foodTupleToAdd)
                 validated = True
+            else : 
+                self.foodnameLineEdit.setStateInvalid(error_dict["food_name"])
+                self.foodpriceLineEdit.setStateInvalid(error_dict["food_price"])
         if validated :
             self.close()
             self.selectImgCard.clearImg()
@@ -190,6 +199,7 @@ class QeditDialog(QaddDialog) :
             self.fooditem_id, self.foodname, self.price, self.imgfile, self.is_available, self.category_id = Tuple
             self.init_editFood()
         self.submitBtn.setText(f"Save")
+        self.selectImgCard.getLabel().setFixedSize(150,150)
 
 
     def init_editCategory(self) :
@@ -211,13 +221,17 @@ class QeditDialog(QaddDialog) :
         if self.panelName == "category" :
             hasImg = self.tempImagePath is not None # checks if an img is appended
             catTupleToEdit = (self.catnameLineEdit.text(), None, self.category_id)
-            if formValidated(catTupleToEdit, self.panelName) :
+            error_dict = formValidated(catTupleToEdit, self.panelName) 
+            if error_dict["final"] :
                 imgfileName = editCategory(catTupleToEdit, hasImg)
                 if hasImg: # if it has an img, move temp to assets renamed, will overwrite on edit
                     moveImageToAssets(self.tempImagePath, self.panelName, imgfileName)
                 pubsub.publish("updateCategory")
                 print("edited category : ", catTupleToEdit)
                 validated = True
+            else : 
+                self.catnameLineEdit.setStateInvalid(error_dict["category_name"])
+
         elif self.panelName == "food" :
             hasImg = self.tempImagePath is not None
             foodTupleToEdit = (self.foodnameLineEdit.text(),
@@ -225,7 +239,8 @@ class QeditDialog(QaddDialog) :
                                 None, 
                                 self.categoryidComboBox.itemData(self.categoryidComboBox.currentIndex()),
                                 self.fooditem_id)
-            if formValidated(foodTupleToEdit, self.panelName) :
+            error_dict = formValidated(foodTupleToEdit, self.panelName)
+            if error_dict["final"]  :
                 imgfileName = editFoodItem(foodTupleToEdit, hasImg)
                 if hasImg : 
                     moveImageToAssets(self.tempImagePath, self.panelName, imgfileName)
@@ -233,6 +248,9 @@ class QeditDialog(QaddDialog) :
                 pubsub.publish("updateCategory")
                 print("edited food item : ", foodTupleToEdit)
                 validated = True
+            else : 
+                self.foodnameLineEdit.setStateInvalid(error_dict["food_name"])
+                self.foodpriceLineEdit.setStateInvalid(error_dict["food_price"])
         if validated :
             self.close()
             self.selectImgCard.clearImg()

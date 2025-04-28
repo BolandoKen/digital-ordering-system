@@ -145,3 +145,20 @@ def fetchLatest_orderid() :
     latestorder = cursor.fetchone()[0]
     cursor.fetchall()
     return latestorder
+
+
+
+
+
+
+
+
+
+def fetchSubStrNames(substr) :
+    cursor.execute(f"""SELECT f.fooditem_id, f.name, f.is_available, c.category_id, c.name 
+                   FROM FoodItems AS f 
+                   LEFT JOIN Categories AS c
+                   ON f.category_id = c.category_id
+                   WHERE f.name LIKE '%{substr}%' """)
+    return cursor.fetchall()
+

@@ -148,7 +148,7 @@ class QOrderHTable(QStyledTable) :
         self.viewport().setStyleSheet("margin-right: 10px")
         pubsub.subscribe("orderSubmitted_event", self.order_table)
 
-        self.rows = 25
+        self.rows = 50
         self.curr_lastPage = math.ceil(len(self.orders_list)/self.rows)
         self.pageNav = QPageNav(self.curr_lastPage, self.order_table )
         # self.order_table()
