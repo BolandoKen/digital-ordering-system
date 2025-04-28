@@ -94,7 +94,7 @@ def fetchStatistics(order='DESC', category_id=None):
     return results
 
 def fetchOrderHistory(date_filter=None):
-    print(f"Called fetchOrderHistory with date_filter: {date_filter}")
+    # print(f"Called fetchOrderHistory with date_filter: {date_filter}")
 
     if date_filter is None:
         cursor.execute("SELECT * FROM Orders ORDER BY order_datetime DESC")

@@ -34,7 +34,6 @@ class QMyDateEdit(QDateEdit) :
 
 class QCalendarFilter(QPopupButton) :
     dateSelected = pyqtSignal(object) #fix suggested by gpt, to use object instead of QDate
-    print(f"Signal defined in {__file__}")
     def __init__(self) :
         super().__init__()
         self.popup_layout.setContentsMargins(10,10,10,10)

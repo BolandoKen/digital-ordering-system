@@ -151,7 +151,7 @@ class QOrderHTable(QStyledTable) :
         self.rows = 25
         self.curr_lastPage = math.ceil(len(self.orders_list)/self.rows)
         self.pageNav = QPageNav(self.curr_lastPage, self.order_table )
-        self.order_table()
+        # self.order_table()
 
         self.set_filter(None)
 
@@ -186,12 +186,6 @@ class QOrderHTable(QStyledTable) :
     
 
     def order_table(self, e = None): 
-        if isinstance(e, str):
-            self.filter = e
-        elif isinstance(e, tuple):
-            self.filter = e
-        else:
-            self.filter = None
         
         self.clearTable()
         self.setHorizontalHeaderLabels(["Date", "OrderID", ""])
@@ -219,10 +213,7 @@ class QOrderHTable(QStyledTable) :
 
     def set_filter(self, date_filter):
         self.filter = date_filter
-        self.clearTable() 
-        self.orders_list = fetchOrderHistory(date_filter)
-        self.pageNav.updateNav(self.orders_list, self.rows)
-        self.renderList(self.orders_list)
+        self.order_table()
 
   
     
