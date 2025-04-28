@@ -206,12 +206,15 @@ class QeditDialog(QaddDialog) :
         self.catnameLineEdit.setText(self.catname)
         if self.imgfile is not None:
             self.tempImagePath = setPixMapOf(self.selectImgCard.getLabel(), self.imgfile, "category")["path"]
+            self.selectImgCard.clearButton.show()
 
     def init_editFood(self) :
         self.foodnameLineEdit.setText(self.foodname)
         self.foodpriceLineEdit.setText(str(self.price))
         if self.imgfile is not None:
             self.tempImagePath = setPixMapOf(self.selectImgCard.getLabel(), self.imgfile, "food")["path"]
+            self.selectImgCard.clearButton.show()
+
         self.categoryidLabel.show()
         self.categoryidComboBox.show()
         self.categoryidComboBox.setDefaultOption(str(self.category_id))

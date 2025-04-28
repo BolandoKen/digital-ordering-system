@@ -16,11 +16,12 @@ from PyQt6.QtWidgets import (
     QLabel,
     QListView,
     QLineEdit,
-    QGraphicsDropShadowEffect
+    QGraphicsDropShadowEffect,
+    QSpacerItem
 
 )
-from PyQt6.QtCore import Qt, QPoint
-from PyQt6.QtGui import QShortcut, QKeySequence, QColor
+from PyQt6.QtCore import Qt, QPoint, QSize
+from PyQt6.QtGui import QShortcut, QKeySequence, QColor, QIcon
 from src.components.ComboBox import QFilterButton  
 from src.components.Buttons import (QDeleteButton,
                                     QBackButton,
@@ -41,15 +42,32 @@ from src.components.ScrollArea import QScrollAreaLayout
 class QSearchArea(QFrame) :
     def __init__(self, parent = None):
         super().__init__(parent)
-        self.main_layout = QVBoxLayout(self)
+        self.main_layout = QHBoxLayout(self)
         self.floatArea = QFloatArea()
         self.searchbar = QLineEdit(self)
-        self.setFixedHeight(40)
+        self.styleStr = """
+                background-color: white; 
+                border: 2px solid #D9D9D9; 
+                border-radius: 10px;
+                outline: none;
+                padding: 2px;                
+            """
+        self.setObjectName("searcharea")
+        self.setStyleSheet("#searcharea{margin-bottom:5px; }")
+        self.searchbar.setStyleSheet(self.styleStr)
+        self.setFixedHeight(50)
         self.searchbar.textChanged.connect(self.floatArea.renderArea)
         self.searchbar.installEventFilter(self)
         self.searchbar.setFixedSize(450,30)
         self.temp = [0]
-        self.main_layout.addWidget(self.searchbar, Qt.AlignmentFlag.AlignRight)
+        searchIcon = QPushButton() 
+        searchIcon.setIcon(QIcon("assets/icons/Search.svg"))
+        searchIcon.setFixedSize(32,32)
+        searchIcon.setStyleSheet("background:transparent; border: none;")
+        searchIcon.setIconSize(QSize(30,30))
+        self.main_layout.addWidget(searchIcon, alignment=Qt.AlignmentFlag.AlignVCenter)
+        self.main_layout.addWidget(self.searchbar)
+        self.main_layout.addStretch()
 
         QTimer.singleShot(0, self.moveFloater_toPos)
         pubsub.subscribe("resize_event", self.moveFloater_toPos)
