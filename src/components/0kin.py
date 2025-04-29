@@ -32,9 +32,7 @@ class QWindow(QMainWindow):
 
         main_layout.addWidget(delete_button)
         main_layout.addWidget(back_button)
-        # main_layout.addWidget(logo_button)
         main_layout.addWidget(dineIn_button)
-        # main_layout.addWidget(takeOut_button)
         main_layout.addWidget(plus_button)
         main_layout.addWidget(minus_button)
         main_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
