@@ -41,4 +41,6 @@ class QMenuCard(QFrame) :
         shadow.setYOffset(1)
         shadow.setColor(QColor(0, 0, 0, 180))
         self.setGraphicsEffect(shadow)
+    
+
 # make class card for add buttons
