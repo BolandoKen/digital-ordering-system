@@ -13,10 +13,12 @@ from PyQt6.QtWidgets import (
     QTableWidgetItem,
     QHeaderView,
 )
+import math
 from src.database.queries import fetchStatistics, fetchOrderHistory
 from src.components.Dialogs import QviewOrderDialog
 from src.utils.PubSub import pubsub
-from src.utils.listOrganizer import organizeByDate
+from src.utils.listOrganizer import organizeByDate, getPage
+from src.components.PageNav import QPageNav
 
 
 class QStyledTable(QTableWidget) :
@@ -74,7 +76,7 @@ class QStatsTable(QStyledTable) :
         self.setColumnCount(4)
         self.setHorizontalHeaderLabels(["#","Food", "Category", "Times Ordered"])
         self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-        self.statistics_table()    
+        self.init_list() 
         self.setShowGrid(False)
         self.verticalHeader().setVisible(False)
         self.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)
@@ -86,34 +88,44 @@ class QStatsTable(QStyledTable) :
         pubsub.subscribe("orderSubmitted_event", self.statistics_table)
         pubsub.subscribe("updateFoodItem", self.statistics_table)
 
+        self.rows = 25
+        self.curr_lastPage = math.ceil(len(self.stats_data)/self.rows)
+        self.pageNav = QPageNav(self.curr_lastPage, self.renderPage )
+        self.renderPage()
+
     def setOrderBy(self, orderby) :
         self.orderBy_mostOrdered = orderby
         self.statistics_table()
 
-    def updateStatsTable(self, category_id=None, mostordered=True):
-        order = ("DESC" if mostordered else "ASC")
-        stats = fetchStatistics(order, category_id)
-        self.setRowCount(len(stats))
-        count = 1 
+    def renderPage(self) :
+        paginatedArr = getPage(self.stats_data, self.pageNav.currentPage, self.rows)
+        self.renderList(paginatedArr)
 
-        for row_id, row_data in enumerate(stats):
-            food, category, times = row_data
-            self.setItem(row_id, 0, QTableWidgetItem(str(count)))
-            self.setItem(row_id, 1, QTableWidgetItem(food)) 
-            self.setItem(row_id, 2, QTableWidgetItem(category))
-            self.setItem(row_id, 3, QTableWidgetItem(str(times)))
-            count += 1 #i might change this later, muni gi suggest sa chatgpt, ako orig code kay somehow na shift to the left tanan values after nako i-change ang category
+    def renderList(self, mylist) :
+        self.setRowCount(len(mylist)) 
+        count = (self.pageNav.currentPage - 1) * self.rows + 1
 
-    def statistics_table(self, e = None): 
-        stats_data = fetchStatistics('DESC' if self.orderBy_mostOrdered else 'ASC')
-        self.setRowCount(len(stats_data))
-        count = 1
-        for row, (food, category, times) in enumerate(stats_data): 
+        for row, (food, category, times) in enumerate(mylist):
             self.setItem(row, 0, QTableWidgetItem(str(count)))
-            self.setItem(row, 1, QTableWidgetItem(food))
+            self.setItem(row, 1, QTableWidgetItem(food)) 
             self.setItem(row, 2, QTableWidgetItem(category))
             self.setItem(row, 3, QTableWidgetItem(str(times)))
-            count+=1
+            count += 1  
+
+    def init_list(self) :
+        self.stats_data = fetchStatistics('DESC' if self.orderBy_mostOrdered else 'ASC')
+
+
+    def updateStatsTable(self, category_id=None, mostordered=True): 
+        order = ("DESC" if mostordered else "ASC")
+        self.stats_data = fetchStatistics(order, category_id)
+        self.pageNav.updateNav(self.stats_data, self.rows)
+        self.renderPage()
+
+    def statistics_table(self, e = None): # redundant with function above?
+        self.stats_data = fetchStatistics('DESC' if self.orderBy_mostOrdered else 'ASC')
+        self.pageNav.updateNav(self.stats_data, self.rows)
+        self.renderPage()
     
 class QOrderHTable(QStyledTable) :
     def __init__(self) :
@@ -124,8 +136,9 @@ class QOrderHTable(QStyledTable) :
         self.setColumnCount(3)
         self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.setShowGrid(False)
-        self.order_table()
+        self.init_list()
         self.verticalHeader().setVisible(False)
+        self.filter = None
 
         self.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)
         self.setColumnWidth(2, 50)
@@ -134,18 +147,25 @@ class QOrderHTable(QStyledTable) :
         self.horizontalHeader().setStyleSheet("margin-right: 10px")
         self.viewport().setStyleSheet("margin-right: 10px")
         pubsub.subscribe("orderSubmitted_event", self.order_table)
-        
 
-    def order_table(self, e = None): 
-        self.clearTable()
-        self.setHorizontalHeaderLabels(["Date", "OrderID", ""])
-        orders = fetchOrderHistory()
-        organizedOrders = organizeByDate(orders)
+        self.rows = 50
+        self.curr_lastPage = math.ceil(len(self.orders_list)/self.rows)
+        self.pageNav = QPageNav(self.curr_lastPage, self.order_table )
+        # self.order_table()
+
+        self.set_filter(None)
+
+    def organizePage(self, mylist) :
+        paginatedOrders = getPage(mylist, self.pageNav.currentPage, self.rows)
+        organizedOrders = organizeByDate(paginatedOrders)
+        return organizedOrders
+
+    def renderList(self, mylist) :
         count = 1
-        self.setRowCount(len(organizedOrders))
+        mylist = self.organizePage(mylist)
+        self.setRowCount(len(mylist))
 
-
-        for row, item in enumerate(organizedOrders):
+        for row, item in enumerate(mylist):
             is_header = item["is_header"]
             if not is_header :
                 order = item["content"]
@@ -164,6 +184,21 @@ class QOrderHTable(QStyledTable) :
                 self.setSpan(row, 0,1,3)
                 pass
     
+
+    def order_table(self, e = None): 
+        
+        self.clearTable()
+        self.setHorizontalHeaderLabels(["Date", "OrderID", ""])
+        self.orders_list = fetchOrderHistory(self.filter)
+        self.pageNav.updateNav(self.orders_list, self.rows)
+        self.renderList(self.orders_list)
+    
+    def init_list(self) :
+        self.orders_list = fetchOrderHistory()
+
+    # for filter by date range, and display by # of rows,
+    #  dont forget to call updateNav
+
     def publishToDialog(self, orderid) :
         pubsub.publish("viewClicked_event", orderid)
         self.viewDialog.exec()
@@ -175,6 +210,10 @@ class QOrderHTable(QStyledTable) :
                 if widget is not None :
                     widget.deleteLater()
         self.setRowCount(0)
+
+    def set_filter(self, date_filter):
+        self.filter = date_filter
+        self.order_table()
 
   
     

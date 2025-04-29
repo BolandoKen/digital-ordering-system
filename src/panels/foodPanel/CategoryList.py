@@ -25,6 +25,7 @@ class QCategoryList(QFrame) :
         super().__init__()
         self.pageName = pageName
         self.stackedLists = stackedLists # access parents stackedlists 
+        self.catCardMap = {}
         self.scroll_layout = QVBoxLayout(self)
         self.scroll_layout.setContentsMargins(0,0,0,0)
         self.catList_Layout = QScrollAreaLayout(QFlowLayout, self.scroll_layout)
@@ -32,6 +33,10 @@ class QCategoryList(QFrame) :
         self.addCatDialog = QaddDialog("category", self.window())
         pubsub.subscribe("updateCategory", self.update_categoryList)
         self.init_catList()
+
+        # will listen to search , subscribe category searched
+        # cat id will be passed down, using catCardMap, we ensure visible the card
+        # redirect (setindex) -> ensure visible
 
 
     def init_catList(self) :
@@ -44,6 +49,7 @@ class QCategoryList(QFrame) :
         self.catList = fetchCatList(self.pageName)
         for catTuple in self.catList :
             catCard = QCategoryCard(catTuple, self.pageName, self.stackedLists)
+            self.catCardMap[str(catTuple[0])] = catCard
             self.catList_Layout.addWidget(catCard)
         # no plus sign
 
@@ -61,10 +67,13 @@ class QCategoryList(QFrame) :
     def update_categoryList(self, e = None) :
         print("updated",self.pageName)
         self.clear_layout(self.catList_Layout.getLayout())
+        self.catList_Layout.myLayout.invalidate()
         self.init_catList()
+        self.catList_Layout.myLayout.invalidate()
 
     def clear_layout(self, layout): 
         print('rerendered category list from ', self.pageName)
+        self.catCardArr = {}
         if layout is not None:
             for i in reversed(range(layout.count())): # reverse, because deletion fills gaps
                 item = layout.takeAt(i) 

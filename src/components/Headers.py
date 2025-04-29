@@ -18,6 +18,7 @@ class QLogoHeader(QFrame) :
     def __init__(self, pageName):
         super().__init__()
         self.main_layout = QHBoxLayout(self) 
+        self.main_layout.setContentsMargins(0,10,0,10)
         self.logo = QLogoButton("assets/icons/pfp_icon.svg", "M'sKitchen", pageName)
         self.logo.connectTo(self.handleLogoClicked)
         self.main_layout.addWidget(self.logo)
@@ -51,9 +52,11 @@ class QOtherPanelHeader(QFrame) :
 
     def init_ProfilePanel(self) :
         self.header_layout.addStretch()
-        self.editBtn = QPushButton("edit")
+        self.editBtn = QPushButton("Edit")
+        self.editBtn.setStyleSheet("background-color: white; color: #72CEFF; border-radius: 5px; padding: 5px; font-size: 15px;")
         self.editBtn.clicked.connect(self.handleEditProfile)
-        self.saveBtn = QPushButton("save") 
+        self.saveBtn = QPushButton("Save")
+        self.saveBtn.setStyleSheet("background-color: white; color: #72CEFF; border-radius: 5px; padding: 5px; font-size: 15px;")
         self.saveBtn.clicked.connect(self.handleSaveProfile)
         self.header_layout.addWidget(self.editBtn)
         self.header_layout.addWidget(self.saveBtn)
@@ -88,7 +91,7 @@ class QFoodPanelHeader(QFrame) :
 
         if self.pageName == "admin" : 
             pubsub.subscribe("initHeaderUnBtn_event", self.setShowUnavailableBtn)
-
+        pubsub.subscribe("logout_Event", self.handleBackBtn)
         self.headerLabel = QLabel()
         self.headerLabel.setFont(QFont("Helvitica", 25, QFont.Weight.Bold))
 
@@ -102,7 +105,8 @@ class QFoodPanelHeader(QFrame) :
         self.init_category()
 
     def init_category(self) :
-        self.backBtn.hide()
+        if self.pageName == "admin" :
+            self.backBtn.hide()
         self.headerLabel.setText("Categories")
         self.showUnBtn.hide()
 
@@ -115,10 +119,13 @@ class QFoodPanelHeader(QFrame) :
         self.state = "food"
         self.init_food()
     
-    def handleBackBtn(self) :
-        self.state = "category"
-        pubsub.publish(f"{self.pageName}_backToCatClicked", None)
-        self.init_category()
+    def handleBackBtn(self, e = None) :
+        if self.state == "food" :
+            self.state = "category"
+            pubsub.publish(f"{self.pageName}_backToCatClicked", None)
+            self.init_category()
+        elif self.state == "category" :
+            pubsub.publish("backBtn_clicked", 1)
     
     def handleToggleUnBtn(self) :
         pubsub.publish(f"admin_toggleShowUnavailable", None)

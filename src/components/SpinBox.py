@@ -17,6 +17,8 @@ from src.components.Buttons import QPlusButton, QMinusButton
 from PyQt6.QtGui import QPixmap, QMouseEvent, QFont, QIntValidator
 from PyQt6.QtCore import Qt
 from src.utils.PubSub import pubsub
+from PyQt6.QtGui import QIcon
+
 
 # spinbox for pagenav
 # spinbox for fooditem cart incrementer
@@ -38,7 +40,7 @@ class QCartItemSpinBox(QFrame) :
         self.quantityLineEdit.setFixedWidth(40)
         self.quantityLineEdit.setFont(QFont("Helvetica", 20, QFont.Weight.Bold))
         self.quantityLineEdit.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.quantityLineEdit.setStyleSheet("border:none; border-bottom: 1px solid black;")
+        self.quantityLineEdit.setStyleSheet("border:none;")
         self.quantityLineEdit.setValidator(QIntValidator(1, 99))
         self.quantity = 1
         self.main_layout.addWidget(self.minusBtn)
@@ -75,6 +77,29 @@ class QCartItemSpinBox(QFrame) :
         self.quantityLineEdit.setText(str(int(self.quantityLineEdit.text())))
         self.quantity = int(self.quantityLineEdit.text())
         cb()
+    
+    def setState(self, state) :
+        if state == "cart" :
+            self.plusBtn.setIcon(QIcon("assets/icons/plus_icon.svg"))
+            self.minusBtn.setIcon(QIcon("assets/icons/minus_icon.svg"))
+            self.minusBtn.setStyleSheet("""
+            background: transparent;
+            border: 2px solid black;
+            border-radius: 10px;
+            padding: 0px;      
+        """)
+        elif state == "confirm" :
+            self.plusBtn.setIcon(QIcon("assets/icons/plus_icon2.svg"))
+            self.minusBtn.setIcon(QIcon("assets/icons/minus_icon2.svg"))
+            self.minusBtn.setStyleSheet("""
+            background: transparent;
+            border: 2px solid white;
+            border-radius: 10px;
+            padding: 0px;      
+        """)
+            print('hello?')
+
+
 
     def getQuantity(self) :
         return self.quantity

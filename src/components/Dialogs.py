@@ -12,7 +12,8 @@ from PyQt6.QtWidgets import (
     QFrame,
     QDialog,
     QLineEdit,
-    QFileDialog
+    QFileDialog,
+    QGraphicsDropShadowEffect
 )
 from src.utils.PubSub import pubsub
 from src.utils.FormValid import formValidated
@@ -24,22 +25,44 @@ from src.components.ImageCard import QSelectImageCard
 from src.components.ComboBox import QCatComboBox
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtGui import QDoubleValidator
-from src.components.Buttons import QPrimaryButton, QSecondaryButton
+from src.components.Buttons import QPrimaryButton, QSecondaryButton, QCloseButton
 from src.database.queries import fetchOrderItemsSubtotalList, fetchOrderItemsTotal
-from PyQt6.QtCore import Qt, QPoint
-from PyQt6.QtGui import QFont
+from PyQt6.QtCore import Qt, QPoint, QTimer
+from PyQt6.QtGui import QFont, QColor
+from src.components.ScrollArea import QScrollAreaLayout
+from src.components.LineEdit import QFormLineEdit
 import traceback
+from PyQt6 import QtWidgets
+
+
+class QDialogShadowFrame(QFrame) :
+    def __init__(self, child_main_layout) :
+        super().__init__()
+        self.setObjectName("dshadow")
+        self.setStyleSheet("#dshadow{ border-radius:10px;}")
+        self.setLayout(child_main_layout)
+        shadow = QGraphicsDropShadowEffect(self)
+        shadow.setBlurRadius(15)
+        shadow.setXOffset(1)
+        shadow.setYOffset(1)
+        shadow.setColor(QColor(0, 0, 0, 180))
+        self.setGraphicsEffect(shadow)
+        shadow.setEnabled(True)
+        self.raise_()
+
 
 
 class QStyledDialog(QDialog) :
     def __init__(self, parent = None):
         super().__init__(parent)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         self.setStyleSheet("Background-color: white; color: black")
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Dialog)
 
     def showEvent(self, event):
         super().showEvent(event)
         # self.center_screen()
+
 
     def center_screen(self):
         if self.parent():
@@ -58,8 +81,14 @@ class QaddDialog(QStyledDialog) :
     def __init__(self, panelName, parent):
         super().__init__(parent)
         self.panelName = panelName
-        self.dialog_layout = QGridLayout(self)
+        self.main_layout = QVBoxLayout(self)
+
+        self.dialog_layout = QGridLayout()
         self.tempImagePath = None
+        self.shadw = QDialogShadowFrame(self.dialog_layout)
+        self.shadw.setObjectName("addshadow")
+        self.shadw.setStyleSheet("#addshadow {padding:20px;border-radius:10px;}")
+        self.main_layout.addWidget(self.shadw)
 
         if panelName == "category" :
             self.init_addCategory()
@@ -68,7 +97,7 @@ class QaddDialog(QStyledDialog) :
     
     def init_addCategory(self) :
         self.catnameLabel = QLabel("category name : ")
-        self.catnameLineEdit = QLineEdit()
+        self.catnameLineEdit = QFormLineEdit()
         self.selectImgCard = QSelectImageCard(self.handleClearBtn)
         self.selectImgCard.connectTo(self.open_file)
         self.submitBtn = QPrimaryButton("Add", 70, 30 )
@@ -84,9 +113,9 @@ class QaddDialog(QStyledDialog) :
     def init_addFood(self) :
         self.category_id = None
         self.foodnameLabel = QLabel("food name : ")
-        self.foodnameLineEdit = QLineEdit()
+        self.foodnameLineEdit = QFormLineEdit()
         self.foodpriceLabel = QLabel("food price : ")
-        self.foodpriceLineEdit = QLineEdit()
+        self.foodpriceLineEdit = QFormLineEdit()
         foodpricevalidator = QDoubleValidator(0.00,1000.00,2) #1000 lang ako gi maximum, 0 minimum for like maybe if mag set sila og free stuff cuz event
         foodpricevalidator.setNotation(QDoubleValidator.Notation.StandardNotation)
         self.foodpriceLineEdit.setValidator(foodpricevalidator)
@@ -116,27 +145,34 @@ class QaddDialog(QStyledDialog) :
         if file_path:
             print(checkImgSize(file_path)) #check for filesize bfore compress
             self.tempImagePath = saveImageToLocalTemp(file_path, "temp.png")
-            setPixMapOf(self.selectImgCard.getLabel(), "temp.png", "temp")            
+            setPixMapOf(self.selectImgCard.getLabel(), "temp.png", "temp")  
+            self.selectImgCard.clearButton.show()        
 
     def handleClearBtn(self) :
         self.tempImagePath = None 
+        self.selectImgCard.clearButton.hide()
 
     def handleSubmitBtn(self) :
         validated = False
         if self.panelName == "category" :
             hasImg = self.tempImagePath is not None # checks if an img is appended
             catTupleToAdd = (self.catnameLineEdit.text(), None)
-            if formValidated(catTupleToAdd, self.panelName) :
+            error_dict = formValidated(catTupleToAdd, self.panelName)
+            if error_dict["final"]  :
                 imgfileName = addCategory(catTupleToAdd, hasImg)
                 if hasImg: # if it has an img, move temp to assets renamed
                     moveImageToAssets(self.tempImagePath, self.panelName, imgfileName)
                 pubsub.publish("updateCategory")
                 print("added category : ", catTupleToAdd)
                 validated = True
+            else : 
+                self.catnameLineEdit.setStateInvalid(error_dict["category_name"])
+
         elif self.panelName == "food" :
             hasImg = self.tempImagePath is not None
             foodTupleToAdd = (self.foodnameLineEdit.text(), self.foodpriceLineEdit.text(), None, self.category_id)
-            if formValidated(foodTupleToAdd, self.panelName) :
+            error_dict = formValidated(foodTupleToAdd, self.panelName)
+            if error_dict["final"]  :
                 imgfileName = addFoodItem(foodTupleToAdd, hasImg)
                 if hasImg : 
                     moveImageToAssets(self.tempImagePath, self.panelName, imgfileName)
@@ -144,6 +180,9 @@ class QaddDialog(QStyledDialog) :
                 pubsub.publish("updateCategory")
                 print("added food item : ", foodTupleToAdd)
                 validated = True
+            else : 
+                self.foodnameLineEdit.setStateInvalid(error_dict["food_name"])
+                self.foodpriceLineEdit.setStateInvalid(error_dict["food_price"])
         if validated :
             self.close()
             self.selectImgCard.clearImg()
@@ -160,18 +199,22 @@ class QeditDialog(QaddDialog) :
             self.fooditem_id, self.foodname, self.price, self.imgfile, self.is_available, self.category_id = Tuple
             self.init_editFood()
         self.submitBtn.setText(f"Save")
+        self.selectImgCard.getLabel().setFixedSize(150,150)
 
 
     def init_editCategory(self) :
         self.catnameLineEdit.setText(self.catname)
         if self.imgfile is not None:
             self.tempImagePath = setPixMapOf(self.selectImgCard.getLabel(), self.imgfile, "category")["path"]
+            self.selectImgCard.clearButton.show()
 
     def init_editFood(self) :
         self.foodnameLineEdit.setText(self.foodname)
         self.foodpriceLineEdit.setText(str(self.price))
         if self.imgfile is not None:
             self.tempImagePath = setPixMapOf(self.selectImgCard.getLabel(), self.imgfile, "food")["path"]
+            self.selectImgCard.clearButton.show()
+
         self.categoryidLabel.show()
         self.categoryidComboBox.show()
         self.categoryidComboBox.setDefaultOption(str(self.category_id))
@@ -181,13 +224,17 @@ class QeditDialog(QaddDialog) :
         if self.panelName == "category" :
             hasImg = self.tempImagePath is not None # checks if an img is appended
             catTupleToEdit = (self.catnameLineEdit.text(), None, self.category_id)
-            if formValidated(catTupleToEdit, self.panelName) :
+            error_dict = formValidated(catTupleToEdit, self.panelName) 
+            if error_dict["final"] :
                 imgfileName = editCategory(catTupleToEdit, hasImg)
                 if hasImg: # if it has an img, move temp to assets renamed, will overwrite on edit
                     moveImageToAssets(self.tempImagePath, self.panelName, imgfileName)
                 pubsub.publish("updateCategory")
                 print("edited category : ", catTupleToEdit)
                 validated = True
+            else : 
+                self.catnameLineEdit.setStateInvalid(error_dict["category_name"])
+
         elif self.panelName == "food" :
             hasImg = self.tempImagePath is not None
             foodTupleToEdit = (self.foodnameLineEdit.text(),
@@ -195,7 +242,8 @@ class QeditDialog(QaddDialog) :
                                 None, 
                                 self.categoryidComboBox.itemData(self.categoryidComboBox.currentIndex()),
                                 self.fooditem_id)
-            if formValidated(foodTupleToEdit, self.panelName) :
+            error_dict = formValidated(foodTupleToEdit, self.panelName)
+            if error_dict["final"]  :
                 imgfileName = editFoodItem(foodTupleToEdit, hasImg)
                 if hasImg : 
                     moveImageToAssets(self.tempImagePath, self.panelName, imgfileName)
@@ -203,6 +251,9 @@ class QeditDialog(QaddDialog) :
                 pubsub.publish("updateCategory")
                 print("edited food item : ", foodTupleToEdit)
                 validated = True
+            else : 
+                self.foodnameLineEdit.setStateInvalid(error_dict["food_name"])
+                self.foodpriceLineEdit.setStateInvalid(error_dict["food_price"])
         if validated :
             self.close()
             self.selectImgCard.clearImg()
@@ -212,7 +263,45 @@ class QeditDialog(QaddDialog) :
 class QviewOrderDialog(QStyledDialog) :
     def __init__(self, parent):
         super().__init__(parent)
-        self.viewOrder_layout = QVBoxLayout(self)
+        self.mainmain_layout = QVBoxLayout(self)
+
+        self.main_layout = QVBoxLayout()
+        self.mainmain_layout.addWidget(QDialogShadowFrame(self.main_layout))
+        self.setFixedHeight(400)
+        # self.setFixedWidth(325)
+
+        close_btn = QCloseButton()
+        close_btn.clicked.connect(self.close)
+
+        self.close_hbox = QHBoxLayout()
+        self.close_hbox.addStretch()
+        self.close_hbox.addWidget(close_btn)
+        self.scrollcontainer_widget = QWidget()
+
+        self.o_idLabel = QLabel()
+        self.o_idLabel.setFont(QFont("Helvitica", 15, QFont.Weight.Bold))
+        self.o_idLabel.setStyleSheet("border-top: 1px solid black; border-bottom: 1px solid black;")
+        self.o_idLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.foot_frame = QFrame()
+        self.foot_frame.setObjectName("footframe")
+        self.foot_frame.setStyleSheet("#footframe {border-top: 1px solid black; border-bottom: 1px solid black;}")
+        self.foot_hbox = QHBoxLayout(self.foot_frame)
+        totlam = QLabel("Total amount")
+        totlam.setFont(QFont("Helvitica", 15, QFont.Weight.Bold))
+        self.foot_hbox.addWidget(totlam)
+
+
+        self.foot_hbox.addStretch()
+        self.totalamt_label = QLabel()
+        self.totalamt_label.setFont(QFont("Helvitica", 15, QFont.Weight.Bold))
+        self.foot_hbox.addWidget(self.totalamt_label)
+
+        self.main_layout.addLayout(self.close_hbox)
+        self.main_layout.addWidget(self.o_idLabel)
+        self.viewOrder_layout = QScrollAreaLayout(QVBoxLayout,self.main_layout)
+        self.viewOrder_layout.getLayout().setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.main_layout.addWidget(self.foot_frame)
         pubsub.subscribe("viewClicked_event", self.setContents)
         
     def setContents(self, orderid) :
@@ -222,17 +311,28 @@ class QviewOrderDialog(QStyledDialog) :
     
     def updateContents(self) :
 
-        self.clear_layout(self.viewOrder_layout)
+        self.clear_layout(self.viewOrder_layout.getLayout())
         self.o_id = self.orderItemsSubtotalList[0][0]
-        o_idLabel = QLabel(f"Order #{self.o_id}")
-        self.viewOrder_layout.addWidget(o_idLabel)        
+        self.o_idLabel.setText(f"Order #{self.o_id}")        
         for oiTuple in self.orderItemsSubtotalList :
             _, fname, oiquan, subtotal = oiTuple
-            orderitemLabel = QLabel(f"{oiquan}x {fname} ₱{subtotal}")
-            self.viewOrder_layout.addWidget(orderitemLabel)
+
+            labelframe = QFrame()
+            labelh = QHBoxLayout(labelframe)
+            labelh.setContentsMargins(0,0,0,0)
+
+            orderitemLabel = QLabel(f"{oiquan}x {fname}")
+            orderpricelabel = QLabel(f"₱{subtotal}")
+            orderitemLabel.setFont(QFont("Helvitica", 13, QFont.Weight.Normal))
+            orderpricelabel.setFont(QFont("Helvitica", 13, QFont.Weight.Normal))
+
+            labelh.addWidget(orderitemLabel)
+            labelh.addStretch()
+            labelh.addWidget(orderpricelabel)
+            self.viewOrder_layout.getLayout().addWidget(labelframe, alignment=Qt.AlignmentFlag.AlignTop)
         
             pass
-        self.viewOrder_layout.addWidget(QLabel(f"Total Amount: ₱{self.orderItemsTotal}"))
+        self.totalamt_label.setText(f"₱{self.orderItemsTotal}")
     
     def clear_layout(self, layout): 
         print('rerendered viewOrder Dialog')
@@ -244,6 +344,8 @@ class QviewOrderDialog(QStyledDialog) :
                     item.widget().deleteLater()
                 elif item.spacerItem():  
                     layout.removeItem(item)   
+                elif item.layout() :
+                    item.layout().deleteLater()
 
 
 class QConfirmDialog(QStyledDialog):
@@ -253,7 +355,10 @@ class QConfirmDialog(QStyledDialog):
         self.setFixedSize(400, 200)
         self.result = False
         font = QFont("Helvetica", 12, QFont.Weight.Bold)
-        layout = QVBoxLayout(self)
+        self.main_layout = QVBoxLayout(self)
+        layout = QVBoxLayout()
+        self.main_layout.addWidget(QDialogShadowFrame(layout))
+
         layout.setContentsMargins(20, 20, 20, 20)
         layout.setSpacing(15)
         layout.addStretch()

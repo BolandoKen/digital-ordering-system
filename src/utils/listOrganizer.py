@@ -6,10 +6,12 @@ from datetime import *;
 from src.database.queries import fetchStatistics, fetchOrderHistory
 
 
-def paginate(list) :
-    pass
+def getPage(arr, pageNumber, rows) :
+    end = rows * pageNumber
+    start = end - rows
+    return arr[start : end]
 
-def organizeByDate(orderList) :
+def organizeByDate(orderList) : # paginate -> organize
     orderListArr = [] 
 
     previousDate = datetime(1,1,1,1,1,1)

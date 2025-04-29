@@ -42,7 +42,7 @@ class QFoodItemCard(QMenuCard) :
         self.foodLabel = QLabel(self.foodname)
         self.foodimg = QLabel()
         self.foodimgpixmap = setPixMapOf(self.foodimg, self.imgfile, "food")["pixmap"]
-        self.priceLabel = QLabel(str(self.price))   
+        self.priceLabel = QLabel(f"₱{str(self.price)}")   
              
         self.foodCard_layout.addWidget(self.foodimg, alignment=Qt.AlignmentFlag.AlignCenter) 
         self.foodCard_layout.addWidget(self.foodLabel, alignment=Qt.AlignmentFlag.AlignCenter)   
@@ -74,13 +74,13 @@ class QFoodItemCard(QMenuCard) :
         # if food is available : delete or hide
         # if food is unavailable : show
         typeOf = "delete"
-        message = "Are you sure you want to delete this food item?"
+        message = f"Are you sure you want to delete {self.foodname}?"
 
         if self.hasBeenOrdered and not self.is_available:
-            message = "Are you sure you want to revive this food item?"
+            message = f"Are you sure you want to revive {self.foodname} back to the menu?"
             typeOf = "revive"
         elif self.hasBeenOrdered:
-            message = "This item has existing orders in order history. It will be hidden instead of deleted."
+            message = f"{self.foodname} has existing orders in order history. It will be hidden from customers instead of deleted."
 
         confirm = QConfirmDialog("Confirm", message, self.window())
         if confirm.exec():  # returns True if "Yes" was clicked

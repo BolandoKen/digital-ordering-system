@@ -17,7 +17,7 @@ from PyQt6.QtWidgets import (
 
 from src.database.queries import fetchOrderHistory
 
-class QOrderHPanel(QFrame) :
+class QOrderHPanel(QFrame) : # not used
     def __init__(self):
         super().__init__()
         self.order_layout = QVBoxLayout(self)
@@ -36,4 +36,4 @@ class QOrderHPanel(QFrame) :
             order_id, order_datetime = order
             self.table.setItem(row, 1, QTableWidgetItem(str(order_datetime)))
             self.table.setItem(row, 0, QTableWidgetItem(str(order_id)))
-        
+    
