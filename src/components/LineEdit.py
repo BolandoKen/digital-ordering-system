@@ -201,6 +201,20 @@ class QSearchRowItem(QFrame) :
             # - each panel/list will have map of their cards, key of id, value of the obj
 
 
+class QStyledLineEdit(QLineEdit) :
+    def __init__(self, parent = None) :
+        super().__init__(parent)
+        self.setFixedSize(300,30)
+        self.styleStr = """
+                background-color: white; 
+                border: 2px solid #D9D9D9; 
+                border-radius: 10px;
+                outline: none;
+                padding: 2px;                
+            """
+        self.setStyleSheet(self.styleStr)
+
+
 class QFormLineEdit(QLineEdit) :
     def __init__(self, parent = None) :
         super().__init__(parent)

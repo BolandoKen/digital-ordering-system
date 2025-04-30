@@ -12,6 +12,8 @@ from PyQt6.QtWidgets import (
 
 from src.utils.PubSub import pubsub
 from src.components.Buttons import QBackButton, QLogoButton, QEyeButton
+from src.components.Dialogs import QSetupPinDialog, QPinDialog
+from src.database.queries import fetchPin
 from PyQt6.QtGui import QFont
 
 class QLogoHeader(QFrame) :
@@ -19,6 +21,8 @@ class QLogoHeader(QFrame) :
         super().__init__()
         self.main_layout = QHBoxLayout(self) 
         self.main_layout.setContentsMargins(0,10,0,10)
+        self.setuppin_dialog = QSetupPinDialog(self.window())
+        self.pin_dialog = QPinDialog(self.window())
         self.logo = QLogoButton("assets/icons/pfp_icon.svg", "M'sKitchen", pageName)
         self.logo.connectTo(self.handleLogoClicked)
         self.main_layout.addWidget(self.logo)
@@ -27,7 +31,10 @@ class QLogoHeader(QFrame) :
             self.logo.connectTo(self.handleLogoClicked)
 
     def handleLogoClicked(self) :
-        pubsub.publish("login_Event", None)
+        dialogToExec = self.setuppin_dialog if fetchPin() is None else self.pin_dialog
+        print(fetchPin())
+        if dialogToExec.exec() :
+            pubsub.publish("login_Event", None)
     
     def updateHeader(self) :
         # update the QLogoButton name or logo/pfp

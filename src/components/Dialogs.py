@@ -26,11 +26,12 @@ from src.components.ComboBox import QCatComboBox
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtGui import QDoubleValidator
 from src.components.Buttons import QPrimaryButton, QSecondaryButton, QCloseButton
-from src.database.queries import fetchOrderItemsSubtotalList, fetchOrderItemsTotal
+from src.database.queries import fetchOrderItemsSubtotalList, fetchOrderItemsTotal, fetchPin
 from PyQt6.QtCore import Qt, QPoint, QTimer
 from PyQt6.QtGui import QFont, QColor
 from src.components.ScrollArea import QScrollAreaLayout
 from src.components.LineEdit import QFormLineEdit
+from src.database.Profile import setup_pin
 import traceback
 from PyQt6 import QtWidgets
 
@@ -395,6 +396,86 @@ class QConfirmDialog(QStyledDialog):
     def accept(self):
         self.result = True
         super().accept()
+
+    def reject(self):
+        self.result = False
+        super().reject()
+
+class QPinDialog(QStyledDialog) :
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.main_layout = QVBoxLayout(self)
+        self.contents_layout = QVBoxLayout()
+        self.shadw = QDialogShadowFrame(self.contents_layout)
+        self.main_layout.addWidget(self.shadw)
+
+        self.digitpin = QLineEdit()
+        self.digitpin.textChanged.connect(self.handlePin)
+        self.contents_layout.addWidget(QLabel("Enter 4 digit pin"))
+        self.contents_layout.addWidget(self.digitpin)
+        self.result = False
+
+    def exec(self):
+        super().exec()
+        return self.result
+    
+    def handlePin(self) :
+        if len(self.digitpin.text()) == 4 :
+            self.submitPin()
+    
+    def submitPin(self) :
+        if self.digitpin.text() == fetchPin() : 
+            self.result = True
+            super().accept()
+        self.digitpin.setText('')
+            
+
+class QSetupPinDialog(QStyledDialog) :
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.main_layout = QVBoxLayout(self)
+        self.contents_layout = QVBoxLayout()
+        self.shadw = QDialogShadowFrame(self.contents_layout)
+        self.setStyleSheet("QLabel{font-family: Helvetica; font-weight: bold;}")
+        self.main_layout.addWidget(self.shadw)
+        closebtn = QCloseButton()
+        closebtn.clicked.connect(self.close)
+        self.digitpin = QLineEdit()
+        self.digitpin2 = QLineEdit()
+        self.contents_layout.addWidget(closebtn, alignment=Qt.AlignmentFlag.AlignRight)
+        self.contents_layout.addWidget(QLabel("Setup 4 Digit Admin Pin"))
+        self.contents_layout.addWidget(QLabel("Enter 4 digit pin"))
+        self.contents_layout.addWidget(self.digitpin)
+        self.contents_layout.addWidget(QLabel("Confirm 4 digit pin"))
+        self.contents_layout.addWidget(self.digitpin2)
+
+        font = QFont("Helvetica", 12, QFont.Weight.Bold)
+        btn_row = QHBoxLayout()
+        self.yes_btn = QPrimaryButton("Confirm")
+        self.no_btn = QSecondaryButton("Cancel")
+        self.yes_btn.setFont(font)
+        self.no_btn.setFont(font)
+        self.yes_btn.clicked.connect(self.accept)
+        self.no_btn.clicked.connect(self.reject)
+        btn_row.addStretch()
+        btn_row.addWidget(self.no_btn)
+        btn_row.addSpacing(10)
+        btn_row.addWidget(self.yes_btn)
+        btn_row.addStretch()
+
+        self.contents_layout.addLayout(btn_row)
+
+    def exec(self):
+        super().exec()
+        return self.result
+
+    def accept(self):
+        self.result = False
+        if self.digitpin.text() == self.digitpin2.text() and self.digitpin.text().strip() != "" :
+            self.result = True
+            setup_pin(self.digitpin.text())
+            super().accept()
+        return
 
     def reject(self):
         self.result = False

@@ -48,6 +48,24 @@ def create_OrderItemsTable() :
                      FOREIGN KEY(order_id) REFERENCES Orders(order_id)
                      )""")
 
+def create_ProfileTable() : # independent table to keep track of account
+    mycursor.execute("""CREATE TABLE IF NOT EXISTS Profile(
+                     profile_id SMALLINT AUTO_INCREMENT PRIMARY KEY,
+                     name VARCHAR(128) NOT NULL,
+                     imgfile VARCHAR(128) NULL,
+                     pin VARCHAR(4) NULL CHECK(pin REGEXP ('^[0-9]{4}$'))
+                     )""")
+    
+def create_ProfileRow() :
+    mycursor.execute("SELECT * FROM Profile")
+    results = mycursor.fetchall()
+    if len(results) == 0 :
+        profileTuple = ("admin", None, None)
+        mycursor.execute("""INSERT INTO Profile
+                    ( name, imgfile, pin)
+                    VALUES (%s,  %s, %s)
+                    """, profileTuple)
+
 def create_Tables() :
     create_CategoriesTable()
     create_OrdersTable()
@@ -57,6 +75,8 @@ def create_Tables() :
 def init_db() :
     create_Database()
     create_Tables()
+    create_ProfileTable()
+    create_ProfileRow()
 
 def get_dbCursor() :
     return db.cursor()    

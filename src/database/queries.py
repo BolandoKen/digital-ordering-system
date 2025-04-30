@@ -97,7 +97,6 @@ def fetchStatistics(order='DESC', category_id=None, search_term=None):
     return results
 
 def fetchOrderHistory(date_filter=None):
-    # print(f"Called fetchOrderHistory with date_filter: {date_filter}")
 
     if date_filter is None:
         cursor.execute("SELECT * FROM Orders ORDER BY order_datetime DESC")
@@ -149,14 +148,6 @@ def fetchLatest_orderid() :
     cursor.fetchall()
     return latestorder
 
-
-
-
-
-
-
-
-
 def fetchSubStrNames(substr) :
     cursor.execute(f"""SELECT f.fooditem_id, f.name, f.is_available, c.category_id, c.name 
                    FROM FoodItems AS f 
@@ -165,3 +156,8 @@ def fetchSubStrNames(substr) :
                    WHERE f.name LIKE '%{substr}%' """)
     return cursor.fetchall()
 
+def fetchPin() :
+    cursor.execute("SELECT pin FROM Profile")
+    pin = cursor.fetchone()[0]
+    cursor.fetchall()
+    return pin
