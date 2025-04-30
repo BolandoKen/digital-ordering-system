@@ -155,7 +155,7 @@ class QCustomerConfirmOrderPanel(QFrame) :
         self.rightFoot_layout.addWidget(self.cancelBtn)
 
       
-        self.main_layout.addWidget(QLogoHeader("customer"))
+        self.main_layout.addWidget(QLogoHeader("admin"))
         self.main_layout.addWidget(self.choice_label)
         self.scroll_arealayout = QScrollAreaLayout(QVBoxLayout, self.main_layout, "confirm")
         self.scroll_arealayout.getLayout().setContentsMargins(0,0,15,0)

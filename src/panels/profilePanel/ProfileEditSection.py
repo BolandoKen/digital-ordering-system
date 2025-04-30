@@ -17,7 +17,7 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QScrollArea,
     QLineEdit,
-    QFileDialog
+    QFileDialog,
 )
 from src.utils.PixMap import setPixMapOf
 from src.utils.PubSub import pubsub
@@ -28,9 +28,10 @@ from src.utils.PixMap import checkImgSize, saveImageToLocalTemp, setPixMapOf, mo
 from src.database.queries import ProfileQueries
 from src.components.LineEdit import QProfileLineEdit
 from src.utils.FormValid import formValidated
-from src.database.Profile import update_name, update_pfp
+from src.database.Profile import update_name, update_pfp, update_displayname
 from src.components.Headers import QProfileNameLabel
 from src.components.Dialogs import QChangePfpDialog
+from src.components.Buttons import QProfileRadioButton
 
 class QProfileViewState(QFrame) :
     def __init__(self):
@@ -58,6 +59,7 @@ class QProfileEditState(QFrame) :
 
         self.inner_VLayout = QVBoxLayout()
         self.inner_VLayout.setContentsMargins(0,0,0,0)
+        self.inner_VLayout.setSpacing(10)
 
         self.changePfp_dialog = QChangePfpDialog(self.window())
 
@@ -69,23 +71,22 @@ class QProfileEditState(QFrame) :
 
         self.nameLineEdit = QProfileLineEdit()
 
-        self.checkbox = QPushButton("O")
-        self.checkbox.setFixedWidth(30)
+        self.displayname_radbtn = QProfileRadioButton("Display Name", self)
         self.resetBtn = QPushButton("reset pin")
         self.resetBtn.clicked.connect(self.handle_resetPin)
         
         checkbox_resetFrame = QFrame()
-        checkbox_resetFrame.setFixedWidth(250)
         checkbox_resetFrame.setFixedSize(250, 30)
         checkbox_reset_hbox = QHBoxLayout(checkbox_resetFrame)
         checkbox_reset_hbox.setContentsMargins(0,0,0,0)
-        checkbox_reset_hbox.addWidget(self.checkbox)
+        checkbox_reset_hbox.addWidget(self.displayname_radbtn)
         checkbox_reset_hbox.addStretch()
         checkbox_reset_hbox.addWidget(self.resetBtn)
 
-
+        self.inner_VLayout.addStretch()
         self.inner_VLayout.addWidget(self.nameLineEdit)
         self.inner_VLayout.addWidget(checkbox_resetFrame)
+        self.inner_VLayout.addStretch()
         pubsub.subscribe("saveEditProfile", self.saveEditProfile)
         pubsub.subscribe("discardEditProfile", self.discardEditProfile)
         # have cancel handler, 
@@ -116,6 +117,7 @@ class QProfileEditState(QFrame) :
             if hasImg :
                 moveImageToAssets(self.changePfp_dialog.tempImagePath, "profile", "pfp.png")
             update_pfp(hasImg)
+            update_displayname(self.displayname_radbtn.isChecked())
             pubsub.publish("updateProfile")
             self.switch(0)
         else :

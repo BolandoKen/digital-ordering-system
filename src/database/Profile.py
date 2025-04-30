@@ -19,3 +19,7 @@ def update_pfp(hasimg) :
     imgTuple = (img,)
 
     cursor.execute("UPDATE Profile SET imgfile = %s WHERE profile_id = 1",imgTuple)
+
+def update_displayname(bool) :
+    boolTuple = (bool,)
+    cursor.execute("UPDATE Profile SET is_displayname = %s WHERE profile_id = 1",boolTuple)

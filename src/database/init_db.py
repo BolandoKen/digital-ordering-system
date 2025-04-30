@@ -53,6 +53,7 @@ def create_ProfileTable() : # independent table to keep track of account
                      profile_id SMALLINT AUTO_INCREMENT PRIMARY KEY,
                      name VARCHAR(128) NOT NULL,
                      imgfile VARCHAR(128) NULL,
+                     is_displayname BOOL NOT NULL DEFAULT TRUE,
                      pin VARCHAR(4) NULL CHECK(pin REGEXP ('^[0-9]{4}$'))
                      )""")
     
@@ -60,10 +61,10 @@ def create_ProfileRow() :
     mycursor.execute("SELECT * FROM Profile")
     results = mycursor.fetchall()
     if len(results) == 0 :
-        profileTuple = ("admin", None, None)
+        profileTuple = ("admin",)
         mycursor.execute("""INSERT INTO Profile
-                    ( name, imgfile, pin)
-                    VALUES (%s,  %s, %s)
+                    (name)
+                    VALUES (%s)
                     """, profileTuple)
 
 def create_Tables() :

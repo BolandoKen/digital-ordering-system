@@ -13,7 +13,8 @@ from PyQt6.QtWidgets import (
     QDialog,
     QLineEdit,
     QFileDialog,
-    QSizePolicy
+    QSizePolicy,
+    QRadioButton
 )
 from PyQt6.QtWidgets import QPushButton, QSpacerItem, QSizePolicy
 from PyQt6.QtGui import QIcon
@@ -22,6 +23,8 @@ from PyQt6.QtGui import QPixmap, QMouseEvent, QFont
 from PyQt6.QtCore import Qt
 from src.components.MenuCards import QMenuCard
 from src.utils.PixMap import setPixMapOf
+from src.database.queries import ProfileQueries
+from src.utils.PubSub import pubsub
 
 class QDeleteButton(QPushButton):
 
@@ -414,3 +417,12 @@ class QOrderDetailsButton(QPushButton) :
         self.setIcon(QIcon("assets/icons/orderDetails_icon.svg"))
         self.setIconSize(QSize(12, 2))
         self.setCursor(Qt.CursorShape.PointingHandCursor)
+class QProfileRadioButton(QRadioButton) :
+    def __init__(self, text, parent = None) :
+        super().__init__(text, parent)
+        self.init_checked()
+        pubsub.subscribe("updateProfile", self.init_checked)
+        
+    def init_checked(self, e=None) :
+        self.is_displayname69 = ProfileQueries.fetchDisplayName()
+        self.setChecked(self.is_displayname69)

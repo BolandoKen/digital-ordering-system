@@ -175,3 +175,9 @@ class ProfileQueries :
         name = cursor.fetchone()[0]
         cursor.fetchall()
         return name
+
+    def fetchDisplayName() :
+        cursor.execute("SELECT is_displayname FROM Profile")
+        is_displayname = cursor.fetchone()[0]
+        cursor.fetchall()
+        return is_displayname

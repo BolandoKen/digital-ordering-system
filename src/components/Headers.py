@@ -15,8 +15,9 @@ from src.components.Buttons import QBackButton, QEyeButton
 from src.components.Dialogs import QSetupPinDialog, QPinDialog
 from src.database.queries import ProfileQueries
 from PyQt6.QtGui import QFont
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QEvent
 from src.components.ImageCard import QProfileImage
+
 
 class QProfileNameLabel(QLabel) :
     def __init__(self):
@@ -46,21 +47,38 @@ class QLogoButton(QFrame):
         layout = QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0) 
 
-        icon_label = QProfileImage(None, 70,70)
-        layout.addWidget(icon_label)
+        self.icon_label = QProfileImage(None, 70,70)
+        layout.addWidget(self.icon_label)
 
         self.text_label = QProfileNameLabel()
         layout.addWidget(self.text_label)
         layout.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
         self.setLayout(layout)
+        self.handleDisplayName()
+        pubsub.subscribe("updateProfile", self.handleDisplayName)
+        self.installEventFilter(self)
+        self.icon_label.installEventFilter(self)
 
     def connectTo(self, callback) :
         self.callback = callback
 
-    def mousePressEvent(self, event):
-        if self.pageName == "admin" : return
-        if event.button() == Qt.MouseButton.LeftButton:
-            self.callback()
+    
+    def eventFilter(self, watched, event) :
+        if self.pageName == "admin" : return super().eventFilter(watched, event)
+        if watched == self or watched == self.icon_label :
+            if event.type() == QEvent.Type.MouseButtonPress :
+                if event.button() == Qt.MouseButton.LeftButton :
+                    self.callback()
+        return super().eventFilter(watched, event)
+
+            
+    
+    def handleDisplayName(self, e = None) :
+        self.is_displayname = ProfileQueries.fetchDisplayName() 
+        if self.is_displayname :
+            self.text_label.show()
+        else :
+            self.text_label.hide()
 
 class QLogoHeader(QFrame) :
     def __init__(self, pageName):
