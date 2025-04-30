@@ -75,6 +75,8 @@ class QAdminSideBar(QSideBar) :
         self.switchPage(index)
     
     def handleLogoutClicked(self) :
+        self.AccPanelBtn.setClickedState(False)
+        self.StatsPanelBtn.setClickedState(False)
         pubsub.publish("logout_Event", None)
 
 class QCustomerSideBar(QSideBar) :
