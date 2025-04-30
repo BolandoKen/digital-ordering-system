@@ -69,27 +69,30 @@ def checkFoodHasBeenOrdered(foodid) :
     
     return results > 0
 
-def fetchStatistics(order='DESC', category_id=None):
+def fetchStatistics(order='DESC', category_id=None, search_term=None):
+    query = """
+        SELECT f.name AS Food, c.name AS Category, IFNULL(SUM(o.quantity),0) AS Times_Ordered
+        FROM FoodItems f
+        LEFT JOIN Categories c ON f.category_id = c.category_id
+        LEFT JOIN OrderItems o ON f.fooditem_id = o.fooditem_id
+    """
+    
     if category_id is not None:
-        cursor.execute(f"""
-            SELECT f.name AS Food, c.name AS Category, IFNULL(SUM(o.quantity),0) AS Times_Ordered
-            FROM FoodItems f
-            LEFT JOIN Categories c ON f.category_id = c.category_id
-            LEFT JOIN OrderItems o ON f.fooditem_id = o.fooditem_id
-            WHERE c.category_id = %s
-            GROUP BY f.fooditem_id, f.name, c.name
-            ORDER BY Times_Ordered {order}
-        """, (category_id,))
-    else:
-        cursor.execute(f"""
-            SELECT f.name AS Food, c.name AS Category, IFNULL(SUM(o.quantity),0) AS Times_Ordered
-            FROM FoodItems f
-            LEFT JOIN Categories c ON f.category_id = c.category_id
-            LEFT JOIN OrderItems o ON f.fooditem_id = o.fooditem_id
-            GROUP BY f.fooditem_id, f.name, c.name
-            ORDER BY Times_Ordered {order}
-        """)
-        
+        query += " WHERE c.category_id = %s"
+    if search_term:
+        if category_id is not None:
+            query += " AND f.name LIKE %s"
+        else:
+            query += " WHERE f.name LIKE %s"
+
+    query += """GROUP BY f.fooditem_id, f.name, c.name ORDER BY Times_Ordered {order}""".format(order=order)
+    params = []
+    if category_id is not None:
+        params.append(category_id)
+    if search_term:
+        params.append(f"%{search_term}%")
+
+    cursor.execute(query, tuple(params))
     results = cursor.fetchall()
     return results
 
