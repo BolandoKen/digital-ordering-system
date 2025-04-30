@@ -62,12 +62,16 @@ class QAdminSideBar(QSideBar) :
         self.sidebar_layout.addStretch()
 
     def handlePanelBtnClicked(self, index) :
+        if self.currindex == index :
+            return
+        pubsub.publish("adminPanelSwitched")
         self.AccPanelBtn.setClickedState(False)
         self.StatsPanelBtn.setClickedState(False)
         if index == 1 : 
             self.StatsPanelBtn.setClickedState(True)
         elif index == 2 :
             self.AccPanelBtn.setClickedState(True)
+        self.currindex = index
         self.switchPage(index)
     
     def handleLogoutClicked(self) :

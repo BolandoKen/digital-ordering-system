@@ -104,6 +104,7 @@ class QProfileEditState(QFrame) :
         self.profileIcon.init_profileImg()
         self.nameLineEdit.init_text()
         self.nameLineEdit.setStateInit()
+        self.displayname_radbtn.init_checked()
         self.switch(0)
 
     def saveEditProfile(self, e = None) :

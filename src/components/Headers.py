@@ -136,6 +136,8 @@ class QOtherPanelHeader(QFrame) :
         self.header_layout.addWidget(self.cancelBtn)
         pubsub.subscribe("logout_Event", self.handleSaveEdit)
         pubsub.subscribe("updateProfile", self.handleBackToDefaultState)
+        pubsub.subscribe("adminPanelSwitched",self.handleDiscardEdit)
+        pubsub.subscribe
         self.cancelBtn.hide()
         self.saveBtn.hide()
     
@@ -145,7 +147,7 @@ class QOtherPanelHeader(QFrame) :
         self.cancelBtn.show()
         self.saveBtn.show()
     
-    def handleDiscardEdit(self) :
+    def handleDiscardEdit(self, e=None) :
         pubsub.publish("discardEditProfile")
         self.handleBackToDefaultState()
 
