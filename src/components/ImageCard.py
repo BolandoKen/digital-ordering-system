@@ -16,6 +16,7 @@ from src.components.Buttons import QImageButton, QCloseButton
 from PyQt6.QtGui import QPixmap
 from src.utils.PixMap import setPixMapOf
 from PyQt6.QtCore import Qt
+from src.utils.PubSub import pubsub
 from src.database.queries import ProfileQueries
 
 class QSelectImageCard(QFrame) :
@@ -88,7 +89,27 @@ class QCatLabelImageLayout(QHBoxLayout) :
 
 
 class QProfileImage(QLabel) :
-    def __init__(self):
+    def __init__(self, cb = None, width = None, height = None):
         super().__init__()
-        imgfile = ProfileQueries.fetchProfileImg()
-        setPixMapOf(self, imgfile, "profile")
+        self.width = width
+        self.height = height
+        self.imgfile = None
+        self.init_profileImg()
+        self.cb = cb 
+        pubsub.subscribe("updateProfile", self.init_profileImg)
+
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.MouseButton.LeftButton and self.cb is not None:
+            self.cb()
+
+    def init_profileImg(self, e= None) :
+        self.imgfile = ProfileQueries.fetchProfileImg()
+        imgfilepath = setPixMapOf(self, self.imgfile, "profile")["path"]
+        if self.width is not None and self.height is not None :
+            self.setFixedSize(self.width, self.height)
+            self.setScaledContents(True)
+        return imgfilepath
+    
+    def clearImg(self) :
+        setPixMapOf(self, None, "profile")

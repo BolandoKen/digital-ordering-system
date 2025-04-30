@@ -78,15 +78,24 @@ def saveImageToLocalTemp(imgFilePath, fileName) :
     return pathToSave
 
 def moveImageToAssets(imgFilePath, panelName, ImgRename) :
+    # from edits, when img is saved as is, it basically moves the same image in place.
     if panelName == "category" :
         destPath = os.path.abspath("assets/categoryimg")
         os.makedirs(destPath, exist_ok=True)
         destPath = os.path.join(destPath, ImgRename)
         shutil.move(imgFilePath, destPath)
+        print(imgFilePath, destPath)
         pixmapRepo.update_imgPath_key(destPath)
 
     elif panelName == "food" :
         destPath = os.path.abspath("assets/foodimg")
+        os.makedirs(destPath, exist_ok=True)
+        destPath = os.path.join(destPath, ImgRename)
+        shutil.move(imgFilePath, destPath)
+        pixmapRepo.update_imgPath_key(destPath)
+
+    elif panelName == "profile" :
+        destPath = os.path.abspath("assets/profileimg")
         os.makedirs(destPath, exist_ok=True)
         destPath = os.path.join(destPath, ImgRename)
         shutil.move(imgFilePath, destPath)

@@ -480,3 +480,55 @@ class QSetupPinDialog(QStyledDialog) :
     def reject(self):
         self.result = False
         super().reject()
+
+
+class QChangePfpDialog(QStyledDialog) :
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.main_layout = QVBoxLayout(self)
+        self.contents_layout = QVBoxLayout()
+        self.shadw = QDialogShadowFrame(self.contents_layout)
+        self.setStyleSheet("* {background-color: white;color: black;}QPushButton{font-family: Helvetica; font-weight: bold; border: 1px solid #d1d1d1;}")
+        self.main_layout.addWidget(self.shadw)
+
+        self.contents_layout.setContentsMargins(0,0,0,0)
+        self.contents_layout.setSpacing(0)
+        self.changePhotoBtn = QPushButton("Change Photo")
+        self.changePhotoBtn.clicked.connect(self.open_file)
+        self.removeCurrentBtn = QPushButton("Remove Current Photo")
+        self.removeCurrentBtn.clicked.connect(self.handleClearBtn)
+        self.cancelBtn = QPushButton("cancel")
+        self.cancelBtn.clicked.connect(self.close)
+        
+        self.contents_layout.addWidget(QLabel("Change Profile Photo"))
+        self.contents_layout.addWidget(self.changePhotoBtn)
+        self.contents_layout.addWidget(self.removeCurrentBtn)
+        self.contents_layout.addWidget(self.cancelBtn)
+
+        self.tempImagePath = None
+        pubsub.subscribe("updateProfile", self.setTempImgPath)
+
+    
+    def set_profileIcon(self, profileIcon) :
+        self.profileIcon = profileIcon
+        self.setTempImgPath()
+    
+    def setTempImgPath(self, e= None) :
+        self.tempImagePath = self.profileIcon.init_profileImg()
+
+
+    def open_file(self):
+        home_dir = os.path.expanduser("~")
+        file_path, _ = QFileDialog.getOpenFileName(self, "Open File", home_dir, "Images (*.png *.jpg *.jpeg *.bmp);;All Files (*)")
+        if file_path:
+            print(checkImgSize(file_path)) #check for filesize bfore compress, no
+            self.tempImagePath = saveImageToLocalTemp(file_path, "temp.png")
+            setPixMapOf(self.profileIcon, "temp.png", "temp")  
+        self.close()
+    
+    def handleClearBtn(self) :
+        self.tempImagePath = None
+        self.profileIcon.clearImg()
+        self.profileIcon.setScaledContents(True)
+        self.profileIcon.setFixedSize(150,150)
+        self.close()

@@ -277,5 +277,9 @@ class QProfileLineEdit(QFormLineEdit) :
     def __init__(self, parent = None) :
         super().__init__(parent)
         self.setFixedSize(250,50)
+        self.init_text()
+        self.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
+
+    def init_text(self) :
         self.setText(ProfileQueries.fetchProfileName())
 

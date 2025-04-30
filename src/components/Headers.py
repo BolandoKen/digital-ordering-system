@@ -46,9 +46,7 @@ class QLogoButton(QFrame):
         layout = QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0) 
 
-        icon_label = QProfileImage()
-        icon_label.setFixedSize(70,70)
-        icon_label.setScaledContents(True)
+        icon_label = QProfileImage(None, 70,70)
         layout.addWidget(icon_label)
 
         self.text_label = QProfileNameLabel()
@@ -109,25 +107,36 @@ class QOtherPanelHeader(QFrame) :
         self.editBtn = QPushButton("Edit")
         self.editBtn.setStyleSheet("background-color: white; color: #72CEFF; border-radius: 5px; padding: 5px; font-size: 15px;")
         self.editBtn.clicked.connect(self.handleEditProfile)
+        self.cancelBtn = QPushButton("Discard")
+        self.cancelBtn.setStyleSheet("background-color: white; color: red; border-radius: 5px; padding: 5px; font-size: 15px;")
+        self.cancelBtn.clicked.connect(self.handleDiscardEdit)
         self.saveBtn = QPushButton("Save")
         self.saveBtn.setStyleSheet("background-color: white; color: #72CEFF; border-radius: 5px; padding: 5px; font-size: 15px;")
-        self.saveBtn.clicked.connect(self.handleSaveProfile)
+        self.saveBtn.clicked.connect(self.handleSaveEdit)
         self.header_layout.addWidget(self.editBtn)
         self.header_layout.addWidget(self.saveBtn)
-        pubsub.subscribe("logout_Event", self.handleSaveProfile)
-        pubsub.subscribe("updateProfile", self.handleSaveValidated)
+        self.header_layout.addWidget(self.cancelBtn)
+        pubsub.subscribe("logout_Event", self.handleSaveEdit)
+        pubsub.subscribe("updateProfile", self.handleBackToDefaultState)
+        self.cancelBtn.hide()
         self.saveBtn.hide()
     
     def handleEditProfile(self) :
         pubsub.publish("editProfile", 1)
         self.editBtn.hide()
+        self.cancelBtn.show()
         self.saveBtn.show()
     
-    def handleSaveProfile(self, e = None) :
-        pubsub.publish("saveProfile")
+    def handleDiscardEdit(self) :
+        pubsub.publish("discardEditProfile")
+        self.handleBackToDefaultState()
 
-    def handleSaveValidated(self, e = None) :
+    def handleSaveEdit(self, e = None) :
+        pubsub.publish("saveEditProfile")
+
+    def handleBackToDefaultState(self, e = None) :
         self.editBtn.show()
+        self.cancelBtn.hide()
         self.saveBtn.hide()
         
 

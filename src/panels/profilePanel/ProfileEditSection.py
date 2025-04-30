@@ -28,8 +28,9 @@ from src.utils.PixMap import checkImgSize, saveImageToLocalTemp, setPixMapOf, mo
 from src.database.queries import ProfileQueries
 from src.components.LineEdit import QProfileLineEdit
 from src.utils.FormValid import formValidated
-from src.database.Profile import update_name
+from src.database.Profile import update_name, update_pfp
 from src.components.Headers import QProfileNameLabel
+from src.components.Dialogs import QChangePfpDialog
 
 class QProfileViewState(QFrame) :
     def __init__(self):
@@ -39,9 +40,8 @@ class QProfileViewState(QFrame) :
 
         self.inner_VLayout = QVBoxLayout()
         self.inner_VLayout.setContentsMargins(0,0,0,0)
-        self.profileIcon = QProfileImage()
-        self.profileIcon.setScaledContents(True)
-        self.profileIcon.setFixedSize(150,150)
+
+        self.profileIcon = QProfileImage(None, 150, 150)
         self.main_layout.addWidget(self.profileIcon)
         self.main_layout.addLayout(self.inner_VLayout)
 
@@ -58,15 +58,15 @@ class QProfileEditState(QFrame) :
 
         self.inner_VLayout = QVBoxLayout()
         self.inner_VLayout.setContentsMargins(0,0,0,0)
-        self.profileIcon = QProfileImage()
-        self.profileIcon.setScaledContents(True)
-        self.profileIcon.setFixedSize(150,150)
+
+        self.changePfp_dialog = QChangePfpDialog(self.window())
+
+        self.profileIcon = QProfileImage(self.changePfp_dialog.exec, 150, 150)
         self.main_layout.addWidget(self.profileIcon)
         self.main_layout.addLayout(self.inner_VLayout)
 
-        self.changeBtn = QPushButton("change")
-        self.changeBtn.clicked.connect(self.open_file)
-        self.changeBtn.setFixedWidth(100)
+        self.changePfp_dialog.set_profileIcon(self.profileIcon)
+
         self.nameLineEdit = QProfileLineEdit()
 
         self.checkbox = QPushButton("O")
@@ -84,31 +84,38 @@ class QProfileEditState(QFrame) :
         checkbox_reset_hbox.addWidget(self.resetBtn)
 
 
-        self.inner_VLayout.addWidget(self.changeBtn)
         self.inner_VLayout.addWidget(self.nameLineEdit)
         self.inner_VLayout.addWidget(checkbox_resetFrame)
-        pubsub.subscribe("saveProfile", self.saveProfile)
+        pubsub.subscribe("saveEditProfile", self.saveEditProfile)
+        pubsub.subscribe("discardEditProfile", self.discardEditProfile)
+        # have cancel handler, 
+        # subscribe on logouts, switch panels, back clicks
+        # call cancel on these subscriptions;
 
-    def open_file(self):
-        home_dir = os.path.expanduser("~")
-        file_path, _ = QFileDialog.getOpenFileName(self, "Open File", home_dir, "Images (*.png *.jpg *.jpeg *.bmp);;All Files (*)")
-        if file_path:
-            print(checkImgSize(file_path)) #check for filesize bfore compress, no
-            self.tempImagePath = saveImageToLocalTemp(file_path, "temp.png")
-            setPixMapOf(self.profileIcon, "temp.png", "temp")  
-
+  
     def handle_resetPin(self) :
         reset_pin()
         pubsub.publish("logout_Event")
-        self.saveProfile()
+        self.saveEditProfile()
 
     # handle here saved state
-    def saveProfile(self, e = None) :
+    def discardEditProfile(self, e =None) :
+        self.profileIcon.init_profileImg()
+        self.nameLineEdit.init_text()
+        self.nameLineEdit.setStateInit()
+        self.switch(0)
+
+    def saveEditProfile(self, e = None) :
         name = self.nameLineEdit.text()
         dataTuple = (name,)
         error_dict = formValidated(dataTuple, "profile")
         if error_dict["final"] :
+
+            hasImg = self.changePfp_dialog.tempImagePath is not None
             update_name(name)
+            if hasImg :
+                moveImageToAssets(self.changePfp_dialog.tempImagePath, "profile", "pfp.png")
+            update_pfp(hasImg)
             pubsub.publish("updateProfile")
             self.switch(0)
         else :

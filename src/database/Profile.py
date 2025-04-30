@@ -13,3 +13,9 @@ def reset_pin() :
 def update_name(new_name) :
     nameTuple = (new_name,)
     cursor.execute("UPDATE Profile SET name = %s WHERE profile_id = 1",nameTuple)
+
+def update_pfp(hasimg) :
+    img = "pfp.png" if hasimg else None
+    imgTuple = (img,)
+
+    cursor.execute("UPDATE Profile SET imgfile = %s WHERE profile_id = 1",imgTuple)
