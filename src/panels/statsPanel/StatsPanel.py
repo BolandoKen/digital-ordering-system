@@ -34,7 +34,7 @@ class QStatsPanel(QFrame) :
     def stats_setup(self):
    
         self.stats_layout.addWidget(QOtherPanelHeader("Statistics"))
-        self.search_area = QSearchArea(self)
+        self.search_area = QSearchArea(self, "stats")
         self.stats_layout.addWidget(self.search_area)
         self.search_area.searchbar.textChanged.connect(self.update_table)
         queryBarHLayout = QHBoxLayout()
