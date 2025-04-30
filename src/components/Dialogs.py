@@ -26,7 +26,7 @@ from src.components.ComboBox import QCatComboBox
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtGui import QDoubleValidator
 from src.components.Buttons import QPrimaryButton, QSecondaryButton, QCloseButton
-from src.database.queries import fetchOrderItemsSubtotalList, fetchOrderItemsTotal, fetchPin
+from src.database.queries import fetchOrderItemsSubtotalList, fetchOrderItemsTotal, ProfileQueries
 from PyQt6.QtCore import Qt, QPoint, QTimer
 from PyQt6.QtGui import QFont, QColor
 from src.components.ScrollArea import QScrollAreaLayout
@@ -144,7 +144,7 @@ class QaddDialog(QStyledDialog) :
         home_dir = os.path.expanduser("~")
         file_path, _ = QFileDialog.getOpenFileName(self, "Open File", home_dir, "Images (*.png *.jpg *.jpeg *.bmp);;All Files (*)")
         if file_path:
-            print(checkImgSize(file_path)) #check for filesize bfore compress
+            print(checkImgSize(file_path)) #check for filesize bfore compress, no
             self.tempImagePath = saveImageToLocalTemp(file_path, "temp.png")
             setPixMapOf(self.selectImgCard.getLabel(), "temp.png", "temp")  
             self.selectImgCard.clearButton.show()        
@@ -424,7 +424,7 @@ class QPinDialog(QStyledDialog) :
             self.submitPin()
     
     def submitPin(self) :
-        if self.digitpin.text() == fetchPin() : 
+        if self.digitpin.text() == ProfileQueries.fetchPin() : 
             self.result = True
             super().accept()
         self.digitpin.setText('')

@@ -156,8 +156,22 @@ def fetchSubStrNames(substr) :
                    WHERE f.name LIKE '%{substr}%' """)
     return cursor.fetchall()
 
-def fetchPin() :
-    cursor.execute("SELECT pin FROM Profile")
-    pin = cursor.fetchone()[0]
-    cursor.fetchall()
-    return pin
+class ProfileQueries :
+
+    def fetchPin() :
+        cursor.execute("SELECT pin FROM Profile")
+        pin = cursor.fetchone()[0]
+        cursor.fetchall()
+        return pin
+
+    def fetchProfileImg() :
+        cursor.execute("SELECT imgfile FROM Profile")
+        imgfile = cursor.fetchone()[0]
+        cursor.fetchall()
+        return imgfile
+
+    def fetchProfileName() :
+        cursor.execute("SELECT name FROM Profile")
+        name = cursor.fetchone()[0]
+        cursor.fetchall()
+        return name

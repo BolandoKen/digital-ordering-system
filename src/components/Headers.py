@@ -11,10 +11,58 @@ from PyQt6.QtWidgets import (
 )
 
 from src.utils.PubSub import pubsub
-from src.components.Buttons import QBackButton, QLogoButton, QEyeButton
+from src.components.Buttons import QBackButton, QEyeButton
 from src.components.Dialogs import QSetupPinDialog, QPinDialog
-from src.database.queries import fetchPin
+from src.database.queries import ProfileQueries
 from PyQt6.QtGui import QFont
+from PyQt6.QtCore import Qt
+from src.components.ImageCard import QProfileImage
+
+class QProfileNameLabel(QLabel) :
+    def __init__(self):
+        super().__init__()
+        profilename = ProfileQueries.fetchProfileName()
+        self.setText(profilename)
+        self.setFont(QFont("Helvitica", 15, QFont.Weight.Bold))
+
+        pubsub.subscribe("updateProfile", self.handle_updateProfile)
+
+    def handle_updateProfile(self, e = None) :
+        self.setText(ProfileQueries.fetchProfileName())
+
+
+class QLogoButton(QFrame):
+    def __init__(self, pageName):
+        super().__init__()
+        self.pageName = pageName
+        # self.setFixedSize(400, 70)
+        self.setStyleSheet("""
+            background: transparent;
+            padding: 0px;
+            color: black;           
+        """)
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+
+        layout = QHBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0) 
+
+        icon_label = QProfileImage()
+        icon_label.setFixedSize(70,70)
+        icon_label.setScaledContents(True)
+        layout.addWidget(icon_label)
+
+        self.text_label = QProfileNameLabel()
+        layout.addWidget(self.text_label)
+        layout.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+        self.setLayout(layout)
+
+    def connectTo(self, callback) :
+        self.callback = callback
+
+    def mousePressEvent(self, event):
+        if self.pageName == "admin" : return
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.callback()
 
 class QLogoHeader(QFrame) :
     def __init__(self, pageName):
@@ -23,7 +71,7 @@ class QLogoHeader(QFrame) :
         self.main_layout.setContentsMargins(0,10,0,10)
         self.setuppin_dialog = QSetupPinDialog(self.window())
         self.pin_dialog = QPinDialog(self.window())
-        self.logo = QLogoButton("assets/icons/pfp_icon.svg", "M'sKitchen", pageName)
+        self.logo = QLogoButton(pageName)
         self.logo.connectTo(self.handleLogoClicked)
         self.main_layout.addWidget(self.logo)
         self.main_layout.addStretch()
@@ -31,8 +79,7 @@ class QLogoHeader(QFrame) :
             self.logo.connectTo(self.handleLogoClicked)
 
     def handleLogoClicked(self) :
-        dialogToExec = self.setuppin_dialog if fetchPin() is None else self.pin_dialog
-        print(fetchPin())
+        dialogToExec = self.setuppin_dialog if ProfileQueries.fetchPin() is None else self.pin_dialog
         if dialogToExec.exec() :
             pubsub.publish("login_Event", None)
     
@@ -67,6 +114,8 @@ class QOtherPanelHeader(QFrame) :
         self.saveBtn.clicked.connect(self.handleSaveProfile)
         self.header_layout.addWidget(self.editBtn)
         self.header_layout.addWidget(self.saveBtn)
+        pubsub.subscribe("logout_Event", self.handleSaveProfile)
+        pubsub.subscribe("updateProfile", self.handleSaveValidated)
         self.saveBtn.hide()
     
     def handleEditProfile(self) :
@@ -74,8 +123,10 @@ class QOtherPanelHeader(QFrame) :
         self.editBtn.hide()
         self.saveBtn.show()
     
-    def handleSaveProfile(self) :
-        pubsub.publish("saveProfile", None)
+    def handleSaveProfile(self, e = None) :
+        pubsub.publish("saveProfile")
+
+    def handleSaveValidated(self, e = None) :
         self.editBtn.show()
         self.saveBtn.hide()
         

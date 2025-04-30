@@ -1,5 +1,6 @@
 import os
 from PyQt6.QtGui import QPixmap
+from PyQt6.QtCore import Qt
 from PIL import Image
 import shutil
 
@@ -25,14 +26,10 @@ def getImgPath(imgFileName, assetFolder) :
      return os.path.join(os.path.abspath(f"assets/{assetFolder}"), imgFileName) 
 
 
-
-
-
-
-def setPixMapOf(label, imgFileName, folder) :
-    if imgFileName is None:
+def setPixMapOf(label, imgFileName, folder) : # folder :  temp | icon | food | category | profile
+    if imgFileName is None: # set default icon
         destFolder = "icons"
-        imgFileName = "placeholder_img.svg"
+        imgFileName = "placeholder_img.svg" if folder != "profile" else "pfp_icon.svg"
         path = os.path.join(os.path.abspath(f"assets/{destFolder}"), imgFileName) 
 
         pixmap = pixmapRepo.get_pixmap(path)
@@ -41,7 +38,7 @@ def setPixMapOf(label, imgFileName, folder) :
         label.setScaledContents(True)
         obj = {
             "path" : None,
-            "pixmap" : pixmap,
+            "pixmap" : pixmap, # unnecessary after memoization, refactor later
         }
         return obj
     if folder == "temp" :
@@ -51,7 +48,7 @@ def setPixMapOf(label, imgFileName, folder) :
     elif folder == "icon" :
         destFolder = "icons"
     else :
-        destFolder = folder + "img"
+        destFolder = folder + "img" #folder is either 'category' or 'food'
         label.setFixedSize(125,125)
         label.setScaledContents(True)
 
@@ -60,6 +57,7 @@ def setPixMapOf(label, imgFileName, folder) :
         pixmapRepo.update_imgPath_key(path)
 
     pixmap = pixmapRepo.get_pixmap(path)
+
     label.setPixmap(pixmap)
        
     obj = {

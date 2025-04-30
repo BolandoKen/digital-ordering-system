@@ -6,6 +6,7 @@ def formValidated(dataTuple, panelName):
         "category_name" : None,
         "food_name" : None,
         "food_price" : None,
+        "profile_name" : None,
         "final" : True,
     }
     if panelName == "category":
@@ -39,6 +40,15 @@ def formValidated(dataTuple, panelName):
             except ValueError:
                 error_dict["food_price"] = "invalid number"
                 error_messages.append("price must be a valid number")
+    elif panelName == "profile" :
+        name = dataTuple[0]
+        if (not name.strip()):
+            error_dict["profile_name"] = "cannot be empty"
+            error_messages.append("profile name is empty")
+        if len(name) > 128: #same as table
+            error_dict["profile_name"] = "too long (max 128 chars)"
+            error_messages.append("profile name is too long (max 128 chars)")       
+            
     if error_messages:
         # QMessageBox.warning(
         #     None,

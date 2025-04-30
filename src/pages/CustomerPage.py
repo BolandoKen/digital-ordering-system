@@ -14,10 +14,9 @@ from PyQt6.QtWidgets import (
     QSizePolicy
 )
 from src.components.SideBar import QCustomerSideBar
-from src.components.Headers import QLogoHeader
-
+from src.components.Headers import QLogoHeader, QLogoButton
 from src.utils.PubSub import pubsub
-from src.components.Buttons import QDineInButton, QTakeOutButton, QLogoButton, QTertiaryButton, QQuaternaryButton
+from src.components.Buttons import QDineInButton, QTakeOutButton, QTertiaryButton, QQuaternaryButton
 from src.components.ScrollArea import QScrollAreaLayout
 from src.database.queries import fetchLatest_orderid
 from PyQt6.QtGui import QFont
@@ -94,7 +93,7 @@ class QCustomerGreetPanel(QFrame) :
         greetMsg.setFixedHeight(50)
 
         self.main_layout.addStretch()
-        self.main_layout.addWidget(QLogoButton("assets/icons/pfp_icon.svg", "M'sKitchen", None), alignment=Qt.AlignmentFlag.AlignCenter )
+        self.main_layout.addWidget(QLogoButton("admin"), alignment=Qt.AlignmentFlag.AlignCenter )
         self.main_layout.addWidget(greetMsg, alignment=Qt.AlignmentFlag.AlignCenter)
         self.main_layout.addLayout(btns_Hbox)
         self.main_layout.addStretch()
@@ -287,7 +286,7 @@ class QCustomerPrintingPanel(QFrame) :
         btn_timer_vbox.addWidget(self.msg3_label, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.main_layout.addStretch()
-        self.main_layout.addWidget(QLogoButton("assets/icons/pfp_icon.svg", "M'sKitchen", None), alignment=Qt.AlignmentFlag.AlignCenter)
+        self.main_layout.addWidget(QLogoButton("admin"), alignment=Qt.AlignmentFlag.AlignCenter)
         self.main_layout.addWidget(self.msg_label, alignment=Qt.AlignmentFlag.AlignCenter)
         self.main_layout.addWidget(self.msg2_label, alignment=Qt.AlignmentFlag.AlignCenter)
         self.main_layout.addLayout(orderno_vbox)

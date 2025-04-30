@@ -106,41 +106,6 @@ class QEyeButton(QPushButton) :
         elif state == "show" :
             self.setIcon(QIcon("assets/icons/closedeye_icon.svg"))
 
-class QLogoButton(QFrame):
-    def __init__(self, logo_path: str, eatery_name: str, pageName):
-        super().__init__()
-        self.pageName = pageName
-        # self.setFixedSize(400, 70)
-        self.setStyleSheet("""
-            background: transparent;
-            padding: 0px;
-            color: black;           
-        """)
-        self.setCursor(Qt.CursorShape.PointingHandCursor)
-
-        layout = QHBoxLayout()
-        layout.setContentsMargins(0, 0, 0, 0) 
-
-        icon_label = QLabel()
-        pixmap = QPixmap(logo_path).scaled(70, 70, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
-        icon_label.setPixmap(pixmap)
-        layout.addWidget(icon_label)
-
-        text_label = QLabel(eatery_name)
-        text_label.setFont(QFont("Helvetica", 15, QFont.Weight.Bold))
-        layout.addWidget(text_label)
-        layout.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
-
-        self.setLayout(layout)
-
-    def connectTo(self, callback) :
-        self.callback = callback
-
-    def mousePressEvent(self, event):
-        if self.pageName == "admin" : return
-        if event.button() == Qt.MouseButton.LeftButton:
-            self.callback()
-
 
 class QAddButton(QMenuCard) :
     def __init__(self):

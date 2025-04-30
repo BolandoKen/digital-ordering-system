@@ -16,6 +16,7 @@ from src.components.Buttons import QImageButton, QCloseButton
 from PyQt6.QtGui import QPixmap
 from src.utils.PixMap import setPixMapOf
 from PyQt6.QtCore import Qt
+from src.database.queries import ProfileQueries
 
 class QSelectImageCard(QFrame) :
     def __init__(self, handleClearBtnCallback):
@@ -84,3 +85,10 @@ class QCatLabelImageLayout(QHBoxLayout) :
         self.addStretch()
         self.addWidget(self.imgWidget)    
         self.addStretch()
+
+
+class QProfileImage(QLabel) :
+    def __init__(self):
+        super().__init__()
+        imgfile = ProfileQueries.fetchProfileImg()
+        setPixMapOf(self, imgfile, "profile")

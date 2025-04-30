@@ -36,7 +36,7 @@ from src.components.Calendar import QCalendarFilter
 from PyQt6.QtCore import QDate, QTimer
 from PyQt6.QtCore import QEvent
 from src.utils.PubSub import pubsub
-from src.database.queries import fetchSubStrNames
+from src.database.queries import fetchSubStrNames, ProfileQueries
 from src.components.ScrollArea import QScrollAreaLayout
 
 class QSearchArea(QFrame) :
@@ -242,7 +242,8 @@ class QFormLineEdit(QLineEdit) :
 
     def moveFloater_toPos(self, typeOf = None) :
         self.mypopup.setParent(self.window())
-        globalpos = self.mapToGlobal(QPoint(self.width() - self.mypopup.width() - 10, 0 - self.height()))
+        print(self.width(), self.height())
+        globalpos = self.mapToGlobal(QPoint(self.width() - self.mypopup.width() - 10, 0 - self.mypopup.height()))
         self.mypopup.move(globalpos)
         self.mypopup.raise_()
         if typeOf == "valid" :
@@ -272,4 +273,9 @@ class QLineEditPopup (QLabel) :
         self.setText("Warning, invalid")
         self.setStyleSheet("background-color:red; border-top-left-radius: 10px; border-top-right-radius: 10px; padding:3px; color:white")
 
+class QProfileLineEdit(QFormLineEdit) :
+    def __init__(self, parent = None) :
+        super().__init__(parent)
+        self.setFixedSize(250,50)
+        self.setText(ProfileQueries.fetchProfileName())
 
