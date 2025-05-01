@@ -409,7 +409,8 @@ class QPinDialog(QStyledDialog) :
         self.shadw = QDialogShadowFrame(self.contents_layout)
         self.main_layout.addWidget(self.shadw)
 
-        self.contents_layout.addWidget(QLabel("Enter 4 digit pin"))
+        self.mylabel = QLabel("Enter 4 digit pin")
+        self.contents_layout.addWidget(self.mylabel)
         self.digitpin = QPinInputBox()
         self.digitpin.onChange_connectTo(self.handlePin)
         self.contents_layout.addWidget(self.digitpin)
@@ -420,7 +421,7 @@ class QPinDialog(QStyledDialog) :
         return self.result
     
     def handlePin(self) :
-
+        self.mylabel.setText("Enter 4 digit pin")
         if len(self.digitpin.text()) == 4 :
             self.submitPin()
     
@@ -428,6 +429,9 @@ class QPinDialog(QStyledDialog) :
         if self.digitpin.text() == ProfileQueries.fetchPin() : 
             self.result = True
             super().accept()
+            self.digitpin.clearText()
+            return
+        self.mylabel.setText("Incorrect Pin Entered.\n Try Again")
         self.digitpin.clearText()
             
     def reject(self):
@@ -450,7 +454,9 @@ class QSetupPinDialog(QStyledDialog) :
         self.contents_layout.addWidget(QLabel("Setup 4 Digit Admin Pin"))
         self.contents_layout.addWidget(QLabel("Enter 4 digit pin"))
         self.contents_layout.addWidget(self.digitpin)
-        self.contents_layout.addWidget(QLabel("Confirm 4 digit pin"))
+        self.mylabel = QLabel("Confirm 4 digit pin*")
+        self.digitpin2.onChange_connectTo(lambda: self.mylabel.setText("Confirm 4 digit pin*"))
+        self.contents_layout.addWidget(self.mylabel)
         self.contents_layout.addWidget(self.digitpin2)
 
         font = QFont("Helvetica", 12, QFont.Weight.Bold)
@@ -481,7 +487,9 @@ class QSetupPinDialog(QStyledDialog) :
             self.digitpin.clearText()
             self.digitpin2.clearText()
             super().accept()
-        return
+            return
+        self.mylabel.setText("Confirm 4 digit pin* - pins do not match!")
+        self.digitpin2.clearText()
 
     def reject(self):
         self.result = False

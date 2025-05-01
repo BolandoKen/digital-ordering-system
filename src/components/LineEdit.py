@@ -325,6 +325,7 @@ class QPinInputBox(QFrame) :
                     self.curr -= 1
                     self.charBoxArr[self.curr].setChar("")
                     self.updateChildrenStates()
+                self.onTextChange()
                     # print('backspace')
 
         return super().eventFilter(watched, event)
@@ -332,9 +333,10 @@ class QPinInputBox(QFrame) :
     def updateChildrenStates(self) :
         for i in range(len(self.charBoxArr)) :
             box = self.charBoxArr[i]
-            box.setState_curr(i == self.curr)
-
-        if self.cb is not None :
+            box.setState_curr(i == self.curr) 
+    
+    def onTextChange(self) :
+       if self.cb is not None :
             self.cb()
     
     def text(self) :
