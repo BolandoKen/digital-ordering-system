@@ -21,7 +21,7 @@ from PyQt6.QtWidgets import (
 
 )
 from PyQt6.QtCore import Qt, QPoint, QSize
-from PyQt6.QtGui import QShortcut, QKeySequence, QColor, QIcon
+from PyQt6.QtGui import QShortcut, QKeySequence, QColor, QIcon, QKeyEvent
 from src.components.ComboBox import QFilterButton  
 from src.components.Buttons import (QDeleteButton,
                                     QBackButton,
@@ -36,6 +36,7 @@ from src.components.Calendar import QCalendarFilter
 from PyQt6.QtCore import QDate, QTimer
 from PyQt6.QtCore import QEvent
 from src.utils.PubSub import pubsub
+from src.utils.PixMap import setPixMapOf
 from src.database.queries import fetchSubStrNames, ProfileQueries
 from src.components.ScrollArea import QScrollAreaLayout
 
@@ -285,3 +286,98 @@ class QProfileLineEdit(QFormLineEdit) :
     def init_text(self) :
         self.setText(ProfileQueries.fetchProfileName())
 
+
+class QPinInputBox(QFrame) :
+    def __init__(self, parent = None) :
+        super().__init__(parent)
+        self.test = None
+
+        self.main_layout = QHBoxLayout(self) 
+        self.charBoxArr = [QCharacterBox(self), QCharacterBox(self), QCharacterBox(self), QCharacterBox(self)]
+        for i in range(len(self.charBoxArr)) :
+            self.main_layout.addWidget(self.charBoxArr[i])
+
+        self.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
+        self.installEventFilter(self)
+        self.curr = 0 
+        self.charBoxArr[0].setState_curr(True)
+        self.cb = None
+
+    def eventFilter(self, watched, event) :
+        if watched == self:
+            if event.type() == QEvent.Type.FocusIn:
+                self.updateChildrenStates()
+            elif event.type() == QEvent.Type.FocusOut:
+                self.updateChildrenStates()
+            
+            if event.type() == QEvent.Type.KeyPress :
+                text = event.text()
+                if text.isdigit() :
+                    if self.curr == len(self.charBoxArr):
+                        # print(self.curr)
+                        return super().eventFilter(watched, event)
+                    self.charBoxArr[self.curr].setChar(text)
+                    self.curr += 1
+                    self.updateChildrenStates()
+                elif event.key() == Qt.Key.Key_Backspace :
+                    if self.curr == 0 :
+                        return super().eventFilter(watched, event)
+                    self.curr -= 1
+                    self.charBoxArr[self.curr].setChar("")
+                    self.updateChildrenStates()
+                    # print('backspace')
+
+        return super().eventFilter(watched, event)
+
+    def updateChildrenStates(self) :
+        for i in range(len(self.charBoxArr)) :
+            box = self.charBoxArr[i]
+            box.setState_curr(i == self.curr)
+
+        if self.cb is not None :
+            self.cb()
+    
+    def text(self) :
+        return "".join([box.character for box in self.charBoxArr])
+
+    def onChange_connectTo(self, cb) :
+        self.cb = cb
+     
+    def clearText(self) :
+        self.curr = 0 
+        for i in range(len(self.charBoxArr)) :
+            box = self.charBoxArr[i]
+            box.setChar("")
+            box.setState_curr(i == self.curr)
+
+
+class QCharacterBox(QLabel) :
+    def __init__(self, parent = None) :
+        super().__init__(parent)   
+        self.parent = parent
+        self.state_isCurr = False
+        self.character = ''
+        self.updateState()
+
+    
+    def setChar(self, char) :
+        self.character = char
+    
+    def setState_curr(self, iscurr) :
+        self.state_isCurr = iscurr
+        self.updateState()
+    
+    def updateState(self) :
+        parenthasFocus = self.parent.hasFocus()
+        self.focusedState = "" if parenthasFocus else "Unfocused"
+        if self.character != '' :
+            self.setSelfPixmap(f"numberboxFilled{self.focusedState}_icon.svg")
+        elif self.state_isCurr and self.character == '' and parenthasFocus:
+            self.setSelfPixmap("numberboxCurr_icon.svg")
+        else :
+            self.setSelfPixmap(f"numberboxEmpty{self.focusedState}_icon.svg")
+        
+    def setSelfPixmap(self, stateIcon) :
+        setPixMapOf(self, stateIcon, "icon")
+        self.setScaledContents(True)
+        self.setFixedSize(50,50)

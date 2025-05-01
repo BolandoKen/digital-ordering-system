@@ -30,7 +30,7 @@ from src.database.queries import fetchOrderItemsSubtotalList, fetchOrderItemsTot
 from PyQt6.QtCore import Qt, QPoint, QTimer
 from PyQt6.QtGui import QFont, QColor
 from src.components.ScrollArea import QScrollAreaLayout
-from src.components.LineEdit import QFormLineEdit
+from src.components.LineEdit import QFormLineEdit, QPinInputBox
 from src.database.Profile import setup_pin
 import traceback
 from PyQt6 import QtWidgets
@@ -409,9 +409,9 @@ class QPinDialog(QStyledDialog) :
         self.shadw = QDialogShadowFrame(self.contents_layout)
         self.main_layout.addWidget(self.shadw)
 
-        self.digitpin = QLineEdit()
-        self.digitpin.textChanged.connect(self.handlePin)
         self.contents_layout.addWidget(QLabel("Enter 4 digit pin"))
+        self.digitpin = QPinInputBox()
+        self.digitpin.onChange_connectTo(self.handlePin)
         self.contents_layout.addWidget(self.digitpin)
         self.result = False
 
@@ -420,6 +420,7 @@ class QPinDialog(QStyledDialog) :
         return self.result
     
     def handlePin(self) :
+
         if len(self.digitpin.text()) == 4 :
             self.submitPin()
     
@@ -427,7 +428,7 @@ class QPinDialog(QStyledDialog) :
         if self.digitpin.text() == ProfileQueries.fetchPin() : 
             self.result = True
             super().accept()
-        self.digitpin.setText('')
+        self.digitpin.clearText()
             
     def reject(self):
         self.result = False
@@ -443,8 +444,8 @@ class QSetupPinDialog(QStyledDialog) :
         self.main_layout.addWidget(self.shadw)
         closebtn = QCloseButton()
         closebtn.clicked.connect(self.close)
-        self.digitpin = QLineEdit()
-        self.digitpin2 = QLineEdit()
+        self.digitpin = QPinInputBox()
+        self.digitpin2 = QPinInputBox()
         self.contents_layout.addWidget(closebtn, alignment=Qt.AlignmentFlag.AlignRight)
         self.contents_layout.addWidget(QLabel("Setup 4 Digit Admin Pin"))
         self.contents_layout.addWidget(QLabel("Enter 4 digit pin"))
@@ -477,6 +478,8 @@ class QSetupPinDialog(QStyledDialog) :
         if self.digitpin.text() == self.digitpin2.text() and self.digitpin.text().strip() != "" :
             self.result = True
             setup_pin(self.digitpin.text())
+            self.digitpin.clearText()
+            self.digitpin2.clearText()
             super().accept()
         return
 
