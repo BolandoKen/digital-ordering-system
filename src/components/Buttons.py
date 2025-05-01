@@ -127,7 +127,7 @@ class QLogoButton(QFrame):
         layout.addWidget(icon_label)
 
         text_label = QLabel(eatery_name)
-        text_label.setFont(QFont("Helvitica", 15, QFont.Weight.Bold))
+        text_label.setFont(QFont("Helvetica", 15, QFont.Weight.Bold))
         layout.addWidget(text_label)
         layout.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 
@@ -157,6 +157,22 @@ class QAddButton(QMenuCard) :
         if event.button() == Qt.MouseButton.LeftButton:
             self.callback()
 
+class QAddFoodButton(QMenuCard) :
+    def __init__(self):
+        super().__init__()
+        layout = QVBoxLayout(self)
+        label = QLabel()
+        self.setFixedSize(270, 380)
+        setPixMapOf(label, "addCircle.svg", "icon")
+        layout.addWidget(label, alignment=Qt.AlignmentFlag.AlignHCenter)
+    
+    def connectTo(self, callback) :
+        self.callback = callback
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.callback()
+
 class QImageButton(QLabel) :
     def __init__(self, text) :
         super().__init__(text)
@@ -169,7 +185,7 @@ class QImageButton(QLabel) :
             self.callback()
 
 class QPrimaryButton(QPushButton) :
-    def __init__(self, text, width=None, height=None, fontSize=None): 
+    def __init__(self, text, width=None, height=None, fontSize=None, extra_style=""): 
         super().__init__(text)
         styleString = """
             background: #C8161D;
@@ -178,7 +194,7 @@ class QPrimaryButton(QPushButton) :
             font-style: "Helvetica";
             font-weight: bold;
             padding: 5px;
-            """
+            """ + extra_style
         if width is not None :
             self.setFixedWidth(width)
         if height is not None :
@@ -357,18 +373,19 @@ class QMinusButton(QPushButton):
 
 
 class QAdminButton(QPushButton):
-    def __init__(self, text, width = 80, height = 60):
+    def __init__(self, text, extra_style=""):
         super().__init__(text)
+
         self.styleString = """
             background-color: white;
             color: black;
             font-style: "Helvetica";
-            font-size: 20px;
+            font-size: 30px;
             font-weight: 450;
             padding: 10px;
             text-align: left;
-            border: 1px solid #d9d9d9;
-            """
+            border: 2px solid #D9D9D9;
+            """ +  extra_style
         self.setStyleSheet(self.styleString)
 
     def setClickedState(self, bool) :
@@ -411,14 +428,23 @@ class QNextButton(QPushButton):
 class QCloseButton(QPushButton) :
     def __init__(self) :
         super().__init__()
-        xIcon = QIcon ("assets/icons/x_icon.svg")
 
         self.setStyleSheet("""
             background-color: transparent;
             padding: 0px;       
             border: none;          
         """)
-        self.setIcon(xIcon)
+        self.setIcon(QIcon("assets/icons/x_icon.svg"))
         self.setIconSize(QSize(16, 16))
         self.setCursor(Qt.CursorShape.PointingHandCursor)
 
+class QOrderDetailsButton(QPushButton) :
+    def __init__(self,) :
+        super().__init__()
+        self.setStyleSheet("""
+            background-color: transparent; 
+            padding: 5px;      
+        """)
+        self.setIcon(QIcon("assets/icons/orderDetails_icon.svg"))
+        self.setIconSize(QSize(12, 2))
+        self.setCursor(Qt.CursorShape.PointingHandCursor)

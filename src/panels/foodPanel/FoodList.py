@@ -19,7 +19,7 @@ from PyQt6.QtGui import QPixmap
 from src.components.ScrollArea import QScrollAreaLayout
 from src.components.FlowLayout import QFlowLayout
 from src.database.queries import fetchCategoryUnavailableItemCount
-from src.components.Buttons import QAddButton
+from src.components.Buttons import QAddFoodButton
 from PyQt6.QtCore import QTimer
 import traceback
 
@@ -81,7 +81,7 @@ class QFoodList(QFrame) :
 
     def init_adminFoodList(self) :
 
-        addFoodBtn = QAddButton()
+        addFoodBtn = QAddFoodButton()
 
         addFoodBtn.connectTo(self.handleAddFoodItem)
         self.foodList_layout.addWidget(addFoodBtn)

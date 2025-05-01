@@ -27,13 +27,13 @@ import traceback
 class QSideBar(QFrame) :
     def __init__(self) :
         super().__init__()
-        self.setFixedWidth(250)
+        self.setFixedWidth(300)
         self.cartItems = []
         self.cartItems_amount = []
         self.scroll_layout = QVBoxLayout(self)
         self.scroll_layout.setContentsMargins(0,0,0,10)
         self.scroll_layout.setSpacing(0)
-        self.setStyleSheet("background-color: white; color: black;border-left: 1px solid #d9d9d9")
+        self.setStyleSheet("background-color: white; color: black;border-left: 2px solid #CFCFCF")
 
 
 
@@ -43,15 +43,16 @@ class QAdminSideBar(QSideBar) :
         self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout, "sidebar")
 
         self.switchPage = switchPage
-        self.logoutBtn = QPrimaryButton("Log out", 90, 30, 20)
+        self.logoutBtn = QPrimaryButton("Log out", 180, 60, 30,)
         self.scroll_layout.addWidget(self.logoutBtn, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.scroll_layout.addItem(QSpacerItem(20, 40))
         self.init_adminSideBar()
 
     def init_adminSideBar(self) :
         self.currindex = 0 
         pubsub.subscribe("backToFoodPanel_clicked", self.handlePanelBtnClicked)
-        self.AccPanelBtn = QAdminButton("Account")
-        self.StatsPanelBtn = QAdminButton("Statistics")
+        self.AccPanelBtn = QAdminButton("Account", "border-bottom: none;")
+        self.StatsPanelBtn = QAdminButton("Statistics", )
         self.AccPanelBtn.clicked.connect(lambda: self.handlePanelBtnClicked(2))
         self.StatsPanelBtn.clicked.connect(lambda: self.handlePanelBtnClicked(1))
         self.sidebar_layout.addItem(QSpacerItem(50,150))
@@ -78,11 +79,11 @@ class QCustomerSideBar(QSideBar) :
         # self.scroll_layout.addItem(QSpacerItem(50,100))
         title = QLabel("My Orders")
         self.scroll_layout.addWidget(title)
-        title.setFont(QFont("Helvetica", 15, QFont.Weight.Bold))
+        title.setFont(QFont("Helvetica", 40, QFont.Weight.Bold))
         title.setStyleSheet("""
                 qproperty-alignment: AlignCenter;
                 margin-top: 110px;
-                border-bottom: 1px solid #d9d9d9;
+                border-bottom: 2px solid #CFCFCF;
                 padding-bottom: 20px;
             """)
         self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout, "sidebar")
@@ -94,22 +95,24 @@ class QCustomerSideBar(QSideBar) :
         pubsub.subscribe("choice_clicked", self.setChoice)
 
         self.totalContainer = QFrame()
-        self.totalContainer.setStyleSheet("border-top: 1px solid #d9d9d9;padding-top: 30px")
+        self.totalContainer.setStyleSheet("border-top: 2px solid #d9d9d9;padding-top: 30px")
         self.totalContainer_Vbox = QVBoxLayout(self.totalContainer)
         self.totalContainer_Vbox.setContentsMargins(0,0,0,0)
         self.totalContainer_Vbox.setSpacing(5)
         self.totalText_label = QLabel("Total") 
-        self.totalText_label.setStyleSheet("border:none;margin:0px;padding:0px;color: #a1a1a1;")
+        self.totalText_label.setFont(QFont("Helvetica", 20))
+        self.totalText_label.setStyleSheet("border:none;margin:0px;padding:0px;color: #A1A1A1;")
         self.total_label = QLabel("₱0.00")
-        self.total_label.setFont(QFont("Helvetica", 15, QFont.Weight.Bold))
+        self.total_label.setFont(QFont("Helvetica", 40, QFont.Weight.Bold))
         self.total_label.setStyleSheet("border:none;margin-bottom: 0px;padding:0px;")
 
-        self.submitBtn = QPrimaryButton("Done", 70, 30, 20)
+        self.submitBtn = QPrimaryButton("Done", 180, 60, 30)
         self.submitBtn.clicked.connect(self.handleSubmitOrderClicked)
     
         self.totalContainer_Vbox.addWidget(self.totalText_label, alignment=Qt.AlignmentFlag.AlignCenter)
         self.totalContainer_Vbox.addWidget(self.total_label, alignment=Qt.AlignmentFlag.AlignCenter)
         self.totalContainer_Vbox.addWidget(self.submitBtn, alignment=Qt.AlignmentFlag.AlignCenter)
+        self.totalContainer_Vbox.addItem(QSpacerItem(20, 40))
         self.scroll_layout.addWidget(self.totalContainer)
 
 
@@ -248,7 +251,7 @@ class QSimpleCartItem(QFrame) : # refactor this later
         self.recalculate_cb = recalculate_cb
         self.setStyleSheet("""
                            #cartItem {
-                            border-bottom: 1px solid #D9D9D9;
+                            border-bottom: 2px solid #D9D9D9;
                            padding: 5px;
                            }
                            #cartItem *{background-color: white; color: black; border: none;}""")

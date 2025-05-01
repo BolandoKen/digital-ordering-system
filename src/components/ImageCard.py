@@ -67,8 +67,20 @@ class QCatLabelImageLayout(QHBoxLayout) :
         self.imgfile = imgfile
         self.panelName = panelName
         self.nameLabel = QLabel(self.name)
+        self.nameLabel.setWordWrap(True)
+        self.nameLabel.setMaximumWidth(250)
+        self.nameLabel.setStyleSheet("""
+                    background-color: transparent;
+                    color: black;
+                    font-size: 40px;
+                    font: "Helvetica";
+                    font-weight: bold;
+                    margin-left: 10px;
+                    """)
         self.imgWidget = QLabel()
         setPixMapOf(self.imgWidget, self.imgfile, "category")
 
         self.addWidget(self.nameLabel)
-        self.addWidget(self.imgWidget)                
+        self.addStretch()
+        self.addWidget(self.imgWidget)    
+        self.addStretch()

@@ -27,6 +27,8 @@ from src.database.queries import checkFoodHasBeenOrdered
 class QFoodItemCard(QMenuCard) : 
     def __init__(self, foodTuple, pageName) : 
         super().__init__()
+        self.setFixedHeight(380)
+        self.setFixedWidth(270)
         self.pageName = pageName
         self.foodTuple = foodTuple
         self.fooditem_id, self.foodname, self.price, self.imgfile, self.is_available, self.category_id = foodTuple
@@ -43,10 +45,27 @@ class QFoodItemCard(QMenuCard) :
         # no edit/del btns
         self.foodLabel = QLabel(self.foodname)
         self.foodimg = QLabel()
+        self.foodLabel.setStyleSheet("""
+                    background-color: transparent;
+                    font-size: 20px;
+                    font: "Helvetica";
+                    font-weight: bold;
+                    padding: 10px;
+                    """)
         self.foodimgpixmap = setPixMapOf(self.foodimg, self.imgfile, "food")["pixmap"]
         self.priceLabel = QLabel(f"₱{str(self.price)}")   
-             
+        self.priceLabel.setStyleSheet("""
+                    background-color: transparent;
+                    color: #A1A1A1;
+                    font-size: 20px;
+                    font: "Helvetica";
+                    font-weight: bold;
+                    padding: 5px;
+                    """)
+        
+        self.foodCard_layout.addStretch()
         self.foodCard_layout.addWidget(self.foodimg, alignment=Qt.AlignmentFlag.AlignCenter) 
+        self.foodCard_layout.addStretch()
         self.foodCard_layout.addWidget(self.foodLabel, alignment=Qt.AlignmentFlag.AlignCenter)   
         self.foodCard_layout.addWidget(self.priceLabel, alignment=Qt.AlignmentFlag.AlignCenter)
 
