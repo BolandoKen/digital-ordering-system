@@ -425,7 +425,6 @@ class QPinDialog(QStyledDialog) :
     
     def submitPin(self) :
         if self.digitpin.text() == ProfileQueries.fetchPin() : 
-            print('true what???')
             self.result = True
             super().accept()
         self.digitpin.setText('')

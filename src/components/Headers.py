@@ -20,16 +20,20 @@ from src.components.ImageCard import QProfileImage
 
 
 class QProfileNameLabel(QLabel) :
-    def __init__(self):
+    def __init__(self, typeOf = None):
+        self.typeOf = typeOf
         super().__init__()
         profilename = ProfileQueries.fetchProfileName()
-        self.setText(profilename)
+        finalname = profilename + " - Admin" if self.typeOf == "admin" else profilename
+        self.setText(finalname)
         self.setFont(QFont("Helvitica", 15, QFont.Weight.Bold))
 
         pubsub.subscribe("updateProfile", self.handle_updateProfile)
 
     def handle_updateProfile(self, e = None) :
-        self.setText(ProfileQueries.fetchProfileName())
+        profilename = ProfileQueries.fetchProfileName()
+        finalname = profilename + " - Admin" if self.typeOf == "admin" else profilename
+        self.setText(finalname)
 
 
 class QLogoButton(QFrame):
@@ -50,7 +54,7 @@ class QLogoButton(QFrame):
         self.icon_label = QProfileImage(None, 70,70)
         layout.addWidget(self.icon_label)
 
-        self.text_label = QProfileNameLabel()
+        self.text_label = QProfileNameLabel(pageName)
         layout.addWidget(self.text_label)
         layout.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
         self.setLayout(layout)
@@ -64,7 +68,7 @@ class QLogoButton(QFrame):
 
     
     def eventFilter(self, watched, event) :
-        if self.pageName == "admin" : return super().eventFilter(watched, event)
+        if self.pageName == "admin" or self.pageName == "nocb": return super().eventFilter(watched, event)
         if watched == self or watched == self.icon_label :
             if event.type() == QEvent.Type.MouseButtonPress :
                 if event.button() == Qt.MouseButton.LeftButton :

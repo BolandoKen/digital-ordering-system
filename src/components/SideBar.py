@@ -79,6 +79,7 @@ class QAdminSideBar(QSideBar) :
         if dialog.exec():
             self.AccPanelBtn.setClickedState(False)
             self.StatsPanelBtn.setClickedState(False)
+            self.currindex = 0 
             pubsub.publish("logout_Event", None)
             
 
