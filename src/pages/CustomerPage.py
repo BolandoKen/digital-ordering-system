@@ -207,7 +207,7 @@ class QCustomerConfirmOrderPanel(QFrame) :
         self.submitorder_callback()
         self.parent_stackedWidgets.setCurrentIndex(3)
         pubsub.publish("orderConfirmed_event")
-
+        pubsub.publish("print_event")
         # in print panel, just fetch the latest order...
         self.clear_layout(self.scroll_arealayout.getLayout())
 
@@ -268,7 +268,11 @@ class QCustomerPrintingPanel(QFrame) :
         self.msg3_label.setFixedSize(500,100)
         self.msg3_label.setFont(QFont("Helvitica", 15, QFont.Weight.Normal))
 
-        newOrderBtn = QQuaternaryButton("Start New Order", 300, 60, 35)
+        msg3_sizepolicy = self.msg3_label.sizePolicy()
+        msg3_sizepolicy.setRetainSizeWhenHidden(True)
+        self.msg3_label.setSizePolicy(msg3_sizepolicy)
+
+        self.newOrderBtn = QQuaternaryButton("Start New Order", 300, 60, 35)
         
         self.orderno_labellabel = QLabel("Order No:")
         self.orderno_labellabel.setFont(QFont("Helvitica", 25, QFont.Weight.Bold))
@@ -282,7 +286,7 @@ class QCustomerPrintingPanel(QFrame) :
         btn_timer_vbox = QVBoxLayout()
         btn_timer_vbox.setContentsMargins(0,0,0,0)
         btn_timer_vbox.setSpacing(0)
-        btn_timer_vbox.addWidget(newOrderBtn, alignment=Qt.AlignmentFlag.AlignCenter)
+        btn_timer_vbox.addWidget(self.newOrderBtn, alignment=Qt.AlignmentFlag.AlignCenter)
         btn_timer_vbox.addWidget(self.msg3_label, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.main_layout.addStretch()
@@ -293,8 +297,11 @@ class QCustomerPrintingPanel(QFrame) :
         self.main_layout.addLayout(btn_timer_vbox)
        
         self.main_layout.addStretch()
-        newOrderBtn.clicked.connect(self.handleNewOrder_clicked)
+        self.newOrderBtn.clicked.connect(self.handleNewOrder_clicked)
+        self.newOrderBtn.setEnabled(False)
+        self.msg3_label.hide()
         pubsub.subscribe("orderConfirmed_event", self.setText_OrderId)
+        pubsub.subscribe("print_finished", self.startTimer)
 
     def handleNewOrder_clicked(self) :
         self.parent_stackedWidgets.setCurrentIndex(1)
@@ -303,20 +310,25 @@ class QCustomerPrintingPanel(QFrame) :
 
     
     def setText_OrderId(self, e = None) :
-        self.mytimer = QTimer()
-        self.mytimer.setSingleShot(True)
-        self.mytimer.timeout.connect(lambda: self.timeRecurse) # set up to disconnect
         self.orderno = str(fetchLatest_orderid())
         self.orderno_label.setText(self.orderno)
 
+    
+    def startTimer(self, e=None) :
+        self.newOrderBtn.setEnabled(True)
+        self.msg3_label.show()
+        self.mytimer = QTimer()
+        self.mytimer.setSingleShot(True)
+        self.mytimer.timeout.connect(lambda: self.timeRecurse) # set up to disconnect
 
         # should only start after printing ends..
         self.timeRecurse(5)
-    
+
     def timeRecurse(self, seconds) :
         self.msg3_label.setText(f"Returning to Home in {seconds}")
         if seconds == 0 :
             self.parent_stackedWidgets.setCurrentIndex(1)
+            self.msg3_label.hide()
             return
         seconds -= 1
         self.mytimer.start(1000)

@@ -11,11 +11,14 @@ from PyQt6.QtWidgets import (
     QLabel,
     QFrame,
 )
+import asyncio
 from PyQt6.QtGui import QShortcut, QKeySequence
+from qasync import QEventLoop, asyncSlot
 from src.pages.AdminPage import QAdminPage
 from src.pages.CustomerPage import QCustomerPage
 from src.database.init_db import init_db
 from src.utils.PubSub import pubsub
+from src.utils.CatPrinter.CatPrinter import CatPrinter
 
 class QWindow(QMainWindow) :
     def __init__(self):
@@ -27,6 +30,8 @@ class QWindow(QMainWindow) :
         self.stackedPages = QStackedWidget()
         self.CustomerPage = QCustomerPage()
         self.AdminPage = QAdminPage()
+
+        self.catPrinter = CatPrinter()
 
         self.stackedPages.addWidget(self.CustomerPage)
         self.stackedPages.addWidget(self.AdminPage)
@@ -43,6 +48,7 @@ class QWindow(QMainWindow) :
 
         pubsub.subscribe("login_Event", self.switchPage)
         pubsub.subscribe("logout_Event", self.switchPage)
+        pubsub.subscribe("print_event", self.intitiate_catPrint)
         exit_shortcut = QShortcut(QKeySequence('esc'), self)
         exit_shortcut.activated.connect(self.close)
 
@@ -58,15 +64,24 @@ class QWindow(QMainWindow) :
         else:
             self.switchBtn.setText("logout")
             self.AdminPage.switchPage(0)
-    
+
+    @asyncSlot()
+    async def intitiate_catPrint(self, e = None) :   
+        await self.catPrinter.test_sequence()
+
     def resizeEvent(self, event):
         super().resizeEvent(event)
-        
+
+async def main() :
+    app = QApplication([])
+    loop = QEventLoop(app)
+    asyncio.set_event_loop(loop)
+
+    window = QWindow()
+    window.show()
+
+    with loop:
+        loop.run_forever()
 
 if __name__ == "__main__" :
-    app = QApplication([])
-    init_db()
-    main_window = QWindow()
-    main_window.show()
-
-    sys.exit(app.exec())
+    asyncio.run(main())

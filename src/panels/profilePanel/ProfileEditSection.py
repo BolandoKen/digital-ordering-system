@@ -90,7 +90,6 @@ class QProfileEditState(QFrame) :
         pubsub.subscribe("saveEditProfile", self.saveEditProfile)
         pubsub.subscribe("discardEditProfile", self.discardEditProfile)
         pubsub.subscribe("logout_Event", self.discardEditProfile)
-        print("subscribing to logout event")
         # have cancel handler, 
         # subscribe on logouts, switch panels, back clicks
         # call cancel on these subscriptions;
