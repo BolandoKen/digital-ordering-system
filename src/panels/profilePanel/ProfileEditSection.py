@@ -1,7 +1,7 @@
 import sys
 import os
 from src.panels.orderHPanel.OrderHPanel import QOrderHPanel
-
+from src.components.Dialogs import QConfirmDialog
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import (
@@ -95,9 +95,11 @@ class QProfileEditState(QFrame) :
 
   
     def handle_resetPin(self) :
-        reset_pin()
-        pubsub.publish("logout_Event")
-        self.saveEditProfile()
+        dialog = QConfirmDialog("Reset PIN", "Are you sure you want to reset your PIN?", self)
+        if dialog.exec():
+            reset_pin()
+            pubsub.publish("logout_Event")
+            self.saveEditProfile()
 
     # handle here saved state
     def discardEditProfile(self, e =None) :

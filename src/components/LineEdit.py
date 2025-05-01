@@ -241,10 +241,12 @@ class QFormLineEdit(QLineEdit) :
         return super().eventFilter(watched, event)
 
     def moveFloater_toPos(self, typeOf = None) :
+        parenwindow = self.window()
         self.mypopup.setParent(self.window())
         print(self.width(), self.height())
         globalpos = self.mapToGlobal(QPoint(self.width() - self.mypopup.width() - 10, 0 - self.mypopup.height()))
-        self.mypopup.move(globalpos)
+        relativepos = parenwindow.mapFromGlobal(globalpos)
+        self.mypopup.move(relativepos)
         self.mypopup.raise_()
         if typeOf == "valid" :
             self.mypopup.hide() 

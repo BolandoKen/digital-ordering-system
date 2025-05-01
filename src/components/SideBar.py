@@ -75,9 +75,12 @@ class QAdminSideBar(QSideBar) :
         self.switchPage(index)
     
     def handleLogoutClicked(self) :
-        self.AccPanelBtn.setClickedState(False)
-        self.StatsPanelBtn.setClickedState(False)
-        pubsub.publish("logout_Event", None)
+        dialog = QConfirmDialog("Log Out", "Are you sure you want to log out?", self)
+        if dialog.exec():
+            self.AccPanelBtn.setClickedState(False)
+            self.StatsPanelBtn.setClickedState(False)
+            pubsub.publish("logout_Event", None)
+            
 
 class QCustomerSideBar(QSideBar) :
     def __init__(self) :
