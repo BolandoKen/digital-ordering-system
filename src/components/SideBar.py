@@ -60,6 +60,7 @@ class QAdminSideBar(QSideBar) :
         self.sidebar_layout.addWidget(self.StatsPanelBtn)
         self.logoutBtn.clicked.connect(self.handleLogoutClicked)
         self.sidebar_layout.addStretch()
+        pubsub.subscribe("logout_Event", self.setCurrIndexToZero)
 
     def handlePanelBtnClicked(self, index) :
         if self.currindex == index :
@@ -74,13 +75,16 @@ class QAdminSideBar(QSideBar) :
         self.currindex = index
         self.switchPage(index)
     
+    def setCurrIndexToZero(self, e= None) :
+        self.currindex = 0 
+
     def handleLogoutClicked(self) :
         dialog = QConfirmDialog("Log Out", "Are you sure you want to log out?", self)
         if dialog.exec():
             self.AccPanelBtn.setClickedState(False)
             self.StatsPanelBtn.setClickedState(False)
-            self.currindex = 0 
             pubsub.publish("logout_Event", None)
+
             
 
 class QCustomerSideBar(QSideBar) :

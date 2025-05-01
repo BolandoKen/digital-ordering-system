@@ -89,6 +89,8 @@ class QProfileEditState(QFrame) :
         self.inner_VLayout.addStretch()
         pubsub.subscribe("saveEditProfile", self.saveEditProfile)
         pubsub.subscribe("discardEditProfile", self.discardEditProfile)
+        pubsub.subscribe("logout_Event", self.discardEditProfile)
+        print("subscribing to logout event")
         # have cancel handler, 
         # subscribe on logouts, switch panels, back clicks
         # call cancel on these subscriptions;
@@ -99,7 +101,6 @@ class QProfileEditState(QFrame) :
         if dialog.exec():
             reset_pin()
             pubsub.publish("logout_Event")
-            self.saveEditProfile()
 
     # handle here saved state
     def discardEditProfile(self, e =None) :

@@ -265,7 +265,8 @@ class QFormLineEdit(QLineEdit) :
     
     def setStateInit(self) :
         self.setStyleSheet(self.styleStr)
-        self.mypopup.hide()
+        QTimer.singleShot(0, self.mypopup.hide) # idk why, but when logout - normal hide would still show
+        # self.mypopup.hide()
 
 
 class QLineEditPopup (QLabel) :
