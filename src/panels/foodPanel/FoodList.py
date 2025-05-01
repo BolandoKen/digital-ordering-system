@@ -13,7 +13,7 @@ from PyQt6.QtWidgets import (
 import time
 from src.utils.PubSub import pubsub
 from src.panels.foodPanel.FoodCard import QFoodItemCard
-from src.components.Dialogs import QaddDialog
+from src.components.Dialogs import QaddDialog, QeditDialog
 from src.database.queries import fetchFoodUnderCatList
 from PyQt6.QtGui import QPixmap
 from src.components.ScrollArea import QScrollAreaLayout
@@ -36,6 +36,7 @@ class QFoodList(QFrame) :
         self.previousCategory_id = None
         self.showUnavailable = False
         self.addFoodDialog = QaddDialog("food", self.window())
+        self.editFoodDialog = QeditDialog("food", self.window())
         pubsub.subscribe(f"{self.pageName}_catCardClicked", self.update_listContent)
         self.subbedToUpdate = False
         self.subbedToToggle = False
@@ -44,9 +45,15 @@ class QFoodList(QFrame) :
         # will listen to search, subscribe food searched
         if pageName == "admin" :
             pubsub.subscribe("foodSearched_event", self.getFoodCardMap)
+            pubsub.subscribe("foodedit_clicked", self.initEditDialog)
         # food id will be passed down, as well as the catTuple (parameter for updateList)
         # using foodcard map we ensure visible the card
         # updatelist -> redirect (setindex) -> ensure visible
+
+    def initEditDialog(self, Tuple) :
+        self.editFoodDialog.init_editFood(Tuple)
+        self.editFoodDialog.exec()
+
 
     def getFoodCardMap(self, rowTuple = None) :
         foodid, foodname, isavailable, catid, catname = rowTuple

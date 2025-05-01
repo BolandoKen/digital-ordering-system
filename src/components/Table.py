@@ -73,6 +73,7 @@ class QStyledTable(QTableWidget) :
 class QStatsTable(QStyledTable) : 
     def __init__(self) :
         super().__init__() 
+        self.search_term = None
         self.orderBy_mostOrdered = True
         self.setColumnCount(4)
         self.setHorizontalHeaderLabels(["#","Food", "Category", "Times Ordered"])
@@ -114,17 +115,18 @@ class QStatsTable(QStyledTable) :
             count += 1  
 
     def init_list(self) :
-        self.stats_data = fetchStatistics('DESC' if self.orderBy_mostOrdered else 'ASC')
+        self.stats_data = fetchStatistics('DESC' if self.orderBy_mostOrdered else 'ASC', search_term=self.search_term)
 
 
-    def updateStatsTable(self, category_id=None, mostordered=True): 
-        order = ("DESC" if mostordered else "ASC")
-        self.stats_data = fetchStatistics(order, category_id)
+    def updateStatsTable(self, category_id=None, mostordered=True, search_term=None): 
+        self.search_term = search_term 
+        order = "DESC" if mostordered else "ASC"
+        self.stats_data = fetchStatistics(order, category_id, search_term)
         self.pageNav.updateNav(self.stats_data, self.rows)
         self.renderPage()
 
     def statistics_table(self, e = None): # redundant with function above?
-        self.stats_data = fetchStatistics('DESC' if self.orderBy_mostOrdered else 'ASC')
+        self.stats_data = fetchStatistics('DESC' if self.orderBy_mostOrdered else 'ASC', search_term=self.search_term)
         self.pageNav.updateNav(self.stats_data, self.rows)
         self.renderPage()
     

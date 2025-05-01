@@ -189,15 +189,13 @@ class QaddDialog(QStyledDialog) :
             self.tempImagePath = None
 
 class QeditDialog(QaddDialog) :
-    def __init__(self, panelName, Tuple, parent):
+    def __init__(self, panelName, parent, Tuple = None):
         super().__init__(panelName, parent)
 
         if self.panelName == "category" :
             self.category_id, self.catname, self.imgfile = Tuple                
             self.init_editCategory()
-        elif self.panelName == "food" :
-            self.fooditem_id, self.foodname, self.price, self.imgfile, self.is_available, self.category_id = Tuple
-            self.init_editFood()
+
         self.submitBtn.setText(f"Save")
         self.selectImgCard.getLabel().setFixedSize(150,150)
 
@@ -208,9 +206,17 @@ class QeditDialog(QaddDialog) :
             self.tempImagePath = setPixMapOf(self.selectImgCard.getLabel(), self.imgfile, "category")["path"]
             self.selectImgCard.clearButton.show()
 
-    def init_editFood(self) :
+    def init_editFood(self, Tuple) :
+        self.selectImgCard.clearButton.hide()
+        self.categoryidLabel.hide()
+        self.categoryidComboBox.hide()
+
+        self.fooditem_id, self.foodname, self.price, self.imgfile, self.is_available, self.category_id = Tuple
         self.foodnameLineEdit.setText(self.foodname)
         self.foodpriceLineEdit.setText(str(self.price))
+        self.selectImgCard.clearImg()
+        self.selectImgCard.getLabel().setFixedSize(150,150)
+
         if self.imgfile is not None:
             self.tempImagePath = setPixMapOf(self.selectImgCard.getLabel(), self.imgfile, "food")["path"]
             self.selectImgCard.clearButton.show()

@@ -40,7 +40,7 @@ from src.database.queries import fetchSubStrNames
 from src.components.ScrollArea import QScrollAreaLayout
 
 class QSearchArea(QFrame) :
-    def __init__(self, parent = None):
+    def __init__(self, parent = None, typeOf = None):
         super().__init__(parent)
         self.main_layout = QHBoxLayout(self)
         self.floatArea = QFloatArea()
@@ -57,7 +57,6 @@ class QSearchArea(QFrame) :
         self.searchbar.setStyleSheet(self.styleStr)
         self.setFixedHeight(50)
         self.searchbar.textChanged.connect(self.floatArea.renderArea)
-        self.searchbar.installEventFilter(self)
         self.searchbar.setFixedSize(450,30)
         self.temp = [0]
         searchIcon = QPushButton() 
@@ -68,12 +67,13 @@ class QSearchArea(QFrame) :
         self.main_layout.addWidget(searchIcon, alignment=Qt.AlignmentFlag.AlignVCenter)
         self.main_layout.addWidget(self.searchbar)
         self.main_layout.addStretch()
-
-        QTimer.singleShot(0, self.moveFloater_toPos)
-        pubsub.subscribe("resize_event", self.moveFloater_toPos)
-        self.floatArea.hide()
-        self.searchbar.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
-        pubsub.subscribe("foodSearched_event", self.set_searchbarText)
+        if typeOf != "stats" :
+            self.searchbar.installEventFilter(self)
+            QTimer.singleShot(0, self.moveFloater_toPos)
+            pubsub.subscribe("resize_event", self.moveFloater_toPos)
+            self.floatArea.hide()
+            self.searchbar.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
+            pubsub.subscribe("foodSearched_event", self.set_searchbarText)
 
     def eventFilter(self, watched, event):
         if watched == self.searchbar:
@@ -85,9 +85,11 @@ class QSearchArea(QFrame) :
         return super().eventFilter(watched, event)
 
     def moveFloater_toPos(self, e = None) :
+        parenwindow = self.window()
         self.floatArea.setParent(self.window())
         globalpos = self.searchbar.mapToGlobal(QPoint(0, self.searchbar.height()))
-        self.floatArea.move(globalpos)
+        relativepos = parenwindow.mapFromGlobal(globalpos)
+        self.floatArea.move(relativepos)
         self.floatArea.raise_()
 
     def set_searchbarText(self, tuple) :
@@ -98,6 +100,7 @@ class QSearchArea(QFrame) :
 class QFloatArea(QFrame) :
     def __init__(self):
         super().__init__()
+
         self.setObjectName("floatarea")
         self.setStyleSheet("""#floatarea{
                            background-color: white;
@@ -105,6 +108,7 @@ class QFloatArea(QFrame) :
                             border-radius: 10px;
                            padding:3px;}""")
         self.setFixedSize(450,100)
+
         # self.setFixedWidth(300)
         self.setMaximumHeight(0)
         self.mainmain_layout = QVBoxLayout(self)

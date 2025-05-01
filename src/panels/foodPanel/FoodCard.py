@@ -21,7 +21,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 from src.utils.PixMap import setPixMapOf
 from src.components.MenuCards import QMenuCard
-from src.components.Buttons import QDeleteButton
+from src.components.Buttons import QDeleteButton, QEditButton
 from src.database.queries import checkFoodHasBeenOrdered
 
 class QFoodItemCard(QMenuCard) : 
@@ -30,11 +30,13 @@ class QFoodItemCard(QMenuCard) :
         self.setFixedHeight(380)
         self.setFixedWidth(270)
         self.pageName = pageName
+        self.foodTuple = foodTuple
         self.fooditem_id, self.foodname, self.price, self.imgfile, self.is_available, self.category_id = foodTuple
         self.foodCard_layout = QVBoxLayout(self)
         self.hasBeenOrdered = checkFoodHasBeenOrdered(self.fooditem_id)
         if self.pageName == "admin" :
-            self.editFoodDialog = QeditDialog("food", foodTuple, self.window())
+            # self.editFoodDialog = None
+            # self.editFoodDialog = QeditDialog("food", foodTuple, self.window()) # lift this up
             self.init_adminFoodItemCard()
         elif self.pageName == "customer" :
             self.init_customerFoodItemCard()
@@ -70,13 +72,25 @@ class QFoodItemCard(QMenuCard) :
     def init_adminFoodItemCard(self) :
         # has edit/del btns , edit/trash icons in the card
         self.init_customerFoodItemCard()
-        delHBoxLayout = QHBoxLayout()
+        self.delhboxframe = QFrame()
+        delHBoxLayout = QHBoxLayout(self.delhboxframe)
         delHBoxLayout.setContentsMargins(0,0,0,0)
         delHBoxLayout.addStretch()
+        self.editBtn = QEditButton()
+        self.editBtn.clicked.connect(lambda: pubsub.publish("foodedit_clicked", self.foodTuple))
         self.delBtn = QDeleteButton()
         self.delBtn.clicked.connect(self.handleFoodDel)
+        delHBoxLayout.addWidget(self.editBtn)
         delHBoxLayout.addWidget(self.delBtn)
-        self.foodCard_layout.insertLayout(0,delHBoxLayout)
+        # self.foodCard_layout.insertLayout(0,delHBoxLayout)
+
+        self.foodCard_layout.insertWidget(0, self.delhboxframe)
+
+        delhbox_policy  = self.delhboxframe.sizePolicy()
+        delhbox_policy.setRetainSizeWhenHidden(True)
+        self.delhboxframe.setSizePolicy(delhbox_policy)
+        self.delhboxframe.hide()
+
         if self.hasBeenOrdered :
             if self.is_available  :
                 self.delBtn.setState("unavailable") # diff icons instead of text
@@ -114,8 +128,18 @@ class QFoodItemCard(QMenuCard) :
         if event.button() == Qt.MouseButton.LeftButton:
             if self.pageName == "customer" :
                 self.handleAddToCart(self.fooditem_id, self.foodname, self.foodimgpixmap, self.price)
-            elif self.pageName == "admin" :
-                self.editFoodDialog.exec()
+            # elif self.pageName == "admin" :
+            #     pubsub.publish("foodedit_clicked", self.foodTuple)
 
     def handleAddToCart(self, fooditem_id, foodname,imgpixmap, price) :
         pubsub.publish("addToCart", (fooditem_id, foodname, imgpixmap, price))
+
+    def enterEvent(self, event):
+        if self.pageName == "admin" :
+            self.delhboxframe.show()
+        return super().enterEvent(event)
+    
+    def leaveEvent(self, a0):
+        if self.pageName == "admin" : 
+            self.delhboxframe.hide()
+        return super().leaveEvent(a0)

@@ -20,6 +20,7 @@ from src.database.queries import fetchStatistics
 from src.components.Headers import QOtherPanelHeader
 from src.components.Table import QStatsTable
 from src.components.ComboBox import QCatComboBox, QFilterButton
+from src.components.LineEdit import QSearchArea
 
 class QStatsPanel(QFrame) :
     def __init__(self):
@@ -33,6 +34,9 @@ class QStatsPanel(QFrame) :
     def stats_setup(self):
    
         self.stats_layout.addWidget(QOtherPanelHeader("Statistics"))
+        self.search_area = QSearchArea(self, "stats")
+        self.stats_layout.addWidget(self.search_area)
+        self.search_area.searchbar.textChanged.connect(self.update_table)
         queryBarHLayout = QHBoxLayout()
         self.sort_btn = QPushButton("Show Least Ordered")
         self.sort_btn.clicked.connect(self.changeorder)
@@ -61,13 +65,16 @@ class QStatsPanel(QFrame) :
             self.sort_btn.setText("Show Least Ordered")
         else:
             self.sort_btn.setText("Show Most Ordered")
-        
-        self.update_table()
+        search_term = self.search_area.searchbar.text().strip()
+        self.update_table(search_term)
 
-    def update_table(self):
+    def update_table(self, search_term = None):
         category_id = self.catFilter.catComboBox.itemData(self.catFilter.catComboBox.currentIndex())
-        if category_id == None or category_id == -1:
+        if category_id == -1:
             category_id = None
-        
-        self.table.updateStatsTable(category_id, self.mostordered)
+
+        search_term = self.search_area.searchbar.text().strip()
+        search_term = search_term if search_term else None
+
+        self.table.updateStatsTable(category_id, self.mostordered, search_term)
     

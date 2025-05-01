@@ -32,7 +32,7 @@ class QCategoryCard(QMenuCard) :
         self.category_id, self.catname, self.imgfile = catTuple
         self.availableItemCount = fetchCategoryAvailableItemCount(self.category_id) # will show only in admin
         self.unavailableItemCount = fetchCategoryUnavailableItemCount(self.category_id)
-        self.editCatDialog = QeditDialog("category", catTuple, self.window())
+        self.editCatDialog = QeditDialog("category", self.window(), catTuple)
         self.stackedLists = stackedLists
         self.catCard_layout = QVBoxLayout(self)
         self.catCard_layout.setSpacing(0)
@@ -55,13 +55,18 @@ class QCategoryCard(QMenuCard) :
         self.catCard_layout.addStretch()
         self.catCard_layout.addWidget(QStatusIndicator(self.availableItemCount, self.unavailableItemCount), alignment=Qt.AlignmentFlag.AlignLeft)
         # self.catCard_layout.addLayout(QCatStatusEditLayout(self.availableItemCount, self.unavailableItemCount, self.editCatDialog.exec))
-        delHBoxLayout = QHBoxLayout()
+        self.delhboxframe = QFrame()
+        delHBoxLayout = QHBoxLayout(self.delhboxframe)
         delHBoxLayout.setContentsMargins(0,0,0,0)
         delHBoxLayout.addStretch()
         self.editBtn = QEditButton() 
         self.editBtn.clicked.connect(self.editCatDialog.exec)
         self.delBtn = QDeleteButton()
         self.delBtn.clicked.connect(self.handleCatDelete)
+        delhbox_policy  = self.delhboxframe.sizePolicy()
+        delhbox_policy.setRetainSizeWhenHidden(True)
+        self.delhboxframe.setSizePolicy(delhbox_policy)
+        self.delhboxframe.hide()
         # delBtn_sizePolicy = self.delBtn.sizePolicy()
         # delBtn_sizePolicy.setRetainSizeWhenHidden(True)
         # self.delBtn.setSizePolicy(delBtn_sizePolicy)
@@ -69,7 +74,8 @@ class QCategoryCard(QMenuCard) :
         delHBoxLayout.addWidget(self.editBtn)
         delHBoxLayout.addWidget(self.delBtn)
  
-        self.catCard_layout.insertLayout(0,delHBoxLayout)
+        # self.catCard_layout.insertLayout(0,delHBoxLayout)
+        self.catCard_layout.insertWidget(0, self.delhboxframe)
         if self.availableItemCount > 0 or self.unavailableItemCount > 0:
             self.delBtn.hide()
 
@@ -90,3 +96,12 @@ class QCategoryCard(QMenuCard) :
         # self.update_listContent(self.category_id, self.catname)
         self.stackedLists.setCurrentIndex(1)
     
+    def enterEvent(self, event):
+        if self.pageName == "admin" :
+            self.delhboxframe.show()
+        return super().enterEvent(event)
+    
+    def leaveEvent(self, a0):
+        if self.pageName == "admin" : 
+            self.delhboxframe.hide()
+        return super().leaveEvent(a0)

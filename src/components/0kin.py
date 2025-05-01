@@ -112,12 +112,18 @@ class QWindow(QMainWindow):
         main_layout.addWidget(self.formlineedit)
 
 
-        # floater = QLabel("warning", self)
-        # floater.setParent(self.window())
-        # print(self.window())
-        # floater.setStyleSheet("background-color:red")
-        # floater.show()
-        # floater.move(0,0)
+        floater = QLabel("warning")   
+        floater.setFixedSize(100,30)
+        floater.setWindowFlags(Qt.WindowType.Popup | Qt.WindowType.FramelessWindowHint)
+
+
+        floater.setParent(self.window())
+        print(self.window())
+        floater.setStyleSheet("background-color:red")
+        floater.show()
+        floater.move(0,0)
+        pos = floater.mapToGlobal(QPoint(0,0))
+        print("asdf",pos)
         # main_layout.addWidget(floater)
 
 
@@ -130,7 +136,7 @@ class QWindow(QMainWindow):
         exit_shortcut = QShortcut(QKeySequence('esc'), self)
         exit_shortcut.activated.connect(self.close)
 
-        # floater.raise_()
+        floater.raise_()
         # testframe.floater.raise_()
         self.formlineedit.mypopup.raise_()
     
