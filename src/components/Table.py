@@ -19,6 +19,7 @@ from src.components.Dialogs import QviewOrderDialog
 from src.utils.PubSub import pubsub
 from src.utils.listOrganizer import organizeByDate, getPage
 from src.components.PageNav import QPageNav
+from src.components.Buttons import QOrderDetailsButton
 
 
 class QStyledTable(QTableWidget) :
@@ -172,7 +173,7 @@ class QOrderHTable(QStyledTable) :
                 order_datetime, order_id = order
                 self.setItem(row, 0, QTableWidgetItem(str(order_datetime)))
                 self.setItem(row, 1, QTableWidgetItem(str(order_id)))
-                viewBtn = QPushButton("view")
+                viewBtn = QOrderDetailsButton()
                 viewBtn.clicked.connect(lambda _, order_id = order_id : self.publishToDialog(order_id))
                 viewBtn.setFixedHeight(20)
                 self.setCellWidget(row, 2, viewBtn)

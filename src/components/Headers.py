@@ -40,7 +40,7 @@ class QOtherPanelHeader(QFrame) :
         # self.main_layout.setContentsMargins(30,10,10,10)
         self.header_layout = QHBoxLayout(self)
         self.headerLabel = QLabel(panelName)
-        self.headerLabel.setFont(QFont("Helvitica", 25, QFont.Weight.Bold))
+        self.headerLabel.setFont(QFont("Helvetica", 60, QFont.Weight.Bold))
         self.backBtn = QBackButton()
         self.backBtn.clicked.connect(lambda: pubsub.publish("backToFoodPanel_clicked", 0))
         
@@ -93,7 +93,7 @@ class QFoodPanelHeader(QFrame) :
             pubsub.subscribe("initHeaderUnBtn_event", self.setShowUnavailableBtn)
         pubsub.subscribe("logout_Event", self.handleBackBtn)
         self.headerLabel = QLabel()
-        self.headerLabel.setFont(QFont("Helvitica", 25, QFont.Weight.Bold))
+        self.headerLabel.setFont(QFont("Helvetica", 60, QFont.Weight.Bold))
 
         self.header_layout.addWidget(self.backBtn)
         self.header_layout.addWidget(self.headerLabel)

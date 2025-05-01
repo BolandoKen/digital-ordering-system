@@ -26,6 +26,8 @@ from src.components.Buttons import QDeleteButton, QEditButton
 class QCategoryCard(QMenuCard) :
     def __init__(self, catTuple, pageName, stackedLists) :
         super().__init__()
+        self.setFixedHeight(267)
+        self.setFixedWidth(458)
         self.pageName = pageName
         self.category_id, self.catname, self.imgfile = catTuple
         self.availableItemCount = fetchCategoryAvailableItemCount(self.category_id) # will show only in admin
@@ -50,6 +52,7 @@ class QCategoryCard(QMenuCard) :
     def init_adminCategoryCard(self) :
         # has edit/del btns , edit/trash icons in the card
         self.init_customerCategoryCard()
+        self.catCard_layout.addStretch()
         self.catCard_layout.addWidget(QStatusIndicator(self.availableItemCount, self.unavailableItemCount), alignment=Qt.AlignmentFlag.AlignLeft)
         # self.catCard_layout.addLayout(QCatStatusEditLayout(self.availableItemCount, self.unavailableItemCount, self.editCatDialog.exec))
         delHBoxLayout = QHBoxLayout()

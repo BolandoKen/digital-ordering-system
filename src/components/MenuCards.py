@@ -16,8 +16,8 @@ from PyQt6.QtGui import QPixmap, QColor
 class QMenuCard(QFrame) :
     def __init__(self):
         super().__init__()
-        self.setFixedHeight(225)
-        self.setFixedWidth(225)
+        self.setFixedHeight(267)
+        self.setFixedWidth(458)
         self.setObjectName("MenuCard")
         self.setStyleSheet("""
             #MenuCard{

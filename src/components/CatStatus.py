@@ -10,6 +10,8 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtGui import QPixmap, QColor, QPainter
 from PyQt6.QtCore import QSize, Qt
 from src.components.Buttons import QEditButton
+from PyQt6.QtWidgets import QSpacerItem, QSizePolicy
+
 
 class CatStatus(QLabel):
     def __init__(self, color, size=10):
@@ -38,15 +40,29 @@ class QStatusIndicator(QWidget):
 
         green_dot = CatStatus("green", 10)  
         available_Count = QLabel(str(available_items)) 
+        available_Count.setStyleSheet("""
+                                      font: 'Helvetica';
+                                      font-size: 20px;
+                                      font-weight: bold;
+                                      """)
+        layout.addSpacerItem(QSpacerItem(10, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
         layout.addWidget(green_dot)
         layout.addWidget(available_Count)
 
         red_dot = CatStatus("red", 10) 
         unavailable_Count = QLabel(str(unavailable_items)) 
+        unavailable_Count.setStyleSheet("""
+                                        font: 'Helvetica';
+                                        font-size: 20px;
+                                        font-weight: bold;
+                                        """)
         layout.addWidget(red_dot)
         layout.addWidget(unavailable_Count)
 
         emptyCategoryLabel = QLabel("empty category")
+        emptyCategoryLabel.setStyleSheet("""
+                                         font: "Helvetica";
+                                         """)
         layout.addWidget(emptyCategoryLabel)
         emptyCategoryLabel.hide()
         self.setLayout(layout)
