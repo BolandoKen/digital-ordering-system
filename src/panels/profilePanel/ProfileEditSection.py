@@ -63,7 +63,7 @@ class QProfileEditState(QFrame) :
 
         self.changePfp_dialog = QChangePfpDialog(self.window())
 
-        self.profileIcon = QProfileImage(self.changePfp_dialog.exec, 150, 150)
+        self.profileIcon = QProfileImage(self.changePfp_dialog.exec, 150, 150, "edit")
         self.main_layout.addWidget(self.profileIcon)
         self.main_layout.addLayout(self.inner_VLayout)
 

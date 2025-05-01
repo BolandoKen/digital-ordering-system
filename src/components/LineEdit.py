@@ -261,7 +261,7 @@ class QFormLineEdit(QLineEdit) :
         self.setStyleSheet(invalidstyle)
         self.mypopup.setText(text)
         self.mypopup.adjustSize()
-        QTimer.singleShot(100, self.moveFloater_toPos)
+        QTimer.singleShot(0, self.moveFloater_toPos)
     
     def setStateInit(self) :
         self.setStyleSheet(self.styleStr)

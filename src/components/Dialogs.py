@@ -20,7 +20,7 @@ from src.utils.FormValid import formValidated
 from src.database.Categories import addCategory, editCategory
 from src.database.FoodItems import addFoodItem, editFoodItem
 from src.utils.PixMap import checkImgSize, saveImageToLocalTemp, setPixMapOf, moveImageToAssets
-from src.components.Buttons import QImageButton
+from src.components.Buttons import QImageButton, QCloseButton
 from src.components.ImageCard import QSelectImageCard
 from src.components.ComboBox import QCatComboBox
 from PyQt6.QtGui import QPixmap
@@ -409,7 +409,10 @@ class QPinDialog(QStyledDialog) :
         self.shadw = QDialogShadowFrame(self.contents_layout)
         self.main_layout.addWidget(self.shadw)
 
+        closebtn = QCloseButton()
+        closebtn.clicked.connect(self.close)
         self.mylabel = QLabel("Enter 4 digit pin")
+        self.contents_layout.addWidget(closebtn, alignment=Qt.AlignmentFlag.AlignRight)
         self.contents_layout.addWidget(self.mylabel)
         self.digitpin = QPinInputBox()
         self.digitpin.onChange_connectTo(self.handlePin)
