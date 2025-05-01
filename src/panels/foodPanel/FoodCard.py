@@ -49,7 +49,7 @@ class QFoodItemCard(QMenuCard) :
                     background-color: transparent;
                     font-size: 20px;
                     font: "Helvetica";
-                    font-weight: bold;
+                    font-weight: 650;
                     padding: 10px;
                     """)
         self.foodimgpixmap = setPixMapOf(self.foodimg, self.imgfile, "food")["pixmap"]
@@ -59,7 +59,7 @@ class QFoodItemCard(QMenuCard) :
                     color: #A1A1A1;
                     font-size: 20px;
                     font: "Helvetica";
-                    font-weight: bold;
+                    font-weight: 650;
                     padding: 5px;
                     """)
         

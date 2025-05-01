@@ -74,7 +74,7 @@ class QCatLabelImageLayout(QHBoxLayout) :
                     color: black;
                     font-size: 40px;
                     font: "Helvetica";
-                    font-weight: bold;
+                    font-weight: 650;
                     margin-left: 10px;
                     """)
         self.imgWidget = QLabel()

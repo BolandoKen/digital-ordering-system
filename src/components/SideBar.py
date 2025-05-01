@@ -77,14 +77,15 @@ class QCustomerSideBar(QSideBar) :
     def __init__(self) :
         super().__init__()
         # self.scroll_layout.addItem(QSpacerItem(50,100))
-        title = QLabel("My Orders")
+        title = QLabel("My\nOrders")
         self.scroll_layout.addWidget(title)
         title.setFont(QFont("Helvetica", 40, QFont.Weight.Bold))
         title.setStyleSheet("""
-                qproperty-alignment: AlignCenter;
+                qproperty-alignment: AlignLeft;
                 margin-top: 110px;
                 border-bottom: 2px solid #CFCFCF;
                 padding-bottom: 20px;
+
             """)
         self.sidebar_layout = QScrollAreaLayout(QVBoxLayout, self.scroll_layout, "sidebar")
         self.sidebar_layout.getLayout().setContentsMargins(0,0,0,0)
@@ -103,7 +104,7 @@ class QCustomerSideBar(QSideBar) :
         self.totalText_label.setFont(QFont("Helvetica", 20))
         self.totalText_label.setStyleSheet("border:none;margin:0px;padding:0px;color: #A1A1A1;")
         self.total_label = QLabel("₱0.00")
-        self.total_label.setFont(QFont("Helvetica", 40, QFont.Weight.Bold))
+        self.total_label.setFont(QFont("Helvetica", 35, QFont.Weight.Bold))
         self.total_label.setStyleSheet("border:none;margin-bottom: 0px;padding:0px;")
 
         self.submitBtn = QPrimaryButton("Done", 180, 60, 30)
@@ -225,7 +226,7 @@ class QCustomerSideBar(QSideBar) :
             self.sidebar_layout.addWidget(item)
             total += item.getSubTotal()
         
-        self.total_label.setText(f"Total: ₱{total:.2f}")
+        self.total_label.setText(f"₱{total:.2f}")
 
 
     def clear_layout(self, layout): 

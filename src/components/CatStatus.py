@@ -43,7 +43,7 @@ class QStatusIndicator(QWidget):
         available_Count.setStyleSheet("""
                                       font: 'Helvetica';
                                       font-size: 20px;
-                                      font-weight: bold;
+                                      font-weight: 650;
                                       """)
         layout.addSpacerItem(QSpacerItem(10, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
         layout.addWidget(green_dot)
@@ -54,7 +54,7 @@ class QStatusIndicator(QWidget):
         unavailable_Count.setStyleSheet("""
                                         font: 'Helvetica';
                                         font-size: 20px;
-                                        font-weight: bold;
+                                        font-weight: 650;
                                         """)
         layout.addWidget(red_dot)
         layout.addWidget(unavailable_Count)

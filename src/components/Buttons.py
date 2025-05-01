@@ -442,8 +442,9 @@ class QOrderDetailsButton(QPushButton) :
     def __init__(self,) :
         super().__init__()
         self.setStyleSheet("""
-            background-color: transparent; 
+            background-color: white; 
             padding: 5px;      
+            border: none;
         """)
         self.setIcon(QIcon("assets/icons/orderDetails_icon.svg"))
         self.setIconSize(QSize(12, 2))
