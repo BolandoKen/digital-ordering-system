@@ -40,6 +40,12 @@ class QFoodItemCard(QMenuCard) :
             self.init_adminFoodItemCard()
         elif self.pageName == "customer" :
             self.init_customerFoodItemCard()
+        
+        if not self.is_available :
+            unavailablemask = QUnavailableMask(self)
+            unavailablemask.setFixedSize(270,380)
+            unavailablemask.move(0,0)
+            unavailablemask.show()
 
     def init_customerFoodItemCard(self) :
         # no edit/del btns
@@ -143,3 +149,9 @@ class QFoodItemCard(QMenuCard) :
         if self.pageName == "admin" : 
             self.delhboxframe.hide()
         return super().leaveEvent(a0)
+
+class QUnavailableMask(QFrame) :
+    def __init__(self, parent = None) :
+        super().__init__(parent)  
+        self.setStyleSheet("background-color: rgba(128, 128, 128, 20); border-radius: 10px;")
+        self.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
