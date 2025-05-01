@@ -3,6 +3,7 @@ import os
 import sys
 sys.path.append(".")
 from datetime import *;
+from dateutil.relativedelta import relativedelta
 
 
 def getPage(arr, pageNumber, rows) :
@@ -18,7 +19,6 @@ def organizeByDate(orderList) : # paginate -> organize
         order_id, order_datetime = orderTuple
         order_datetime = str(order_datetime)
         orderdate = dparser.parse(order_datetime)
-        print(orderdate.day, previousDate.day)
         deltaday = orderdate.day - previousDate.day
         deltayear = orderdate.year - previousDate.year
         if deltaday != 0 or deltayear != 0: 
@@ -49,11 +49,13 @@ def dateParser(datestr) :
     note = None
     date = dparser.parse(datestr, fuzzy=True)
     now = datetime.now()
-    delta = now.day - date.day
-    deltayear = now.year - date.year
-    if delta == 0 and deltayear == 0 : 
+    now_deltaday = now.day - date.day
+    now_deltamonth = now.month - date.month
+    now_deltayear = now.year - date.year
+    yesterday = now - relativedelta(days=1)
+    if now_deltaday == 0 and now_deltamonth == 0 and now_deltayear == 0 : 
         note = "Today"
-    elif delta == 1 and deltayear == 0 :
+    elif date.day == yesterday.day and date.month == yesterday.month and date.year == yesterday.year :
         note = "Yesterday"
     weekday = date.strftime('%A')
     month = date.strftime('%B')
@@ -74,6 +76,3 @@ def dateParser(datestr) :
 # for item in organizedOrders :
 #     print(len(item["content"]))
 #     # print(item["content"])
-
-
-
