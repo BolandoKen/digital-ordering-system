@@ -3,7 +3,6 @@ import os
 import sys
 sys.path.append(".")
 from datetime import *;
-from src.database.queries import fetchStatistics, fetchOrderHistory
 
 
 def getPage(arr, pageNumber, rows) :
@@ -19,8 +18,10 @@ def organizeByDate(orderList) : # paginate -> organize
         order_id, order_datetime = orderTuple
         order_datetime = str(order_datetime)
         orderdate = dparser.parse(order_datetime)
-
-        if orderdate.day - previousDate.day != 0 : 
+        print(orderdate.day, previousDate.day)
+        deltaday = orderdate.day - previousDate.day
+        deltayear = orderdate.year - previousDate.year
+        if deltaday != 0 or deltayear != 0: 
             # add header
             headerObj = {
                 "content" : dateParser(order_datetime),
@@ -49,9 +50,10 @@ def dateParser(datestr) :
     date = dparser.parse(datestr, fuzzy=True)
     now = datetime.now()
     delta = now.day - date.day
-    if delta == 0 : 
+    deltayear = now.year - date.year
+    if delta == 0 and deltayear == 0 : 
         note = "Today"
-    elif delta == 1 :
+    elif delta == 1 and deltayear == 0 :
         note = "Yesterday"
     weekday = date.strftime('%A')
     month = date.strftime('%B')
@@ -72,4 +74,6 @@ def dateParser(datestr) :
 # for item in organizedOrders :
 #     print(len(item["content"]))
 #     # print(item["content"])
+
+
 
