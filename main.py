@@ -1,4 +1,5 @@
 import sys
+import atexit
 # import os
 # sys.path.append(os.path.abspath("src"))
 from PyQt6.QtWidgets import (
@@ -11,11 +12,16 @@ from PyQt6.QtWidgets import (
     QLabel,
     QFrame,
 )
+import asyncio
 from PyQt6.QtGui import QShortcut, QKeySequence
+from qasync import QEventLoop, asyncSlot
 from src.pages.AdminPage import QAdminPage
 from src.pages.CustomerPage import QCustomerPage
 from src.database.init_db import init_db
 from src.utils.PubSub import pubsub
+from src.utils.CatPrinter.CatPrinter import CatPrinter
+from PyQt6.QtWidgets import QStyleFactory
+
 
 class QWindow(QMainWindow) :
     def __init__(self):
@@ -27,6 +33,8 @@ class QWindow(QMainWindow) :
         self.stackedPages = QStackedWidget()
         self.CustomerPage = QCustomerPage()
         self.AdminPage = QAdminPage()
+
+        self.catPrinter = CatPrinter()
 
         self.stackedPages.addWidget(self.CustomerPage)
         self.stackedPages.addWidget(self.AdminPage)
@@ -43,6 +51,7 @@ class QWindow(QMainWindow) :
 
         pubsub.subscribe("login_Event", self.switchPage)
         pubsub.subscribe("logout_Event", self.switchPage)
+        pubsub.subscribe("print_event", self.intitiate_catPrint)
         exit_shortcut = QShortcut(QKeySequence('esc'), self)
         exit_shortcut.activated.connect(self.close)
 
@@ -58,15 +67,38 @@ class QWindow(QMainWindow) :
         else:
             self.switchBtn.setText("logout")
             self.AdminPage.switchPage(0)
-    
+
+    @asyncSlot()
+    async def intitiate_catPrint(self, myOrder = None) :   
+        await self.catPrinter.print_sequence(myOrder)
+
+
     def resizeEvent(self, event):
         super().resizeEvent(event)
-        
 
-if __name__ == "__main__" :
+
+
+
+
+async def main() :
     app = QApplication([])
-    init_db()
-    main_window = QWindow()
-    main_window.show()
+    app.setStyle(QStyleFactory.create("Fusion"))
 
-    sys.exit(app.exec())
+    loop = QEventLoop(app)
+    asyncio.set_event_loop(loop)
+
+    window = QWindow()
+    window.show()
+
+
+    with loop:
+        try :
+            loop.run_forever()
+        finally :
+            pending = asyncio.all_tasks(loop)
+            for task in pending:
+                task.cancel()
+            loop.run_until_complete(window.catPrinter.disconnect_catPrinter())
+        
+if __name__ == "__main__" :
+    asyncio.run(main())

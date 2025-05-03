@@ -97,7 +97,6 @@ class QCartItemSpinBox(QFrame) :
             border-radius: 10px;
             padding: 0px;      
         """)
-            print('hello?')
 
 
 

@@ -18,9 +18,9 @@ from src.components.Headers import QLogoHeader, QLogoButton
 from src.utils.PubSub import pubsub
 from src.components.Buttons import QDineInButton, QTakeOutButton, QTertiaryButton, QQuaternaryButton
 from src.components.ScrollArea import QScrollAreaLayout
-from src.database.queries import fetchLatest_orderid
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt, QTimer
+from src.database.queries import fetchLatest_orderid, fetchOrderItemsSubtotalList, fetchOrderItemsTotal, fetchOrderDateTime, ProfileQueries
 import threading
 
 
@@ -126,7 +126,7 @@ class QCustomerConfirmOrderPanel(QFrame) :
 
         self.confirmBtn = QTertiaryButton("Checkout",300, 60, 35)
         self.cancelBtn = QQuaternaryButton("Back to Menu",300, 60, 35 )
-        self.confirmBtn.clicked.connect(self.handleConfirm_clicked)
+        self.confirmBtn.clicked.connect(self.handleCheckout_clicked)
         self.cancelBtn.clicked.connect(self.handleCancel_clicked)
  
 
@@ -155,7 +155,7 @@ class QCustomerConfirmOrderPanel(QFrame) :
         self.rightFoot_layout.addWidget(self.cancelBtn)
 
       
-        self.main_layout.addWidget(QLogoHeader("admin"))
+        self.main_layout.addWidget(QLogoHeader("confirmorder"))
         self.main_layout.addWidget(self.choice_label)
         self.scroll_arealayout = QScrollAreaLayout(QVBoxLayout, self.main_layout, "confirm")
         self.scroll_arealayout.getLayout().setContentsMargins(0,0,15,0)
@@ -165,22 +165,27 @@ class QCustomerConfirmOrderPanel(QFrame) :
         self.main_layout.addLayout(self.footer_layout)
 
         self.cartItemsArr = None
+        self.printer_connected = False
         pubsub.subscribe("submitOrder_clicked", self.handleSubmitOrder_clicked)
         pubsub.subscribe("cartItem_deleted", self.updateCartItems)
         pubsub.subscribe("recalculate_total", self.update_totalText)
+        pubsub.subscribe("printer_connected", self.setPrinterConnected)
     
+    def setPrinterConnected(self, is_connected) :
+        self.printer_connected = is_connected
+
     def handleSubmitOrder_clicked(self, submitParams) :
-        self.cartItemsArr, self.submitorder_callback, self.choice, self.sidebar_layout = submitParams
+        self.cartItemsArr, self.submitcheckout_callback, self.choice, self.sidebar_layout = submitParams
         self.parent_stackedWidgets.setCurrentIndex(2) 
 
         self.setContent()        
 
     def setContent(self) :
         if self.choice == "dine_in" :
-            choicestr = "Dine in"
+            self.choicestr = "Dine in"
         else :
-            choicestr = "Take out"
-        self.choice_label.setText(f"Confirm Order - {choicestr}")
+            self.choicestr = "Take out"
+        self.choice_label.setText(f"Confirm Order - {self.choicestr}")
         for item in self.cartItemsArr :
             self.sidebar_layout.getLayout().removeWidget(item)
             item.transitionState()
@@ -200,15 +205,33 @@ class QCustomerConfirmOrderPanel(QFrame) :
 
         self.parent_stackedWidgets.setCurrentIndex(0)
     
-    def handleConfirm_clicked(self) :
+    def handleCheckout_clicked(self) :
+        if not self.printer_connected :
+            # warning dialog
+            return 
         if not self.cartItemsArr :
             print("cart is empty")
             return
-        self.submitorder_callback()
-        self.parent_stackedWidgets.setCurrentIndex(3)
-        pubsub.publish("orderConfirmed_event")
+        #fetch latest orderId, #fetch orderitemssubtotal, total
 
-        # in print panel, just fetch the latest order...
+        self.submitcheckout_callback() # add order cb
+        self.parent_stackedWidgets.setCurrentIndex(3)
+
+        profile_name = ProfileQueries.fetchProfileName()
+        latest_orderid = fetchLatest_orderid()
+        self.orderItemsSubtotalList = fetchOrderItemsSubtotalList(latest_orderid) 
+        self.orderItemsTotal = fetchOrderItemsTotal(latest_orderid)
+        order_datetime = fetchOrderDateTime(latest_orderid)
+        myOrder = {
+            "items" : self.orderItemsSubtotalList,
+            "total" : self.orderItemsTotal,
+            "orderid" : latest_orderid,
+            "choice" : self.choicestr,
+            "profile_name" : profile_name,
+            "date" : order_datetime
+        }
+        pubsub.publish("orderConfirmed_event")
+        pubsub.publish("print_event", myOrder)
         self.clear_layout(self.scroll_arealayout.getLayout())
 
     def updateCartItems(self, newCartItems) :
@@ -268,7 +291,11 @@ class QCustomerPrintingPanel(QFrame) :
         self.msg3_label.setFixedSize(500,100)
         self.msg3_label.setFont(QFont("Helvitica", 15, QFont.Weight.Normal))
 
-        newOrderBtn = QQuaternaryButton("Start New Order", 300, 60, 35)
+        msg3_sizepolicy = self.msg3_label.sizePolicy()
+        msg3_sizepolicy.setRetainSizeWhenHidden(True)
+        self.msg3_label.setSizePolicy(msg3_sizepolicy)
+
+        self.newOrderBtn = QQuaternaryButton("Start New Order", 300, 60, 35)
         
         self.orderno_labellabel = QLabel("Order No:")
         self.orderno_labellabel.setFont(QFont("Helvitica", 25, QFont.Weight.Bold))
@@ -282,7 +309,7 @@ class QCustomerPrintingPanel(QFrame) :
         btn_timer_vbox = QVBoxLayout()
         btn_timer_vbox.setContentsMargins(0,0,0,0)
         btn_timer_vbox.setSpacing(0)
-        btn_timer_vbox.addWidget(newOrderBtn, alignment=Qt.AlignmentFlag.AlignCenter)
+        btn_timer_vbox.addWidget(self.newOrderBtn, alignment=Qt.AlignmentFlag.AlignCenter)
         btn_timer_vbox.addWidget(self.msg3_label, alignment=Qt.AlignmentFlag.AlignCenter)
 
         self.main_layout.addStretch()
@@ -293,8 +320,12 @@ class QCustomerPrintingPanel(QFrame) :
         self.main_layout.addLayout(btn_timer_vbox)
        
         self.main_layout.addStretch()
-        newOrderBtn.clicked.connect(self.handleNewOrder_clicked)
+        self.newOrderBtn.clicked.connect(self.handleNewOrder_clicked)
+        self.newOrderBtn.setEnabled(False)
+        self.msg3_label.hide()
+        self.newOrderBtn.hide()
         pubsub.subscribe("orderConfirmed_event", self.setText_OrderId)
+        pubsub.subscribe("print_finished", self.startTimer)
 
     def handleNewOrder_clicked(self) :
         self.parent_stackedWidgets.setCurrentIndex(1)
@@ -303,20 +334,27 @@ class QCustomerPrintingPanel(QFrame) :
 
     
     def setText_OrderId(self, e = None) :
-        self.mytimer = QTimer()
-        self.mytimer.setSingleShot(True)
-        self.mytimer.timeout.connect(lambda: self.timeRecurse) # set up to disconnect
         self.orderno = str(fetchLatest_orderid())
         self.orderno_label.setText(self.orderno)
 
+    
+    def startTimer(self, e=None) :
+        self.newOrderBtn.setEnabled(True)
+        self.msg3_label.show()
+        self.newOrderBtn.show()
+        self.mytimer = QTimer()
+        self.mytimer.setSingleShot(True)
+        self.mytimer.timeout.connect(lambda: self.timeRecurse) # set up to disconnect
 
         # should only start after printing ends..
         self.timeRecurse(5)
-    
+
     def timeRecurse(self, seconds) :
         self.msg3_label.setText(f"Returning to Home in {seconds}")
         if seconds == 0 :
             self.parent_stackedWidgets.setCurrentIndex(1)
+            self.msg3_label.hide()
+            self.newOrderBtn.hide()
             return
         seconds -= 1
         self.mytimer.start(1000)
