@@ -432,14 +432,14 @@ class QBongoBtn(QPushButton):
     def __init__(self):
         super().__init__()
         self.setStyleSheet("background-color: transparent; border: none;")
-        self.setFixedSize(100, 100)
+        self.setFixedSize(80, 80)
 
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
 
         self.label = QLabel(self)
         self.label.setStyleSheet("background: transparent;")
-        self.label.setFixedSize(100, 100)
+        self.label.setFixedSize(80, 80)
 
         self.movie = QMovie("assets/icons/bongo_loading_tp3.gif")
         self.movie.setScaledSize(QSize(80, 80))
