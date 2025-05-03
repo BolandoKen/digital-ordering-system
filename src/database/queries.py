@@ -85,7 +85,7 @@ def fetchStatistics(order='DESC', category_id=None, search_term=None):
         else:
             query += " WHERE f.name LIKE %s"
 
-    query += """GROUP BY f.fooditem_id, f.name, c.name ORDER BY Times_Ordered {order}""".format(order=order)
+    query += """ GROUP BY f.fooditem_id, f.name, c.name ORDER BY Times_Ordered {order}""".format(order=order)
     params = []
     if category_id is not None:
         params.append(category_id)
@@ -127,7 +127,6 @@ def fetchOrderItemsSubtotalList(orderid) :
                    WHERE o.order_id = {orderid};
                    """)
     results = cursor.fetchall()
-    print(results)
     return results
 
 def fetchOrderItemsTotal(orderid) :
@@ -148,6 +147,14 @@ def fetchLatest_orderid() :
     cursor.fetchall()
     return latestorder
 
+def fetchOrderDateTime(orderid) :
+    cursor.execute(f"""SELECT order_datetime FROM Orders WHERE order_id = {orderid} """)
+    latestorder = cursor.fetchone()[0]
+    cursor.fetchall()
+    return latestorder
+
+# should have contained these queries into a class...
+
 def fetchSubStrNames(substr) :
     cursor.execute(f"""SELECT f.fooditem_id, f.name, f.is_available, c.category_id, c.name 
                    FROM FoodItems AS f 
@@ -155,6 +162,7 @@ def fetchSubStrNames(substr) :
                    ON f.category_id = c.category_id
                    WHERE f.name LIKE '%{substr}%' """)
     return cursor.fetchall()
+
 
 class ProfileQueries :
 

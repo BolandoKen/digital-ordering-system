@@ -156,25 +156,17 @@ class QCustomerSideBar(QSideBar) :
         for item in self.cartItems :
             orderitem_info.append((item.getQuantity(), item.foodid))
         
-        pubsub.publish("submitOrder_clicked", (self.cartItems, self.submitOrderCallback, self.choice, self.sidebar_layout)) # should also probably pass cb
+        pubsub.publish("submitOrder_clicked", (self.cartItems, self.submitCheckoutCallback, self.choice, self.sidebar_layout)) # should also probably pass cb
 
-    def submitOrderCallback(self) :
-        # called back from confirm panel
-        if not self.cartItems:
-            print("Cart is empty")
-            # error or just disable?
-            return []
-      
+    def submitCheckoutCallback(self) :
         orderitem_info = []
         for item in self.cartItems :
             orderitem_info.append((item.getQuantity(), item.foodid))
         
+        addOrder(orderitem_info)
+        pubsub.publish("orderSubmitted_event")
+        self.init_customerSideBar()
 
-        confirmation = True # placeholder for confirmation dialog,
-        if confirmation :
-            addOrder(orderitem_info)
-            pubsub.publish("orderSubmitted_event")
-            self.init_customerSideBar()
         return True
 
     def handleFoodAddToCart(self, foodTuple) :

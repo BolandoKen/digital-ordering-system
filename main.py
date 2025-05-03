@@ -69,8 +69,9 @@ class QWindow(QMainWindow) :
             self.AdminPage.switchPage(0)
 
     @asyncSlot()
-    async def intitiate_catPrint(self, e = None) :   
-        await self.catPrinter.test_sequence()
+    async def intitiate_catPrint(self, myOrder = None) :   
+        await self.catPrinter.print_sequence(myOrder)
+
 
     def resizeEvent(self, event):
         super().resizeEvent(event)

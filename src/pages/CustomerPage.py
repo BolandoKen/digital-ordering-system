@@ -18,9 +18,9 @@ from src.components.Headers import QLogoHeader, QLogoButton
 from src.utils.PubSub import pubsub
 from src.components.Buttons import QDineInButton, QTakeOutButton, QTertiaryButton, QQuaternaryButton
 from src.components.ScrollArea import QScrollAreaLayout
-from src.database.queries import fetchLatest_orderid
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt, QTimer
+from src.database.queries import fetchLatest_orderid, fetchOrderItemsSubtotalList, fetchOrderItemsTotal, fetchOrderDateTime, ProfileQueries
 import threading
 
 
@@ -126,7 +126,7 @@ class QCustomerConfirmOrderPanel(QFrame) :
 
         self.confirmBtn = QTertiaryButton("Checkout",300, 60, 35)
         self.cancelBtn = QQuaternaryButton("Back to Menu",300, 60, 35 )
-        self.confirmBtn.clicked.connect(self.handleConfirm_clicked)
+        self.confirmBtn.clicked.connect(self.handleCheckout_clicked)
         self.cancelBtn.clicked.connect(self.handleCancel_clicked)
  
 
@@ -170,17 +170,17 @@ class QCustomerConfirmOrderPanel(QFrame) :
         pubsub.subscribe("recalculate_total", self.update_totalText)
     
     def handleSubmitOrder_clicked(self, submitParams) :
-        self.cartItemsArr, self.submitorder_callback, self.choice, self.sidebar_layout = submitParams
+        self.cartItemsArr, self.submitcheckout_callback, self.choice, self.sidebar_layout = submitParams
         self.parent_stackedWidgets.setCurrentIndex(2) 
 
         self.setContent()        
 
     def setContent(self) :
         if self.choice == "dine_in" :
-            choicestr = "Dine in"
+            self.choicestr = "Dine in"
         else :
-            choicestr = "Take out"
-        self.choice_label.setText(f"Confirm Order - {choicestr}")
+            self.choicestr = "Take out"
+        self.choice_label.setText(f"Confirm Order - {self.choicestr}")
         for item in self.cartItemsArr :
             self.sidebar_layout.getLayout().removeWidget(item)
             item.transitionState()
@@ -200,15 +200,30 @@ class QCustomerConfirmOrderPanel(QFrame) :
 
         self.parent_stackedWidgets.setCurrentIndex(0)
     
-    def handleConfirm_clicked(self) :
+    def handleCheckout_clicked(self) :
         if not self.cartItemsArr :
             print("cart is empty")
             return
-        self.submitorder_callback()
+        #fetch latest orderId, #fetch orderitemssubtotal, total
+
+        self.submitcheckout_callback() # add order cb
         self.parent_stackedWidgets.setCurrentIndex(3)
+
+        profile_name = ProfileQueries.fetchProfileName()
+        latest_orderid = fetchLatest_orderid()
+        self.orderItemsSubtotalList = fetchOrderItemsSubtotalList(latest_orderid) 
+        self.orderItemsTotal = fetchOrderItemsTotal(latest_orderid)
+        order_datetime = fetchOrderDateTime(latest_orderid)
+        myOrder = {
+            "items" : self.orderItemsSubtotalList,
+            "total" : self.orderItemsTotal,
+            "orderid" : latest_orderid,
+            "choice" : self.choicestr,
+            "profile_name" : profile_name,
+            "date" : order_datetime
+        }
         pubsub.publish("orderConfirmed_event")
-        pubsub.publish("print_event")
-        # in print panel, just fetch the latest order...
+        pubsub.publish("print_event", myOrder)
         self.clear_layout(self.scroll_arealayout.getLayout())
 
     def updateCartItems(self, newCartItems) :

@@ -4,6 +4,7 @@ from bleak import BleakClient
 from PyQt6.QtCore import QTimer
 from src.utils.CatPrinter.crc8table import format_command
 from src.utils.PubSub import pubsub
+from src.utils.CatPrinter.OrderToText import getImage_textBytes
 
 class CatPrinter(object) :
     def __init__(self):
@@ -26,8 +27,9 @@ class CatPrinter(object) :
         QTimer.singleShot(0, lambda: asyncio.create_task(self.connectClient()))
 
 
-    async def test_sequence(self) :
-        print(self.client)
+    async def print_sequence(self, myOrder = None) :
+        if myOrder is not None :
+            getImage_textBytes(myOrder)
         if not self.client.is_connected :
             print("not connected to printer!")
             return
@@ -35,13 +37,16 @@ class CatPrinter(object) :
         #     await self.client.stop_notify(self.notify_uuid)
         # except Exception as e:
         #     print("error stopping notify", e)
-        await self.client.start_notify(self.notify_uuid, self.notification_handler)
-        await self.print_request(self.client)
-        await self.write_chunk(self.client)
+        myImg_inBytes = getImage_textBytes(myOrder)
 
+        await self.client.start_notify(self.notify_uuid, self.notification_handler)
+        await self.print_request(myImg_inBytes)
+        await self.write_chunk(myImg_inBytes)
+
+        await asyncio.sleep(3)
         pubsub.publish("print_finished")
         print("end of sequence")
-        await self.client.stop_notify(self.notify_uuid)
+        await self.client.stop_notify(self.notify_uuid) # stop notify after every print_seq
 
 
     async def connectClient(self) :
@@ -66,25 +71,28 @@ class CatPrinter(object) :
         else : 
             print("cat failed to connect...")
 
-    async def print_request(self,client, row_count = None) :
-        if row_count is None :
-            row_count = 90 # how long it would print.. default 90
+    async def print_request(self, image_data = None) :
+        if image_data is None :
+            row_count = 90 # how long it would print (height).. default 90
+        else :
+            row_count = len(image_data) // 48 # because each row has 48 bytes
 
         payload = row_count.to_bytes(2, "little") + bytes.fromhex("3000")
         printReq_cmd = format_command(self.printid, payload)
-        await client.write_gatt_char(self.printer_characteristic, printReq_cmd)
+        await self.client.write_gatt_char(self.printer_characteristic, printReq_cmd)
         print("print req complete")
         await asyncio.sleep(2)
 
-    async def write_chunk(self, client, image_data = None) :
+    async def write_chunk(self, image_data = None) :
     
-        if image_data is None : 
-            myrow = b"\xff\xff\x00\x00" * 12 
+        if image_data is None : # default for testing
+            myrow = b"\xff\xff\x00\x00" * 12 # each row contains 48 bytes
             myrow2 = b"\x00\x00\xff\xff" * 24
             image_data = (myrow + myrow2) * 45 
-        chunk_size = 180 if sys.platform == "darwin" else 508
+        
+        chunk_size = 180 if sys.platform == "darwin" else 508 # mtu for os differs
         for i in range(0, len(image_data), chunk_size):
-            await client.write_gatt_char(self.data_characteristic, image_data[i:i+chunk_size], response=False)
+            await self.client.write_gatt_char(self.data_characteristic, image_data[i:i+chunk_size], response=False)
             await asyncio.sleep(0.1)
         await asyncio.sleep(5)
 
