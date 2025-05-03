@@ -1,3 +1,4 @@
+import sys
 import asyncio
 from bleak import BleakClient
 from PyQt6.QtCore import QTimer
@@ -6,7 +7,8 @@ from src.utils.PubSub import pubsub
 
 class CatPrinter(object) :
     def __init__(self):
-        self.printer_address = "48:0F:57:2A:DD:09"
+        #hardcoded address for now :P
+        self.printer_address = "FE16E45D-6E8A-039D-16C7-B668107E8F62" if sys.platform == "darwin" else "48:0F:57:2A:DD:09"  
         self.printer_characteristic = "0000ae01-0000-1000-8000-00805f9b34fb"
         self.notify_uuid = "0000ae02-0000-1000-8000-00805f9b34fb"
         self.data_characteristic = "0000ae03-0000-1000-8000-00805f9b34fb"
@@ -29,12 +31,18 @@ class CatPrinter(object) :
         if not self.client.is_connected :
             print("not connected to printer!")
             return
+        # try : 
+        #     await self.client.stop_notify(self.notify_uuid)
+        # except Exception as e:
+        #     print("error stopping notify", e)
         await self.client.start_notify(self.notify_uuid, self.notification_handler)
         await self.print_request(self.client)
         await self.write_chunk(self.client)
 
         pubsub.publish("print_finished")
         print("end of sequence")
+        await self.client.stop_notify(self.notify_uuid)
+
 
     async def connectClient(self) :
         retries = 5 
@@ -48,7 +56,6 @@ class CatPrinter(object) :
                 print("client connected successfully")
                 break
             except Exception as e:
-                print(e)
                 print("failed attempt", attempts + 1)
                 await asyncio.sleep(3)
 
@@ -75,12 +82,16 @@ class CatPrinter(object) :
             myrow = b"\xff\xff\x00\x00" * 12 
             myrow2 = b"\x00\x00\xff\xff" * 24
             image_data = (myrow + myrow2) * 45 
-        chunk_size = 508
+        chunk_size = 180 if sys.platform == "darwin" else 508
         for i in range(0, len(image_data), chunk_size):
-            await client.write_gatt_char(self.data_characteristic, image_data[i:i+chunk_size])
+            await client.write_gatt_char(self.data_characteristic, image_data[i:i+chunk_size], response=False)
             await asyncio.sleep(0.1)
         await asyncio.sleep(5)
 
     async def notification_handler(self, sender, data):
         # print(data)
         print(f"Printer response: {data.hex()}")
+
+    async def disconnect_catPrinter(self) :
+        if self.client.is_connected :
+           await self.client.disconnect()

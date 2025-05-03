@@ -300,6 +300,7 @@ class QCustomerPrintingPanel(QFrame) :
         self.newOrderBtn.clicked.connect(self.handleNewOrder_clicked)
         self.newOrderBtn.setEnabled(False)
         self.msg3_label.hide()
+        self.newOrderBtn.hide()
         pubsub.subscribe("orderConfirmed_event", self.setText_OrderId)
         pubsub.subscribe("print_finished", self.startTimer)
 
@@ -317,6 +318,7 @@ class QCustomerPrintingPanel(QFrame) :
     def startTimer(self, e=None) :
         self.newOrderBtn.setEnabled(True)
         self.msg3_label.show()
+        self.newOrderBtn.show()
         self.mytimer = QTimer()
         self.mytimer.setSingleShot(True)
         self.mytimer.timeout.connect(lambda: self.timeRecurse) # set up to disconnect
@@ -329,6 +331,7 @@ class QCustomerPrintingPanel(QFrame) :
         if seconds == 0 :
             self.parent_stackedWidgets.setCurrentIndex(1)
             self.msg3_label.hide()
+            self.newOrderBtn.hide()
             return
         seconds -= 1
         self.mytimer.start(1000)

@@ -1,4 +1,5 @@
 import sys
+import atexit
 # import os
 # sys.path.append(os.path.abspath("src"))
 from PyQt6.QtWidgets import (
@@ -19,6 +20,8 @@ from src.pages.CustomerPage import QCustomerPage
 from src.database.init_db import init_db
 from src.utils.PubSub import pubsub
 from src.utils.CatPrinter.CatPrinter import CatPrinter
+from PyQt6.QtWidgets import QStyleFactory
+
 
 class QWindow(QMainWindow) :
     def __init__(self):
@@ -72,16 +75,26 @@ class QWindow(QMainWindow) :
     def resizeEvent(self, event):
         super().resizeEvent(event)
 
+
+
+
+
 async def main() :
     app = QApplication([])
+    app.setStyle(QStyleFactory.create("Fusion"))
+
     loop = QEventLoop(app)
     asyncio.set_event_loop(loop)
 
     window = QWindow()
     window.show()
 
-    with loop:
-        loop.run_forever()
 
+    with loop:
+        try :
+            loop.run_forever()
+        finally :
+            loop.run_until_complete(window.catPrinter.disconnect_catPrinter())
+        
 if __name__ == "__main__" :
     asyncio.run(main())
