@@ -4,7 +4,6 @@ import PIL.ImageFont
 from datetime import *;
 
 def getImage_textBytes(myOrder = None, target_width = 384) :
-    print(myOrder)
     fontsize = 25
     font = "src/utils/CatPrinter/helvetica-255/Helvetica.ttf"
     fontbold = "src/utils/CatPrinter/helvetica-255/Helvetica-Bold.ttf"
@@ -66,7 +65,7 @@ def getImage_textBytes(myOrder = None, target_width = 384) :
     target_height = int(target_width * aspect_ratio)
     img = img.resize((target_width, target_height))
 
-# from werwolvs catprinter implementation
+# from werwolvs catprinter implementation : https://github.com/WerWolv/PythonCatPrinter/blob/master/text/print.py
     byte_rows = []
     for y in range(0, img.height): 
         bmp = []

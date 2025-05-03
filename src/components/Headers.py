@@ -19,6 +19,25 @@ from PyQt6.QtCore import Qt, QEvent
 from src.components.ImageCard import QProfileImage
 
 
+class QPrinterButton(QPushButton) :
+    def __init__(self):
+        super().__init__("connecting...")
+        self.printer_connected = False
+        pubsub.subscribe("printer_connected", self.setPrinterState)
+        pubsub.subscribe("printer_connected", self.setPrinterState)
+        self.clicked.connect(self.setPrinterState_connecting )
+
+    def setPrinterState_connecting(self) :
+        if not self.printer_connected :
+            self.setText("connecting...")
+
+    def setPrinterState(self, is_connected) :
+        self.printer_connected = is_connected
+        if self.printer_connected :
+            self.setText("connected")
+        else :
+            self.setText("offline")
+
 class QProfileNameLabel(QLabel) :
     def __init__(self, typeOf = None):
         self.typeOf = typeOf
@@ -97,6 +116,12 @@ class QLogoHeader(QFrame) :
         self.main_layout.addStretch()
         if pageName == "customer" :
             self.logo.connectTo(self.handleLogoClicked)
+        if pageName != "admin" :
+            self.printerBtn = QPrinterButton()
+            self.printerBtn.clicked.connect(lambda: pubsub.publish("printerBtn_clicked"))
+            self.main_layout.addWidget(self.printerBtn)
+
+
 
     def handleLogoClicked(self) :
         dialogToExec = self.setuppin_dialog if ProfileQueries.fetchPin() is None else self.pin_dialog

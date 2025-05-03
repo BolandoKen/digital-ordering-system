@@ -95,6 +95,9 @@ async def main() :
         try :
             loop.run_forever()
         finally :
+            pending = asyncio.all_tasks(loop)
+            for task in pending:
+                task.cancel()
             loop.run_until_complete(window.catPrinter.disconnect_catPrinter())
         
 if __name__ == "__main__" :

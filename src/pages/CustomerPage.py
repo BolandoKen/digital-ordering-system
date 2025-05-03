@@ -155,7 +155,7 @@ class QCustomerConfirmOrderPanel(QFrame) :
         self.rightFoot_layout.addWidget(self.cancelBtn)
 
       
-        self.main_layout.addWidget(QLogoHeader("admin"))
+        self.main_layout.addWidget(QLogoHeader("confirmorder"))
         self.main_layout.addWidget(self.choice_label)
         self.scroll_arealayout = QScrollAreaLayout(QVBoxLayout, self.main_layout, "confirm")
         self.scroll_arealayout.getLayout().setContentsMargins(0,0,15,0)
@@ -165,10 +165,15 @@ class QCustomerConfirmOrderPanel(QFrame) :
         self.main_layout.addLayout(self.footer_layout)
 
         self.cartItemsArr = None
+        self.printer_connected = False
         pubsub.subscribe("submitOrder_clicked", self.handleSubmitOrder_clicked)
         pubsub.subscribe("cartItem_deleted", self.updateCartItems)
         pubsub.subscribe("recalculate_total", self.update_totalText)
+        pubsub.subscribe("printer_connected", self.setPrinterConnected)
     
+    def setPrinterConnected(self, is_connected) :
+        self.printer_connected = is_connected
+
     def handleSubmitOrder_clicked(self, submitParams) :
         self.cartItemsArr, self.submitcheckout_callback, self.choice, self.sidebar_layout = submitParams
         self.parent_stackedWidgets.setCurrentIndex(2) 
@@ -201,6 +206,9 @@ class QCustomerConfirmOrderPanel(QFrame) :
         self.parent_stackedWidgets.setCurrentIndex(0)
     
     def handleCheckout_clicked(self) :
+        if not self.printer_connected :
+            # warning dialog
+            return 
         if not self.cartItemsArr :
             print("cart is empty")
             return

@@ -6,6 +6,8 @@ from src.utils.CatPrinter.crc8table import format_command
 from src.utils.PubSub import pubsub
 from src.utils.CatPrinter.OrderToText import getImage_textBytes
 
+# minimal mxw01 printing sequence derived from https://github.com/eerimoq/moblin/tree/main/Moblin/Integrations/CatPrinter
+
 class CatPrinter(object) :
     def __init__(self):
         #hardcoded address for now :P
@@ -13,19 +15,22 @@ class CatPrinter(object) :
         self.printer_characteristic = "0000ae01-0000-1000-8000-00805f9b34fb"
         self.notify_uuid = "0000ae02-0000-1000-8000-00805f9b34fb"
         self.data_characteristic = "0000ae03-0000-1000-8000-00805f9b34fb"
-        reset = 0xa0
-        status = 0xa1
-        drawBitmap = 0xa2
-        drawingMode = 0xbe
-        setEnergy = 0xaf
-        setQuality = 0xa4
-        deviceinfo = 0xa8
         self.printid = 0xa9
-        version = 0xb1
         self.client = None
-        self.connected = False
-        QTimer.singleShot(0, lambda: asyncio.create_task(self.connectClient()))
 
+        self.pendingConnection = False
+
+        self.connectToClient_wrapper()
+        pubsub.subscribe("printerBtn_clicked", self.connectToClient_wrapper)
+    
+    def connectToClient_wrapper(self, e = None) :
+        if self.pendingConnection :
+            print('its currently pending connection please wait!')
+            return
+        if self.client is not None and self.client.is_connected :
+            print('printer is already connected!')
+            return
+        QTimer.singleShot(0, lambda: asyncio.create_task(self.connectClient())) # need qtimer singleshot to wait until app event loop has started
 
     async def print_sequence(self, myOrder = None) :
         if myOrder is not None :
@@ -38,20 +43,23 @@ class CatPrinter(object) :
         # except Exception as e:
         #     print("error stopping notify", e)
         myImg_inBytes = getImage_textBytes(myOrder)
-
-        await self.client.start_notify(self.notify_uuid, self.notification_handler)
-        await self.print_request(myImg_inBytes)
-        await self.write_chunk(myImg_inBytes)
+        try :
+            await self.client.start_notify(self.notify_uuid, self.notification_handler)
+            await self.print_request(myImg_inBytes)
+            await self.write_chunk(myImg_inBytes)
+            await self.client.stop_notify(self.notify_uuid) # stop notify after every print_seq
+        except Exception as e :
+            print("printing failed!", e)
 
         await asyncio.sleep(3)
         pubsub.publish("print_finished")
         print("end of sequence")
-        await self.client.stop_notify(self.notify_uuid) # stop notify after every print_seq
 
 
     async def connectClient(self) :
+        self.pendingConnection = True
         retries = 5 
-        self.client = BleakClient(self.printer_address) 
+        self.client = BleakClient(self.printer_address, disconnected_callback=self.on_disconnect) 
         await self.client.disconnect()
         print("expected", self.client)
         print("cat trying to connect...")
@@ -66,10 +74,17 @@ class CatPrinter(object) :
 
         if self.client.is_connected :
             self.client = self.client
-            self.connected = True
+            pubsub.publish("printer_connected", True)
             print("cat connected successfully!")
         else : 
+            pubsub.publish("printer_connected", False)
             print("cat failed to connect...")
+        self.pendingConnection = False
+
+    
+    def on_disconnect(self, e = None) :
+        pubsub.publish("printer_connected", False)
+        print("printer disconnected!", e)
 
     async def print_request(self, image_data = None) :
         if image_data is None :
