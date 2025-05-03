@@ -15,10 +15,10 @@ from PyQt6.QtWidgets import (
     QDateEdit,
     QLabel,
     QListView,
-    QLineEdit
+    QLineEdit,
 )
-from PyQt6.QtCore import Qt, QPoint
-from PyQt6.QtGui import QShortcut, QKeySequence
+from PyQt6.QtCore import Qt, QPoint, QSize
+from PyQt6.QtGui import QShortcut, QKeySequence, QIcon
 from src.components.ComboBox import QFilterButton  
 from src.components.Buttons import (QDeleteButton,
                                     QBackButton,
@@ -28,7 +28,8 @@ from src.components.Buttons import (QDeleteButton,
                                     QMinusButton,
                                     QPrimaryButton,
                                     QSecondaryButton,
-                                    QPreviousButton,)
+                                    QPreviousButton,
+                                    QBongoBtn)
 from src.components.SpinBox import QCartItemSpinBox
 from src.components.Calendar import QCalendarFilter
 from PyQt6.QtCore import QDate, QTimer
@@ -98,20 +99,21 @@ class QWindow(QMainWindow):
         plus_button = QPlusButton()
         minus_button = QMinusButton()
 
-        main_layout.addWidget(delete_button)
-        main_layout.addWidget(back_button)
-        main_layout.addWidget(dineIn_button)
-        main_layout.addWidget(plus_button)
-        main_layout.addWidget(minus_button)
+        # main_layout.addWidget(delete_button)
+        # main_layout.addWidget(back_button)
+        # main_layout.addWidget(dineIn_button)
+        # main_layout.addWidget(plus_button)
+        # main_layout.addWidget(minus_button)
         main_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         testframe = TestFrame()
-        main_layout.addWidget(testframe)
-        main_layout.addWidget(QSearchArea())
+        # main_layout.addWidget(testframe)
+        # main_layout.addWidget(QSearchArea())
         self.formlineedit = QFormLineEdit(self)
-        main_layout.addWidget(self.formlineedit)
+        # main_layout.addWidget(self.formlineedit)
 
-
+        bongoBtn = QBongoBtn()
+        main_layout.addWidget(bongoBtn)        
         floater = QLabel("warning")   
         floater.setFixedSize(100,30)
         floater.setWindowFlags(Qt.WindowType.Popup | Qt.WindowType.FramelessWindowHint)

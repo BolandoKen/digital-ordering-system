@@ -17,7 +17,7 @@ from PyQt6.QtWidgets import (
     QRadioButton
 )
 from PyQt6.QtWidgets import QPushButton, QSpacerItem, QSizePolicy
-from PyQt6.QtGui import QIcon
+from PyQt6.QtGui import QIcon, QMovie
 from PyQt6.QtCore import Qt, QSize
 from PyQt6.QtGui import QPixmap, QMouseEvent, QFont
 from PyQt6.QtCore import Qt
@@ -426,3 +426,46 @@ class QProfileRadioButton(QRadioButton) :
     def init_checked(self, e=None) :
         self.is_displayname69 = ProfileQueries.fetchDisplayName()
         self.setChecked(self.is_displayname69)
+
+
+class QBongoBtn(QPushButton):
+    def __init__(self):
+        super().__init__()
+        self.setStyleSheet("background-color: transparent; border: none;")
+        self.setFixedSize(100, 100)
+
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+
+        self.label = QLabel(self)
+        self.label.setStyleSheet("background: transparent;")
+        self.label.setFixedSize(100, 100)
+
+        self.movie = QMovie("assets/icons/bongo_loading_tp3.gif")
+        self.movie.setScaledSize(QSize(80, 80))
+        self.label.setMovie(self.movie)
+        self.movie.start()
+        
+
+        layout.addWidget(self.label)
+    
+    def setState(self, state) :
+        if state == "offline" :
+            self.movie.stop()
+            setPixMapOf(self.label, "bongo_tp.png", "icon")
+            self.label.setScaledContents(True)
+            self.label.setFixedSize(80, 80)
+
+        elif state == "online" :
+            self.movie.stop()
+            setPixMapOf(self.label, "bongo_blue_tp.png", "icon")
+            self.label.setScaledContents(True)
+            self.label.setFixedSize(80, 80)
+
+        elif state == "loading" :
+            self.label.setMovie(self.movie)
+            self.movie.start()
+            
+
+    
+

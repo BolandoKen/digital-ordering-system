@@ -11,7 +11,7 @@ from PyQt6.QtWidgets import (
 )
 
 from src.utils.PubSub import pubsub
-from src.components.Buttons import QBackButton, QEyeButton
+from src.components.Buttons import QBackButton, QEyeButton, QBongoBtn
 from src.components.Dialogs import QSetupPinDialog, QPinDialog
 from src.database.queries import ProfileQueries
 from PyQt6.QtGui import QFont
@@ -19,24 +19,27 @@ from PyQt6.QtCore import Qt, QEvent
 from src.components.ImageCard import QProfileImage
 
 
-class QPrinterButton(QPushButton) :
+class QPrinterButton(QBongoBtn) :
     def __init__(self):
-        super().__init__("connecting...")
+        super().__init__()
         self.printer_connected = False
         pubsub.subscribe("printer_connected", self.setPrinterState)
         pubsub.subscribe("printer_connected", self.setPrinterState)
-        self.clicked.connect(self.setPrinterState_connecting )
+        pubsub.subscribe("printerbtn_clicked", self.setPrinterState_connecting)
+        self.clicked.connect(lambda : pubsub.publish("printerbtn_clicked"))
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        
 
-    def setPrinterState_connecting(self) :
+    def setPrinterState_connecting(self, e = None) :
         if not self.printer_connected :
-            self.setText("connecting...")
+            self.setState("loading")
 
     def setPrinterState(self, is_connected) :
         self.printer_connected = is_connected
         if self.printer_connected :
-            self.setText("connected")
+            self.setState("online")
         else :
-            self.setText("offline")
+            self.setState("offline")
 
 class QProfileNameLabel(QLabel) :
     def __init__(self, typeOf = None):
