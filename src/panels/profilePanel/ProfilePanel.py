@@ -19,6 +19,7 @@ from src.utils.PixMap import setPixMapOf
 from src.components.Headers import QOtherPanelHeader
 from src.components.Table import QOrderHTable
 from src.panels.profilePanel.ProfileEditSection import QProfile, QProfileViewState
+from src.utils.PubSub import pubsub
 from PyQt6.QtCore import Qt
 from src.components.Calendar import QCalendarFilter
 
@@ -31,7 +32,7 @@ class QProfilePanel(QFrame) :
         history_label = QLabel("Order History")
         contentsVLayout = QVBoxLayout()
         contentsVLayout.setContentsMargins(10,10,0,10)
-        self.calendarfilter = QCalendarFilter()
+        self.calendarfilter = QCalendarFilter("orders")
         self.label_filter_hbox = QHBoxLayout()
         self.label_filter_hbox.addWidget(history_label)
         self.label_filter_hbox.addStretch()
@@ -46,7 +47,14 @@ class QProfilePanel(QFrame) :
         self.order_layout.addWidget(QProfile(), alignment=Qt.AlignmentFlag.AlignTop)
         self.order_layout.addLayout(contentsVLayout)
 
-        self.calendarfilter.dateSelected.connect(self.filterOrdersByDate)
+        pubsub.subscribe("orders_applyDateClicked", self.filterOrdersByDate)
 
     def filterOrdersByDate(self, date):
+        print(date)
+        if date["fromDate"] is None : # if none, guarantees that it is clear date
+            date = None
+        elif date["toDate"] is None :
+            date = date["fromDate"]
+        else :
+            date = (date["fromDate"],date["toDate"] )
         self.orderHTable.set_filter(date)

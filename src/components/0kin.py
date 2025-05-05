@@ -31,7 +31,7 @@ from src.components.Buttons import (QDeleteButton,
                                     QPreviousButton,
                                     QBongoBtn)
 from src.components.SpinBox import QCartItemSpinBox
-from src.components.Calendar import QCalendarFilter
+from src.components.Calendar import QCalendarFilter, QCustomNullableDateEdit, QDateOptionsFrame
 from PyQt6.QtCore import QDate, QTimer
 from src.components.LineEdit import QSearchArea, QFormLineEdit
 from src.utils.PubSub import pubsub
@@ -113,11 +113,17 @@ class QWindow(QMainWindow):
         # main_layout.addWidget(self.formlineedit)
 
         bongoBtn = QBongoBtn()
-        main_layout.addWidget(bongoBtn)        
+
+
+
         floater = QLabel("warning")   
         floater.setFixedSize(100,30)
         floater.setWindowFlags(Qt.WindowType.Popup | Qt.WindowType.FramelessWindowHint)
 
+        main_layout.addWidget(bongoBtn)    
+        main_layout.addWidget(QCustomNullableDateEdit())
+        # main_layout.addWidget(QDateOptionsFrame())
+        main_layout.addWidget(QCalendarFilter())
 
         floater.setParent(self.window())
         print(self.window())
