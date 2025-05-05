@@ -82,16 +82,29 @@ class QDateOptionsFrame(QFrame) :
         hbox2.addWidget(clearbtn)
 
         todaybtn = QPushButton("Today")
+
+        lastweekbtn = QPushButton("Last Week")
         weekbtn = QPushButton("This Week")
-        monthbtn = QPushButton("This Month")
+        weekhbox = QHBoxLayout()
+        weekhbox.addWidget(lastweekbtn)
+        weekhbox.addWidget(weekbtn)
+
+        monthhbox = QHBoxLayout()
+        lastmonthbtn = QPushButton("Last Month")
+        monthbtn = QPushButton("This Month")   
+        monthhbox.addWidget(lastmonthbtn) 
+        monthhbox.addWidget(monthbtn)
+
         todaybtn.clicked.connect(self.handleTodayBtn)
+        lastweekbtn.clicked.connect(self.handleLastWeekBtn)
         weekbtn.clicked.connect(self.handleWeekBtn)
+        lastmonthbtn.clicked.connect(self.handleLastMonthBtn)
         monthbtn.clicked.connect(self.handleMonthBtn)
 
         main_layout.addLayout(grid)
         main_layout.addWidget(todaybtn)
-        main_layout.addWidget(weekbtn)
-        main_layout.addWidget(monthbtn)
+        main_layout.addLayout(weekhbox)
+        main_layout.addLayout(monthhbox)
         main_layout.addLayout(hbox2)
 
     def handleClearBtn(self) :
@@ -122,12 +135,40 @@ class QDateOptionsFrame(QFrame) :
         self.nullDateEdit.setDate(start_of_month)
         self.nullDateEdit2.setDate(end_of_month)
 
+    def handleLastWeekBtn(self):
+        today = QDate.currentDate()
+        day_of_week = today.dayOfWeek()  # Monday = 1, Sunday = 7
+
+        start_of_this_week = today.addDays(-day_of_week + 1)
+        start_of_last_week = start_of_this_week.addDays(-7)
+        end_of_last_week = start_of_this_week.addDays(-1)
+
+        self.nullDateEdit.setDate(start_of_last_week)
+        self.nullDateEdit2.setDate(end_of_last_week)
+
+    def handleLastMonthBtn(self):
+        today = QDate.currentDate()
+        this_month_start = QDate(today.year(), today.month(), 1)
+        last_month_end = this_month_start.addDays(-1)
+        last_month_start = QDate(last_month_end.year(), last_month_end.month(), 1)
+
+        self.nullDateEdit.setDate(last_month_start)
+        self.nullDateEdit2.setDate(last_month_end)
+
     def handleApplyBtn(self) :
-        if self.nullDateEdit.getValue() is None : 
+        date = {"fromDate" : self.nullDateEdit.getValue(),
+                "toDate": self.nullDateEdit2.getValue()
+                }
+        if date["fromDate"] is None and date["toDate"] is not None :
             return
-        pubsub.publish(f"{self.pubsub_type}_applyDateClicked", {"fromDate" : self.nullDateEdit.getValue(),
-                                            "toDate": self.nullDateEdit2.getValue()
-                                            })
+        if date["fromDate"] is None : # if none, guarantees that it is clear date
+            date = None
+        elif date["toDate"] is None :
+            date = date["fromDate"]
+        else :
+            date = (date["fromDate"],date["toDate"] )
+
+        pubsub.publish(f"{self.pubsub_type}_applyDateClicked", date)
 
 class QCustomNullableDateEdit(QDateEdit) : 
     def __init__(self) :

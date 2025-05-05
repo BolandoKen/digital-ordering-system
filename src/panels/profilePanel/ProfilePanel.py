@@ -50,11 +50,5 @@ class QProfilePanel(QFrame) :
         pubsub.subscribe("orders_applyDateClicked", self.filterOrdersByDate)
 
     def filterOrdersByDate(self, date):
-        print(date)
-        if date["fromDate"] is None : # if none, guarantees that it is clear date
-            date = None
-        elif date["toDate"] is None :
-            date = date["fromDate"]
-        else :
-            date = (date["fromDate"],date["toDate"] )
+
         self.orderHTable.set_filter(date)
