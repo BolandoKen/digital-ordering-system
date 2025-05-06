@@ -21,6 +21,7 @@ from src.components.ScrollArea import QScrollAreaLayout
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt, QTimer
 from src.database.queries import fetchLatest_orderid, fetchOrderItemsSubtotalList, fetchOrderItemsTotal, fetchOrderDateTime, ProfileQueries
+from src.components.Dialogs import QConfirmDialog
 import threading
 
 
@@ -207,7 +208,8 @@ class QCustomerConfirmOrderPanel(QFrame) :
     
     def handleCheckout_clicked(self) :
         if not self.printer_connected :
-            # warning dialog
+            dialog = QConfirmDialog("Warning", "Printer is not connected.", self, single_button = True)
+            dialog.exec()
             return 
         if not self.cartItemsArr :
             print("cart is empty")
