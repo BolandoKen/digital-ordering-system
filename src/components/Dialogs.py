@@ -356,11 +356,12 @@ class QviewOrderDialog(QStyledDialog) :
 
 
 class QConfirmDialog(QStyledDialog):
-    def __init__(self, title, message, parent=None):
+    def __init__(self, title, message, parent=None, single_button=False):
         super().__init__(parent)
         self.setWindowTitle(title)
         self.setFixedSize(400, 200)
         self.result = False
+        self.single_button = single_button
         font = QFont("Helvetica", 12, QFont.Weight.Bold)
         self.main_layout = QVBoxLayout(self)
         layout = QVBoxLayout()
@@ -380,12 +381,17 @@ class QConfirmDialog(QStyledDialog):
         self.yes_btn.setFont(font)
         self.no_btn.setFont(font)
         self.yes_btn.clicked.connect(self.accept)
-        self.no_btn.clicked.connect(self.reject)
+        
         btn_row.addStretch()
-        btn_row.addWidget(self.no_btn)
-        btn_row.addSpacing(10)
+        if not self.single_button:
+            self.no_btn = QSecondaryButton("Cancel")
+            self.no_btn.setFont(font)
+            self.no_btn.clicked.connect(self.reject)
+            btn_row.addWidget(self.no_btn)
+            btn_row.addSpacing(10)
         btn_row.addWidget(self.yes_btn)
         btn_row.addStretch()
+
         layout.addLayout(btn_row)
         layout.addStretch()
 
