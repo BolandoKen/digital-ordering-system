@@ -24,7 +24,6 @@ class QPrinterButton(QBongoBtn) :
         super().__init__()
         self.printer_connected = False
         pubsub.subscribe("printer_connected", self.setPrinterState)
-        pubsub.subscribe("printer_connected", self.setPrinterState)
         pubsub.subscribe("printerbtn_clicked", self.setPrinterState_connecting)
         self.clicked.connect(lambda : pubsub.publish("printerbtn_clicked"))
         self.setCursor(Qt.CursorShape.PointingHandCursor)

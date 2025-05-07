@@ -242,8 +242,10 @@ class QNullableFloater(QFrame) :
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label.setStyleSheet("border:none; background: transparent;")
         
-        self.dropBtn = QPushButton("v") 
-        self.dropBtn.setStyleSheet("border: none; border-radius: 0px;border-left :1px solid #d1d1d1; border-top-right-radius: 10px; border-bottom-right-radius: 10px;")
+        self.dropBtn = QPushButton() 
+        self.dropBtn.setIcon(QIcon("assets/icons/dropdown_icon.svg"))
+        self.dropBtn.setIconSize(QSize(10,10))
+        self.dropBtn.setStyleSheet("border: none; border-radius: 0px; border-top-right-radius: 10px; border-bottom-right-radius: 10px;")
         self.dropBtn.setFixedSize(20,28)
         self.dropBtn.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
 

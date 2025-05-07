@@ -338,7 +338,8 @@ class QCustomerPrintingPanel(QFrame) :
     def setText_OrderId(self, e = None) :
         self.orderno = str(fetchLatest_orderid())
         self.orderno_label.setText(self.orderno)
-
+        self.msg3_label.hide()
+        self.newOrderBtn.hide() # ??
     
     def startTimer(self, e=None) :
         self.newOrderBtn.setEnabled(True)
@@ -346,7 +347,7 @@ class QCustomerPrintingPanel(QFrame) :
         self.newOrderBtn.show()
         self.mytimer = QTimer()
         self.mytimer.setSingleShot(True)
-        self.mytimer.timeout.connect(lambda: self.timeRecurse) # set up to disconnect
+        self.mytimer.timeout.connect(lambda: self.timeRecurse) # init set up to disconnect in recursion
 
         # should only start after printing ends..
         self.timeRecurse(5)

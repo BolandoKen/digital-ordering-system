@@ -43,13 +43,13 @@ def setPixMapOf(label, imgFileName, folder) : # folder :  temp | icon | food | c
         return obj
     if folder == "temp" :
         destFolder = "temp"
-        label.setFixedSize(150,150)
+        label.setFixedSize(150,150) # preferably remove these setfixsizes please!
         label.setScaledContents(True)
     elif folder == "icon" :
         destFolder = "icons"
     else :
         destFolder = folder + "img" #folder is either 'category' or 'food'
-        label.setFixedSize(125,125)
+        label.setFixedSize(125,125) 
         label.setScaledContents(True)
 
     path = os.path.join(os.path.abspath(f"assets/{destFolder}"), imgFileName) 
