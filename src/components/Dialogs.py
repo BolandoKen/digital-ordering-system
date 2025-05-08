@@ -34,6 +34,7 @@ from src.components.LineEdit import QFormLineEdit, QPinInputBox
 from src.database.Profile import setup_pin
 import traceback
 from PyQt6 import QtWidgets
+from src.utils.Matplotlib import lineGraphCanvas
 
 
 class QDialogShadowFrame(QFrame) :
@@ -383,12 +384,14 @@ class QConfirmDialog(QStyledDialog):
         self.yes_btn.clicked.connect(self.accept)
         
         btn_row.addStretch()
-        if not self.single_button:
-            self.no_btn = QSecondaryButton("Cancel")
-            self.no_btn.setFont(font)
-            self.no_btn.clicked.connect(self.reject)
-            btn_row.addWidget(self.no_btn)
-            btn_row.addSpacing(10)
+        if self.single_button:
+            self.no_btn.hide()
+            self.yes_btn.setText("Ok.")
+            self.yes_btn.setFixedWidth(70)
+
+        self.no_btn.clicked.connect(self.reject)
+        btn_row.addWidget(self.no_btn)
+        btn_row.addSpacing(10)
         btn_row.addWidget(self.yes_btn)
         btn_row.addStretch()
 
@@ -562,3 +565,49 @@ class QChangePfpDialog(QStyledDialog) :
         self.profileIcon.setScaledContents(True)
         self.profileIcon.setFixedSize(150,150)
         self.close()
+
+
+
+class QFoodItemStatsDialog(QStyledDialog) :
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.main_layout = QVBoxLayout(self)
+        self.contents_layout = QVBoxLayout()
+        self.shadw = QDialogShadowFrame(self.contents_layout)
+        self.main_layout.addWidget(self.shadw)
+
+        closebtn = QCloseButton()
+        closebtn.clicked.connect(self.close)
+        
+
+        self.imglabel = QLabel()
+        self.foodnamelabel = QLabel()
+        self.categorynamelabel = QLabel()
+        self.countLabel = QLabel()
+        
+        self.contents_layout.setContentsMargins(50, 10,10,10)
+        
+        self.canvas = lineGraphCanvas()
+
+        details_vbox = QVBoxLayout()
+        details_vbox.addSpacing(40)
+        details_vbox.addWidget(self.imglabel, alignment=Qt.AlignmentFlag.AlignCenter)
+        details_vbox.addWidget(self.foodnamelabel, alignment=Qt.AlignmentFlag.AlignCenter)
+        details_vbox.addWidget(self.categorynamelabel, alignment=Qt.AlignmentFlag.AlignLeft)
+        details_vbox.addWidget(self.countLabel, alignment=Qt.AlignmentFlag.AlignLeft)
+        details_vbox.addStretch()
+
+        contentshbox = QHBoxLayout()
+        contentshbox.addLayout(details_vbox)
+        contentshbox.addWidget(self.canvas)
+
+        self.contents_layout.addWidget(closebtn, alignment=Qt.AlignmentFlag.AlignRight)
+        # self.contents_layout.addWidget(self.canvas)
+        self.contents_layout.addLayout(contentshbox)
+    
+    def setContents(self, fooditem_id, foodname, cat, imgfile, times, DateRange = None) :
+        setPixMapOf(self.imglabel, imgfile, "food")
+        self.foodnamelabel.setText(foodname)
+        self.categorynamelabel.setText(cat)
+        self.countLabel.setText(str(times))
+        self.canvas.setContents(fooditem_id, DateRange)

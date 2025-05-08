@@ -71,7 +71,7 @@ def checkFoodHasBeenOrdered(foodid) :
 
 def fetchStatistics(order='DESC', category_id=None, search_term=None, date = None ):
     query = """
-        SELECT f.name AS Food, c.name AS Category, IFNULL(SUM(o.quantity),0) AS Times_Ordered
+        SELECT f.fooditem_id AS id, f.name AS Food, c.name AS Category, f.imgfile AS imgfile, IFNULL(SUM(o.quantity),0) AS Times_Ordered
         FROM FoodItems f
         LEFT JOIN Categories c ON f.category_id = c.category_id
     """
@@ -143,20 +143,26 @@ def fetchStatisticsOnDate(date_from: QDate, date_to : QDate) :
 # fetchStatisticsOnDate(QDate(2025, 5, 1), QDate(2025, 5, 6))
 
 def fetchStatsOfFoodItem(foodid, DateRange) :
-    DateRange = (QDate(2025, 5, 1), QDate(2025, 5, 6))
-    foodid = 1
-    mytuple = (foodid, DateRange[0].toString("yyyy-MM-dd"), DateRange[1].toString("yyyy-MM-dd"))
+
+    if DateRange is None :
+        params = [foodid, "0001-01-01", "9999-12-30"]
+    else :
+        if isinstance(DateRange, QDate) :
+           print('1 date range is picked')
+           return
+        elif isinstance(DateRange, tuple) :
+            params = [foodid, DateRange[0].toString("yyyy-MM-dd") , DateRange[1].toString("yyyy-MM-dd") ]
+
     cursor.execute("""SELECT DATE(ord.order_datetime) order_date, 
                    SUM(ord_item.quantity) total_quantity
                     FROM OrderItems ord_item
                    LEFT JOIN Orders ord ON ord_item.order_id = ord.order_id
                    WHERE ord_item.fooditem_id = %s AND ord.order_datetime BETWEEN %s AND %s
                    GROUP BY DATE(ord.order_datetime)
-                   ORDER BY order_date;""", mytuple)
+                   ORDER BY order_date;""", tuple(params))
     results = cursor.fetchall()
-    print(results)
+    return results
 
-fetchStatsOfFoodItem(1,1)
 
 def fetchOrderHistory(date_filter=None):
 
