@@ -121,7 +121,7 @@ def fetchStatistics(order='DESC', category_id=None, search_term=None, date = Non
     results = cursor.fetchall()
     return results
 
-def fetchStatisticsOnDate(date_from: QDate, date_to : QDate) :
+def fetchStatisticsOnDate(date_from: QDate, date_to : QDate) : # not used
     date_from = date_from.toString("yyyy-MM-dd")
     date_to = date_to.toString("yyyy-MM-dd")
 
@@ -146,12 +146,22 @@ def fetchStatsOfFoodItem(foodid, DateRange) :
 
     if DateRange is None :
         params = [foodid, "0001-01-01", "9999-12-30"]
-    else :
-        if isinstance(DateRange, QDate) :
-           print('1 date range is picked')
-           return
-        elif isinstance(DateRange, tuple) :
-            params = [foodid, DateRange[0].toString("yyyy-MM-dd") , DateRange[1].toString("yyyy-MM-dd") ]
+    elif isinstance(DateRange, QDate) :
+        print('1 date range is picked')
+        params = [ DateRange.toString("yyyy-MM-dd"), foodid]
+        cursor.execute("""SELECT ord.order_hour, SUM(ord_item.quantity) total_quantity
+                        FROM OrderItems ord_item
+                        JOIN (SELECT order_id, HOUR(order_datetime) order_hour FROM Orders
+                        WHERE DATE(order_datetime) = %s) ord
+                        ON ord_item.order_id = ord.order_id
+                        WHERE ord_item.fooditem_id = %s
+                        GROUP BY ord.order_hour
+                        ORDER BY ord.order_hour;""", tuple(params))
+        results = cursor.fetchall()
+        print(results)
+        return results
+    elif isinstance(DateRange, tuple) :
+        params = [foodid, DateRange[0].toString("yyyy-MM-dd") , DateRange[1].toString("yyyy-MM-dd") ]
 
     cursor.execute("""SELECT DATE(ord.order_datetime) order_date, 
                    SUM(ord_item.quantity) total_quantity
