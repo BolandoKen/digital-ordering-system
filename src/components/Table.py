@@ -117,11 +117,13 @@ class QStatsTable(QStyledTable) :
     def init_list(self) :
         self.stats_data = fetchStatistics('DESC' if self.orderBy_mostOrdered else 'ASC', search_term=self.search_term)
 
+    def filterbyDate(self) :
+        pass
 
-    def updateStatsTable(self, category_id=None, mostordered=True, search_term=None): 
+    def updateStatsTable(self, category_id=None, mostordered=True, search_term=None, date = None): 
         self.search_term = search_term 
         order = "DESC" if mostordered else "ASC"
-        self.stats_data = fetchStatistics(order, category_id, search_term)
+        self.stats_data = fetchStatistics(order, category_id, search_term, date)
         self.pageNav.updateNav(self.stats_data, self.rows)
         self.renderPage()
 

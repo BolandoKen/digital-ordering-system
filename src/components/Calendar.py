@@ -46,7 +46,11 @@ class QCalendarFilter(QPopupButton) :
         self.setIcon(self.calendar_icon)
         self.setIconSize(QSize(24, 24))
         
-        self.popup_layout.addWidget(QDateOptionsFrame(pubsub_type))
+        self.dateoptionsframe = QDateOptionsFrame(pubsub_type)
+        self.popup_layout.addWidget(self.dateoptionsframe)
+    
+    def getDate(self) :
+        return self.dateoptionsframe.getDate()
 
 class QDateOptionsFrame(QFrame) :
     def __init__(self, pubsub_type = None) :
@@ -156,6 +160,10 @@ class QDateOptionsFrame(QFrame) :
         self.nullDateEdit2.setDate(last_month_end)
 
     def handleApplyBtn(self) :
+        date = self.getDate()
+        pubsub.publish(f"{self.pubsub_type}_applyDateClicked", date)
+    
+    def getDate(self) :
         date = {"fromDate" : self.nullDateEdit.getValue(),
                 "toDate": self.nullDateEdit2.getValue()
                 }
@@ -167,8 +175,7 @@ class QDateOptionsFrame(QFrame) :
             date = date["fromDate"]
         else :
             date = (date["fromDate"],date["toDate"] )
-
-        pubsub.publish(f"{self.pubsub_type}_applyDateClicked", date)
+        return date
 
 class QCustomNullableDateEdit(QDateEdit) : 
     def __init__(self) :

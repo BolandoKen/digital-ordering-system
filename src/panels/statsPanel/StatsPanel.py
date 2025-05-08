@@ -21,6 +21,8 @@ from src.components.Headers import QOtherPanelHeader
 from src.components.Table import QStatsTable
 from src.components.ComboBox import QCatComboBox, QFilterButton
 from src.components.LineEdit import QSearchArea
+from src.components.Calendar import QCalendarFilter
+from src.utils.PubSub import pubsub
 
 class QStatsPanel(QFrame) :
     def __init__(self):
@@ -40,13 +42,20 @@ class QStatsPanel(QFrame) :
         queryBarHLayout = QHBoxLayout()
         self.sort_btn = QPushButton("Show Least Ordered")
         self.sort_btn.clicked.connect(self.changeorder)
-        queryBarHLayout.addWidget(self.sort_btn)
-        queryBarHLayout.addStretch()
+
 
         self.catFilter = QFilterButton()
         self.catFilter.catComboBox.currentIndexChanged.connect(self.update_table)
 
+        self.dateFilter = QCalendarFilter("stats")
+
+        queryBarHLayout.addWidget(self.sort_btn)
+        queryBarHLayout.addStretch()
+        queryBarHLayout.addWidget(self.dateFilter)
         queryBarHLayout.addWidget(self.catFilter)
+        
+
+
         contentsVLayout = QVBoxLayout()
         contentsVLayout.setContentsMargins(10,10,0,10)
         contentsVLayout.setSpacing(5)
@@ -57,7 +66,13 @@ class QStatsPanel(QFrame) :
         contentsVLayout.addWidget(self.table)
         contentsVLayout.addWidget(self.table.pageNav, alignment=Qt.AlignmentFlag.AlignCenter)
         self.stats_layout.addLayout(contentsVLayout)
+        pubsub.subscribe("stats_applyDateClicked", self.apply_dateFilter)
+        self.search_term = None
         # self.update_table()
+
+    def apply_dateFilter(self, e = None) : 
+        self.update_table()
+
     
     def changeorder(self):
         self.mostordered = not self.mostordered
@@ -65,8 +80,8 @@ class QStatsPanel(QFrame) :
             self.sort_btn.setText("Show Least Ordered")
         else:
             self.sort_btn.setText("Show Most Ordered")
-        search_term = self.search_area.searchbar.text().strip()
-        self.update_table(search_term)
+        self.search_term = self.search_area.searchbar.text().strip()
+        self.update_table(self.search_term)
 
     def update_table(self, search_term = None):
         category_id = self.catFilter.catComboBox.itemData(self.catFilter.catComboBox.currentIndex())
@@ -74,7 +89,6 @@ class QStatsPanel(QFrame) :
             category_id = None
 
         search_term = self.search_area.searchbar.text().strip()
-        search_term = search_term if search_term else None
-
-        self.table.updateStatsTable(category_id, self.mostordered, search_term)
+        self.search_term = None if search_term == "" or search_term is None else search_term
+        self.table.updateStatsTable(category_id, self.mostordered, self.search_term, self.dateFilter.getDate())
     
