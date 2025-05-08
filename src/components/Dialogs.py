@@ -578,23 +578,32 @@ class QFoodItemStatsDialog(QStyledDialog) :
 
         closebtn = QCloseButton()
         closebtn.clicked.connect(self.close)
-        
+        self.setStyleSheet("QLabel{font-family: Helvetica; font: 15px;}")
 
         self.imglabel = QLabel()
         self.foodnamelabel = QLabel()
         self.categorynamelabel = QLabel()
+        self.categorynamelabel.setFixedWidth(130)
+        self.categorynamelabel.setStyleSheet("border-bottom: 1px solid black; ")
+
         self.countLabel = QLabel()
+        self.peakLabel = QLabel()
+        self.datetitleLabel = QLabel()
+
         
         self.contents_layout.setContentsMargins(50, 10,10,10)
         
         self.canvas = lineGraphCanvas()
 
         details_vbox = QVBoxLayout()
-        details_vbox.addSpacing(40)
-        details_vbox.addWidget(self.imglabel, alignment=Qt.AlignmentFlag.AlignCenter)
-        details_vbox.addWidget(self.foodnamelabel, alignment=Qt.AlignmentFlag.AlignCenter)
+        details_vbox.addSpacing(60)
+        details_vbox.addWidget(self.imglabel, alignment=Qt.AlignmentFlag.AlignLeft)
+        details_vbox.addWidget(self.foodnamelabel, alignment=Qt.AlignmentFlag.AlignLeft)
         details_vbox.addWidget(self.categorynamelabel, alignment=Qt.AlignmentFlag.AlignLeft)
+        details_vbox.addWidget(self.datetitleLabel, alignment=Qt.AlignmentFlag.AlignLeft)
         details_vbox.addWidget(self.countLabel, alignment=Qt.AlignmentFlag.AlignLeft)
+        details_vbox.addWidget(self.peakLabel, alignment=Qt.AlignmentFlag.AlignLeft)
+
         details_vbox.addStretch()
 
         contentshbox = QHBoxLayout()
@@ -609,5 +618,8 @@ class QFoodItemStatsDialog(QStyledDialog) :
         setPixMapOf(self.imglabel, imgfile, "food")
         self.foodnamelabel.setText(foodname)
         self.categorynamelabel.setText(cat)
-        self.countLabel.setText(str(times))
+        self.countLabel.setText(f"Times Ordered: {times}")
         self.canvas.setContents(fooditem_id, DateRange)
+        self.peakLabel.setText(self.canvas.peak)
+        self.datetitleLabel.setText(self.canvas.mytitle)
+

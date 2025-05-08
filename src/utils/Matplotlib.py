@@ -14,13 +14,40 @@ class lineGraphCanvas(FigureCanvasQTAgg) :
     def __init__(self) :
         self.fig = Figure()
         super().__init__(self.fig)
+        self.typeOf = None
+        self.peak = None
 
     def setContents(self, fooditem_id, DateRange) :
         # self.DateRange = (QDate(2025, 4, 1), QDate(2025, 5, 6))
+        self.decidePlotType(fooditem_id, DateRange)
+        self.setAnnotates()
+    
+    def setAnnotates(self) :
+        if self.typeOf == "specific_date" :
+            peak = max(self.foodstats, key= lambda x: x[1])
+            hourdatetime = datetime.strptime(str(peak[0]), '%H')# peak 0 would be int 
+            hourdatetime_add = hourdatetime + timedelta(hours=1)
+            hour = hourdatetime.strftime('%I %p').lstrip('0')
+            hour2 = hourdatetime_add.strftime('%I %p').lstrip('0')
+            peakhour_str = f'Peak ({hour} – {hour2}) : {peak[1]} orders'
+            self.peak = peakhour_str
+           
+        elif self.typeOf == "date_range" :
+            peak = max(self.foodstats, key= lambda x: x[1])
+            monthfm = peak[0].strftime('%b')
+            dayfm = peak[0].strftime('%d').lstrip('0')
+            peakdate_str = f'Peak ({monthfm} {dayfm}) : {peak[1]} orders'
+            self.peak = peakdate_str
+
+        else :
+            self.peak = ''
+        print(self.peak)
+
+    def decidePlotType(self, fooditem_id, DateRange) :
         self.DateRange = DateRange
         self.fooditem_id = fooditem_id
-        foodstats = fetchStatsOfFoodItem(self.fooditem_id, self.DateRange)
-        if len(foodstats) == 0 :
+        self.foodstats = fetchStatsOfFoodItem(self.fooditem_id, self.DateRange)
+        if len(self.foodstats) == 0 :
             self.fig.clear()
             ax = self.fig.add_subplot()
 
@@ -30,25 +57,29 @@ class lineGraphCanvas(FigureCanvasQTAgg) :
             ax.set_title('No orders..')
 
             self.draw()
+            self.typeOf = None
+            self.mytitle = 'No dates to show..'
             return
-        if len(foodstats) == 1 and isinstance(foodstats[0][0], date) : # if only has one day, defaults to display on that single day
-            start = foodstats[0][0]
+        if len(self.foodstats) == 1 and isinstance(self.foodstats[0][0], date) : # if only has one day, defaults to display on that single day
+            start = self.foodstats[0][0]
             self.DateRange = QDate(start.year, start.month, start.day)
-            foodstats = fetchStatsOfFoodItem(self.fooditem_id, self.DateRange)
+            self.foodstats = fetchStatsOfFoodItem(self.fooditem_id, self.DateRange)
+            self.typeOf = "specific_date"
         if isinstance(self.DateRange, QDate) : 
-            self.plotSpecificDate(self.DateRange, foodstats)
+            self.plotSpecificDate(self.DateRange, self.foodstats)
+            self.typeOf = "specific_date"
             return
-        
         elif self.DateRange is None : # defaults to first and recent ordered date 
-            start = foodstats[0][0]
+            start = self.foodstats[0][0]
             start = QDate(start.year, start.month, start.day)
-            end = foodstats[len(foodstats) - 1][0]
+            end = self.foodstats[len(self.foodstats) - 1][0]
             end = QDate(end.year, end.month, end.day)
         else : # instance of Tuple : specified daterange
             start = self.DateRange[0]
             end = self.DateRange[1]
-        
-        self.plotDateRange(start, end, foodstats)
+
+        self.typeOf = "date_range"
+        self.plotDateRange(start, end, self.foodstats)
 
     def plotSpecificDate(self, mydate, foodstats) :
         mydate_converted = date(mydate.year(), mydate.month(), mydate.day()) if isinstance(mydate, QDate) else mydate
@@ -91,10 +122,10 @@ class lineGraphCanvas(FigureCanvasQTAgg) :
         ax.tick_params(axis='x', which='major', labelsize=7)
         ax.set_xlabel('Hours') 
         
-        smonth, sday, syear = self.parsetoString(mydate_converted)
+        smonth, sday, syear, _ = self.parsetoString(mydate_converted)
 
-
-        ax.set_title(f'{smonth} {sday} {syear}') # change this
+        self.mytitle = f'{smonth} {sday}'
+        ax.set_title(f'{smonth} {sday} {syear}') 
 
         self.draw()
         pass
@@ -139,12 +170,14 @@ class lineGraphCanvas(FigureCanvasQTAgg) :
         ax.tick_params(axis='x', which='major', labelsize=7)
         ax.set_xlabel('Day')
 
-        smonth, sday, syear = self.parsetoString(start)
-        emonth, eday, eyear = self.parsetoString(end)
+        smonth, sday, syear, asmonth = self.parsetoString(start)
+        emonth, eday, eyear, aemonth = self.parsetoString(end)
         if syear == eyear :
-            ax.set_title(f'{smonth} {sday} to {emonth} {eday} of {eyear}') 
+            ax.set_title(f'{smonth} {sday} – {emonth} {eday}, {eyear}') 
+            self.mytitle = f'{asmonth} {sday} – {aemonth} {eday}, {eyear}'
         else :
-            ax.set_title(f'{smonth} {sday}, {syear} to {emonth} {eday}, {eyear}')
+            ax.set_title(f'{smonth} {sday}, {syear} – {emonth} {eday}, {eyear}')
+            self.mytitle = f'{asmonth} {sday}, {syear} – {aemonth} {eday}, {eyear}'
 
         self.draw()
         
@@ -153,5 +186,6 @@ class lineGraphCanvas(FigureCanvasQTAgg) :
         smonth = mydate_converted.strftime('%B')
         sday = mydate_converted.strftime("%d").lstrip('0')
         syear = mydate_converted.strftime('%Y')
-        return (smonth, sday, syear)
+        abbrevmonth = mydate_converted.strftime('%b')
+        return (smonth, sday, syear, abbrevmonth)
         
