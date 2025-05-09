@@ -20,7 +20,7 @@ from src.utils.FormValid import formValidated
 from src.database.Categories import addCategory, editCategory
 from src.database.FoodItems import addFoodItem, editFoodItem
 from src.utils.PixMap import checkImgSize, saveImageToLocalTemp, setPixMapOf, moveImageToAssets
-from src.components.Buttons import QImageButton, QCloseButton
+from src.components.Buttons import  QCloseButton
 from src.components.ImageCard import QSelectImageCard
 from src.components.ComboBox import QCatComboBox
 from PyQt6.QtGui import QPixmap
@@ -199,7 +199,7 @@ class QeditDialog(QaddDialog) :
             self.init_editCategory()
 
         self.submitBtn.setText(f"Save")
-        self.selectImgCard.getLabel().setFixedSize(150,150)
+        self.selectImgCard.getLabel().setFixedSize(200,200)
 
 
     def init_editCategory(self) :
@@ -217,7 +217,7 @@ class QeditDialog(QaddDialog) :
         self.foodnameLineEdit.setText(self.foodname)
         self.foodpriceLineEdit.setText(str(self.price))
         self.selectImgCard.clearImg()
-        self.selectImgCard.getLabel().setFixedSize(150,150)
+        self.selectImgCard.getLabel().setFixedSize(200,200)
 
         if self.imgfile is not None:
             self.tempImagePath = setPixMapOf(self.selectImgCard.getLabel(), self.imgfile, "food")["path"]
@@ -582,15 +582,15 @@ class QFoodItemStatsDialog(QStyledDialog) :
 
         self.imglabel = QLabel()
         self.foodnamelabel = QLabel()
+        self.foodnamelabel.setStyleSheet("font-family: Helvetica; font: 30px; font-weight: bold;")
         self.categorynamelabel = QLabel()
         self.categorynamelabel.setFixedWidth(130)
-        self.categorynamelabel.setStyleSheet("border-bottom: 1px solid black; ")
+        self.categorynamelabel.setStyleSheet("font-family: Helvetica; font: 15px; font-weight: bold;border-bottom: 1px solid black; ")
 
         self.countLabel = QLabel()
         self.peakLabel = QLabel()
         self.datetitleLabel = QLabel()
 
-        
         self.contents_layout.setContentsMargins(50, 10,10,10)
         
         self.canvas = lineGraphCanvas()
@@ -622,4 +622,3 @@ class QFoodItemStatsDialog(QStyledDialog) :
         self.canvas.setContents(fooditem_id, DateRange)
         self.peakLabel.setText(self.canvas.peak)
         self.datetitleLabel.setText(self.canvas.mytitle)
-

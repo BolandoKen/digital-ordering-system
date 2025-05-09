@@ -1,6 +1,6 @@
 import os
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QSize
 from PIL import Image
 import shutil
 
@@ -10,12 +10,22 @@ class PixmapRepo() :
     
     def get_pixmap(self, img_path) :
         if img_path not in self.repo :
-            self.repo[img_path] = QPixmap(img_path)
+            temp_pixmap = QPixmap(img_path)
+            self.repo[img_path] = temp_pixmap.scaled(
+                                    QSize(200,150), 
+                                    Qt.AspectRatioMode.KeepAspectRatio, 
+                                    Qt.TransformationMode.SmoothTransformation
+                                    )
             return self.repo[img_path]
         return self.repo[img_path]
     
     def update_imgPath_key(self, img_path) :
-        self.repo[img_path] = QPixmap(img_path)
+        temp_pixmap = QPixmap(img_path)
+        self.repo[img_path] = temp_pixmap.scaled(
+                                    QSize(200,150), 
+                                    Qt.AspectRatioMode.KeepAspectRatio, 
+                                    Qt.TransformationMode.SmoothTransformation
+                                    )
 
     
     
@@ -34,8 +44,8 @@ def setPixMapOf(label, imgFileName, folder) : # folder :  temp | icon | food | c
 
         pixmap = pixmapRepo.get_pixmap(path)
         label.setPixmap(pixmap)
-        label.setFixedSize(125,125)
-        label.setScaledContents(True)
+        # label.setFixedSize(125,125)
+        # label.setScaledContents(True)
         obj = {
             "path" : None,
             "pixmap" : pixmap, # unnecessary after memoization, refactor later
@@ -43,14 +53,15 @@ def setPixMapOf(label, imgFileName, folder) : # folder :  temp | icon | food | c
         return obj
     if folder == "temp" :
         destFolder = "temp"
-        label.setFixedSize(150,150) # preferably remove these setfixsizes please!
-        label.setScaledContents(True)
+        # label.setFixedSize(150,150) # preferably remove these setfixsizes please!
+        # label.setScaledContents(True)
     elif folder == "icon" :
         destFolder = "icons"
     else :
         destFolder = folder + "img" #folder is either 'category' or 'food'
-        label.setFixedSize(125,125) 
-        label.setScaledContents(True)
+        # label.setMaximumHeight(125)
+        # label.setFixedSize(125,125) 
+        # label.setScaledContents(True)
 
     path = os.path.join(os.path.abspath(f"assets/{destFolder}"), imgFileName) 
     if folder == "temp" :

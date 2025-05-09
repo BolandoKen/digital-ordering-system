@@ -12,19 +12,32 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QFileDialog,
     QGraphicsOpacityEffect,
+    QGraphicsDropShadowEffect
 )
-from src.components.Buttons import QImageButton, QCloseButton
-from PyQt6.QtGui import QPixmap, QIcon
+from src.components.Buttons import QCloseButton
+from PyQt6.QtGui import QPixmap, QIcon, QColor
 from src.utils.PixMap import setPixMapOf
 from PyQt6.QtCore import Qt, QPoint, QTimer, QSize
 from src.utils.PubSub import pubsub
 from src.database.queries import ProfileQueries
 
+class QImageButton(QLabel) :
+    def __init__(self, text) :
+        super().__init__(text)
+        self.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+    def connectTo(self, callback) :
+        self.callback = callback
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.callback()
+
 class QSelectImageCard(QFrame) :
     def __init__(self, handleClearBtnCallback):
         super().__init__()
         self.setObjectName("imageCard")
-        self.setStyleSheet("#imageCard{border: 1px solid black; border-radius: 10px; padding-bottom: 25px}")
+        self.setStyleSheet("#imageCard{border: 2px solid #D9D9D9; border-radius: 10px; padding-bottom: 25px}")
         self.callback = handleClearBtnCallback
         self.imageCard_layout = QVBoxLayout(self)
         self.clearButton = QCloseButton()
@@ -41,9 +54,16 @@ class QSelectImageCard(QFrame) :
         self.imageCard_layout.addWidget(self.clearButton, alignment=Qt.AlignmentFlag.AlignRight)
         self.imageCard_layout.addWidget(self.imageButton)
         setPixMapOf(self.imageButton, "addCircle.svg", "icon")
-        self.imageButton.setFixedSize(150,150)
-        self.imageButton.setScaledContents(True)
+        # self.imageButton.setFixedSize(150,150)
+        # self.imageButton.setScaledContents(True)
+        shadow = QGraphicsDropShadowEffect(self)
+        shadow.setBlurRadius(5)
+        shadow.setXOffset(1)
+        shadow.setYOffset(1)
+        shadow.setColor(QColor(128,128,128, 100))
+        self.setGraphicsEffect(shadow)
 
+        self.imageButton.setFixedSize(200,200)
     def connectTo(self, callback) :
         self.imageButton.connectTo(callback)
     
@@ -62,10 +82,11 @@ class QImageLabel(QLabel) :
         setPixMapOf(self, imgfile, "icon")
 
 
-class QCatLabelImageLayout(QHBoxLayout) :
+class QCatLabelImageFrame(QFrame) :
     def __init__(self, name, imgfile, panelName) :
         super().__init__()
-        self.setContentsMargins(0,0,0,0)
+        self.hbox = QHBoxLayout(self)
+        self.hbox.setContentsMargins(0,0,0,0)
         self.name = name
         self.imgfile = imgfile
         self.panelName = panelName
@@ -83,10 +104,10 @@ class QCatLabelImageLayout(QHBoxLayout) :
         self.imgWidget = QLabel()
         setPixMapOf(self.imgWidget, self.imgfile, "category")
 
-        self.addWidget(self.nameLabel)
-        self.addStretch()
-        self.addWidget(self.imgWidget)    
-        self.addStretch()
+        self.hbox.addWidget(self.nameLabel)
+        self.hbox.addStretch()
+        self.hbox.addWidget(self.imgWidget)    
+        self.hbox.addStretch()
 
 
 class QProfileImage(QLabel) :
@@ -103,7 +124,7 @@ class QProfileImage(QLabel) :
         if typeOf == "edit" :
             self.editMask = QEditMask(self)
             self.editMask.setFixedSize(width,height)
-            self.editMask.editLabelIcon.clicked.connect(self.cb) # dirty workaround for handling clicked on the icon
+            self.editMask.editLabelIcon.clicked.connect(self.cb) # dirty workaround for handling clicked on the icon; should have done transparent
             self.editMask.move(0,0)
             self.editMask.hide()
     
@@ -125,10 +146,10 @@ class QProfileImage(QLabel) :
     def init_profileImg(self, e= None) :
         self.imgfile = ProfileQueries.fetchProfileImg()
         imgfilepath = setPixMapOf(self, self.imgfile, "profile")["path"]
-        if self.width is not None and self.height is not None :
+        if self.width is not None and self.height is not None : # set fixed size for qprofileimage with set width/height parameters
             self.setFixedSize(self.width, self.height)
             self.setScaledContents(True)
-        return imgfilepath
+        return imgfilepath # whats this for? idk
     
     def clearImg(self) :
         setPixMapOf(self, None, "profile")

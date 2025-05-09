@@ -74,6 +74,7 @@ class QStatsTable(QStyledTable) :
     def __init__(self) :
         super().__init__() 
         self.search_term = None
+        self.mydate = None
         self.orderBy_mostOrdered = True
         self.setColumnCount(5)
         self.setHorizontalHeaderLabels(["#","Food", "Category", "Times Ordered", ""])
@@ -97,7 +98,6 @@ class QStatsTable(QStyledTable) :
         self.pageNav = QPageNav(self.curr_lastPage, self.renderPage )
 
         self.foodstatDialog = QFoodItemStatsDialog(self.window())
-        self.mydate = None
         self.renderPage()
 
     def setOrderBy(self, orderby) :
@@ -130,7 +130,7 @@ class QStatsTable(QStyledTable) :
         
 
     def init_list(self) :
-        self.stats_data = fetchStatistics('DESC' if self.orderBy_mostOrdered else 'ASC', search_term=self.search_term)
+        self.stats_data = fetchStatistics('DESC' if self.orderBy_mostOrdered else 'ASC', search_term=self.search_term, date=self.mydate)
 
     def filterbyDate(self) :
         pass
@@ -140,13 +140,13 @@ class QStatsTable(QStyledTable) :
         self.mydate = date # mydate is either : None, QDate, or Tuple of QDates
         self.search_term = search_term 
         order = "DESC" if mostordered else "ASC"
-        self.stats_data = fetchStatistics(order, category_id, search_term, date)
+        self.stats_data = fetchStatistics(order, category_id, search_term, self.mydate)
         self.pageNav.updateNav(self.stats_data, self.rows)
         self.renderPage()
 
     def statistics_table(self, e = None): # redundant with function above?
         self.clearTable()
-        self.stats_data = fetchStatistics('DESC' if self.orderBy_mostOrdered else 'ASC', search_term=self.search_term)
+        self.stats_data = fetchStatistics('DESC' if self.orderBy_mostOrdered else 'ASC', search_term=self.search_term, date=self.mydate)
         self.pageNav.updateNav(self.stats_data, self.rows)
         self.renderPage()
 
