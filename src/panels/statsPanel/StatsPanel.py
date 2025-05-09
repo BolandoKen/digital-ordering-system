@@ -21,7 +21,7 @@ from src.components.Headers import QOtherPanelHeader
 from src.components.Table import QStatsTable
 from src.components.ComboBox import QCatComboBox, QFilterButton
 from src.components.LineEdit import QSearchArea
-from src.components.Calendar import QCalendarFilter
+from src.components.Calendar import QCalendarFilterFrame
 from src.utils.PubSub import pubsub
 
 class QStatsPanel(QFrame) :
@@ -47,13 +47,16 @@ class QStatsPanel(QFrame) :
         self.catFilter = QFilterButton()
         self.catFilter.catComboBox.currentIndexChanged.connect(self.update_table)
 
-        self.dateFilter = QCalendarFilter("stats")
+        self.dateFilter = QCalendarFilterFrame("stats") # pass in {stats}_applyDateClicked
 
+        queryBarHLayout.setAlignment(Qt.AlignmentFlag.AlignBottom)
         queryBarHLayout.addWidget(self.sort_btn)
         queryBarHLayout.addStretch()
         queryBarHLayout.addWidget(self.dateFilter)
+        queryBarHLayout.addSpacing(10)
         queryBarHLayout.addWidget(self.catFilter)
-        
+        queryBarHLayout.addSpacing(20)
+
 
 
         contentsVLayout = QVBoxLayout()

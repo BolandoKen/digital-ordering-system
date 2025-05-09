@@ -27,6 +27,7 @@ from src.utils.PixMap import setPixMapOf
 from src.components.ComboBox import QPopupButton, QStyledComboBox
 from PyQt6.QtCore import QDate
 from src.utils.PubSub import pubsub
+from datetime import date, timedelta, datetime, time
 
 class QMyDateEdit(QDateEdit) :
     def __init__(self) :
@@ -34,6 +35,42 @@ class QMyDateEdit(QDateEdit) :
         self.setFixedWidth(100)
         self.setCalendarPopup(True)
 
+class QCalendarFilterFrame(QFrame) :
+    def __init__(self, pubsub_type = None) :
+        super().__init__()
+        main_layout = QHBoxLayout(self)
+        self.dateLabel = QLabel("All Time")
+        self.dateLabel.setStyleSheet("font-family: Helvetica; font: 15px;")
+        self.calendarFilterBtn = QCalendarFilter(pubsub_type)
+        self.calendarFilterBtn.dateoptionsframe.applybtn.clicked.connect(self.setDateLabel)
+        main_layout.addWidget(self.dateLabel)
+        main_layout.addWidget(self.calendarFilterBtn)
+    
+    def setDateLabel(self) :
+        mydate = self.calendarFilterBtn.dateoptionsframe.getDate()
+        if isinstance(mydate, QDate) :
+            monthfm, dayfm, yearfm = self.parseDate(mydate)
+            self.dateLabel.setText(f"{monthfm} {dayfm}, {yearfm}")
+        elif isinstance(mydate, tuple) :
+            start_monthfm, start_dayfm, start_yearfm = self.parseDate(mydate[0])
+            end_monthfm, end_dayfm, end_yearfm = self.parseDate(mydate[1])
+            start_datestr = f"{start_monthfm} {start_dayfm}, {start_yearfm}" if start_yearfm != end_yearfm else f"{start_monthfm} {start_dayfm}" 
+            end_datestr = f"{end_monthfm} {end_dayfm}, {end_yearfm}"
+            final_datestr = f"{start_datestr} – {end_datestr}"
+            self.dateLabel.setText(final_datestr)
+        elif mydate is None :
+            self.dateLabel.setText("All Time")
+
+    def parseDate(self, mydate) :
+        mydate_converted = date(mydate.year(), mydate.month(), mydate.day()) if isinstance(mydate, QDate) else mydate
+        monthfm = mydate_converted.strftime('%b')
+        dayfm = mydate_converted.strftime("%d").lstrip('0')
+        yearfm = mydate_converted.strftime('%Y')
+        return (monthfm, dayfm, yearfm)
+
+    def getDate(self) :
+        return self.calendarFilterBtn.getDate()
+    
 class QCalendarFilter(QPopupButton) :
     def __init__(self, pubsub_type = None) :
         super().__init__()
@@ -46,14 +83,14 @@ class QCalendarFilter(QPopupButton) :
         self.setIcon(self.calendar_icon)
         self.setIconSize(QSize(24, 24))
         
-        self.dateoptionsframe = QDateOptionsFrame(pubsub_type)
+        self.dateoptionsframe = QDateOptionsFrame(pubsub_type, self)
         self.popup_layout.addWidget(self.dateoptionsframe)
     
     def getDate(self) :
         return self.dateoptionsframe.getDate()
 
 class QDateOptionsFrame(QFrame) :
-    def __init__(self, pubsub_type = None) :
+    def __init__(self, pubsub_type = None, parent_filterbtn = None) :
         super().__init__()
         self.setStyleSheet("background-color: white; color: black;")
         self.pubsub_type = pubsub_type
@@ -76,13 +113,13 @@ class QDateOptionsFrame(QFrame) :
         grid.addWidget(self.nullDateEdit2, 1, 2)
 
 
-        applybtn = QPushButton("Apply")
-        applybtn.clicked.connect(self.handleApplyBtn)
+        self.applybtn = QPushButton("Apply")
+        self.applybtn.clicked.connect(self.handleApplyBtn)
         clearbtn = QPushButton("Clear")
         clearbtn.clicked.connect(self.handleClearBtn)
 
         hbox2 = QHBoxLayout()
-        hbox2.addWidget(applybtn)
+        hbox2.addWidget(self.applybtn)
         hbox2.addWidget(clearbtn)
 
         todaybtn = QPushButton("Today")
