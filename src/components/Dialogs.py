@@ -360,10 +360,10 @@ class QConfirmDialog(QStyledDialog):
     def __init__(self, title, message, parent=None, single_button=False):
         super().__init__(parent)
         self.setWindowTitle(title)
-        self.setFixedSize(400, 200)
+        self.setFixedSize(800, 400)
         self.result = False
         self.single_button = single_button
-        font = QFont("Helvetica", 12, QFont.Weight.Bold)
+        font = QFont("Helvetica", 40, QFont.Weight.Bold)
         self.main_layout = QVBoxLayout(self)
         layout = QVBoxLayout()
         self.main_layout.addWidget(QDialogShadowFrame(layout))
@@ -377,17 +377,18 @@ class QConfirmDialog(QStyledDialog):
         self.message_label.setFont(font)
         layout.addWidget(self.message_label)
         btn_row = QHBoxLayout()
-        self.yes_btn = QPrimaryButton("Confirm")
-        self.no_btn = QSecondaryButton("Cancel")
-        self.yes_btn.setFont(font)
-        self.no_btn.setFont(font)
+        buttonFont = QFont("Helvetica", 30, QFont.Weight.Bold)
+        self.yes_btn = QPrimaryButton("Confirm", 270, 60)
+        self.no_btn = QSecondaryButton("Cancel", 270, 60)
+        self.yes_btn.setFont(buttonFont)
+        self.no_btn.setFont(buttonFont)
         self.yes_btn.clicked.connect(self.accept)
         
         btn_row.addStretch()
         if self.single_button:
             self.no_btn.hide()
-            self.yes_btn.setText("Ok.")
-            self.yes_btn.setFixedWidth(70)
+            self.yes_btn.setText("Return")
+            self.yes_btn.setFixedWidth(200)
 
         self.no_btn.clicked.connect(self.reject)
         btn_row.addWidget(self.no_btn)
@@ -413,6 +414,7 @@ class QConfirmDialog(QStyledDialog):
 class QPinDialog(QStyledDialog) :
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.setFixedSize(600, 300)
         self.main_layout = QVBoxLayout(self)
         self.contents_layout = QVBoxLayout()
         self.shadw = QDialogShadowFrame(self.contents_layout)
@@ -421,6 +423,8 @@ class QPinDialog(QStyledDialog) :
         closebtn = QCloseButton()
         closebtn.clicked.connect(self.close)
         self.mylabel = QLabel("Enter 4 digit pin")
+        self.mylabel.setFont(QFont("Helvetica", 30, QFont.Weight.Bold))
+        self.mylabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.contents_layout.addWidget(closebtn, alignment=Qt.AlignmentFlag.AlignRight)
         self.contents_layout.addWidget(self.mylabel)
         self.digitpin = QPinInputBox()

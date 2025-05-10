@@ -14,6 +14,7 @@ from PyQt6.QtWidgets import (
     QHeaderView,
 )
 import math
+from PyQt6.QtCore import Qt
 from src.database.queries import fetchStatistics, fetchOrderHistory
 from src.components.Dialogs import QviewOrderDialog, QFoodItemStatsDialog
 from src.utils.PubSub import pubsub
@@ -31,9 +32,12 @@ class QStyledTable(QTableWidget) :
                 }
                 QHeaderView::section {
                     background-color: white;
-                    color: black;
+                    color: #A1A1A1;
                     padding: 4px;
                     border: none;
+                    font-size: 20px;
+                    font-weight: bold;
+                    font-family: 'Helvetica";
                     border-bottom: 1px solid black;
                     border-top: 1px solid black;
                 }
@@ -79,6 +83,7 @@ class QStatsTable(QStyledTable) :
         self.setColumnCount(5)
         self.setHorizontalHeaderLabels(["#","Food", "Category", "Times Ordered", ""])
         self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.horizontalHeader().setDefaultAlignment(Qt.AlignmentFlag.AlignLeft)
         self.init_list() 
         self.setShowGrid(False)
         self.verticalHeader().setVisible(False)
@@ -166,6 +171,7 @@ class QOrderHTable(QStyledTable) :
         self.viewDialog = QviewOrderDialog(self.window())
         self.setColumnCount(3)
         self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.horizontalHeader().setDefaultAlignment(Qt.AlignmentFlag.AlignLeft)
         self.setShowGrid(False)
         self.init_list()
         self.verticalHeader().setVisible(False)
