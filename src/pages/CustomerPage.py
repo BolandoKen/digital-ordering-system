@@ -208,7 +208,7 @@ class QCustomerConfirmOrderPanel(QFrame) :
     
     def handleCheckout_clicked(self) :
         if not self.printer_connected :
-            dialog = QConfirmDialog("Warning", "Printer is not connected.", self, single_button = True)
+            dialog = QConfirmDialog("Warning", "Printer not detected. Please connect a printer to continue.", self, single_button = True)
             dialog.exec()
             return 
         if not self.cartItemsArr :

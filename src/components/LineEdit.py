@@ -383,4 +383,4 @@ class QCharacterBox(QLabel) :
     def setSelfPixmap(self, stateIcon) :
         setPixMapOf(self, stateIcon, "icon")
         self.setScaledContents(True)
-        self.setFixedSize(50,50)
+        self.setFixedSize(80,80)
