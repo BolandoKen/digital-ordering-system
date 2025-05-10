@@ -48,6 +48,7 @@ class QCalendarFilterFrame(QFrame) :
     
     def setDateLabel(self) :
         mydate = self.calendarFilterBtn.dateoptionsframe.getDate()
+        self.dateLabel.hide()
         if isinstance(mydate, QDate) :
             monthfm, dayfm, yearfm = self.parseDate(mydate)
             self.dateLabel.setText(f"{monthfm} {dayfm}, {yearfm}")
@@ -60,6 +61,7 @@ class QCalendarFilterFrame(QFrame) :
             self.dateLabel.setText(final_datestr)
         elif mydate is None :
             self.dateLabel.setText("All Time")
+        self.dateLabel.show() # bcus of visual glitches when changing text
 
     def parseDate(self, mydate) :
         mydate_converted = date(mydate.year(), mydate.month(), mydate.day()) if isinstance(mydate, QDate) else mydate

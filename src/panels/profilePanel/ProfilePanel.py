@@ -30,6 +30,7 @@ class QProfilePanel(QFrame) :
         self.order_layout.setContentsMargins(0,0,0,0)
         self.order_layout.setSpacing(0)
         history_label = QLabel("Order History")
+        history_label.setStyleSheet("background-color: white;color: #A1A1A1;padding: 4px;border: none;font-size: 20px;font-weight: bold;font-family: 'Helvetica'")
         contentsVLayout = QVBoxLayout()
         contentsVLayout.setContentsMargins(10,10,0,10)
         self.calendarfilter = QCalendarFilterFrame("orders") # pass in {orders}_applyDateClicked
