@@ -15,7 +15,7 @@ from PyQt6.QtWidgets import (
 )
 import math
 from src.database.queries import fetchStatistics, fetchOrderHistory
-from src.components.Dialogs import QviewOrderDialog
+from src.components.Dialogs import QviewOrderDialog, QFoodItemStatsDialog
 from src.utils.PubSub import pubsub
 from src.utils.listOrganizer import organizeByDate, getPage
 from src.components.PageNav import QPageNav
@@ -74,15 +74,18 @@ class QStatsTable(QStyledTable) :
     def __init__(self) :
         super().__init__() 
         self.search_term = None
+        self.mydate = None
         self.orderBy_mostOrdered = True
-        self.setColumnCount(4)
-        self.setHorizontalHeaderLabels(["#","Food", "Category", "Times Ordered"])
+        self.setColumnCount(5)
+        self.setHorizontalHeaderLabels(["#","Food", "Category", "Times Ordered", ""])
         self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.init_list() 
         self.setShowGrid(False)
         self.verticalHeader().setVisible(False)
         self.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)
         self.setColumnWidth(0, 30)
+        self.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Fixed)
+        self.setColumnWidth(4, 50)
         self.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
 
         self.horizontalHeader().setStyleSheet("margin-right: 10px")
@@ -93,6 +96,8 @@ class QStatsTable(QStyledTable) :
         self.rows = 25
         self.curr_lastPage = math.ceil(len(self.stats_data)/self.rows)
         self.pageNav = QPageNav(self.curr_lastPage, self.renderPage )
+
+        self.foodstatDialog = QFoodItemStatsDialog(self.window())
         self.renderPage()
 
     def setOrderBy(self, orderby) :
@@ -107,28 +112,51 @@ class QStatsTable(QStyledTable) :
         self.setRowCount(len(mylist)) 
         count = (self.pageNav.currentPage - 1) * self.rows + 1
 
-        for row, (food, category, times) in enumerate(mylist):
+        for row, (foodid, food, category, imgfile, times) in enumerate(mylist):
             self.setItem(row, 0, QTableWidgetItem(str(count)))
             self.setItem(row, 1, QTableWidgetItem(food)) 
             self.setItem(row, 2, QTableWidgetItem(category))
             self.setItem(row, 3, QTableWidgetItem(str(times)))
+            viewBtn = QOrderDetailsButton()
+            viewBtn.clicked.connect(lambda _, foodid = foodid, food=food, category=category, imgfile=imgfile, times=times: self.publishToDialog(foodid, food, category, imgfile,times))
+            viewBtn.setFixedHeight(20)
+            self.setCellWidget(row, 4, viewBtn)
             count += 1  
 
+    def publishToDialog(self, foodid, foodname, cat,imgfile, times) :
+        self.foodstatDialog.setContents(foodid,foodname, cat,imgfile, times, self.mydate)
+        self.foodstatDialog.exec()
+        print(foodid)
+        
+
     def init_list(self) :
-        self.stats_data = fetchStatistics('DESC' if self.orderBy_mostOrdered else 'ASC', search_term=self.search_term)
+        self.stats_data = fetchStatistics('DESC' if self.orderBy_mostOrdered else 'ASC', search_term=self.search_term, date=self.mydate)
 
+    def filterbyDate(self) :
+        pass
 
-    def updateStatsTable(self, category_id=None, mostordered=True, search_term=None): 
+    def updateStatsTable(self, category_id=None, mostordered=True, search_term=None, date = None): 
+        self.clearTable()
+        self.mydate = date # mydate is either : None, QDate, or Tuple of QDates
         self.search_term = search_term 
         order = "DESC" if mostordered else "ASC"
-        self.stats_data = fetchStatistics(order, category_id, search_term)
+        self.stats_data = fetchStatistics(order, category_id, search_term, self.mydate)
         self.pageNav.updateNav(self.stats_data, self.rows)
         self.renderPage()
 
     def statistics_table(self, e = None): # redundant with function above?
-        self.stats_data = fetchStatistics('DESC' if self.orderBy_mostOrdered else 'ASC', search_term=self.search_term)
+        self.clearTable()
+        self.stats_data = fetchStatistics('DESC' if self.orderBy_mostOrdered else 'ASC', search_term=self.search_term, date=self.mydate)
         self.pageNav.updateNav(self.stats_data, self.rows)
         self.renderPage()
+
+    def clearTable(self) :
+        for row in range(self.rowCount()) :
+            for col in range(self.columnCount()) :
+                widget = self.cellWidget(row,col) 
+                if widget is not None :
+                    widget.deleteLater()
+        self.setRowCount(0)
     
 class QOrderHTable(QStyledTable) :
     def __init__(self) :

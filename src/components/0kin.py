@@ -35,6 +35,8 @@ from src.components.Calendar import QCalendarFilter, QCustomNullableDateEdit, QD
 from PyQt6.QtCore import QDate, QTimer
 from src.components.LineEdit import QSearchArea, QFormLineEdit
 from src.utils.PubSub import pubsub
+from src.components.Dialogs import QFoodItemStatsDialog, QSetupPinDialog
+
 class TestFrame(QFrame) :
     def __init__(self, floater = None):
         super().__init__()
@@ -114,6 +116,8 @@ class QWindow(QMainWindow):
 
         bongoBtn = QBongoBtn()
 
+        self.fooditemstatsdialog = QFoodItemStatsDialog()
+        setup = QSetupPinDialog()
 
 
         floater = QLabel("warning")   
@@ -124,6 +128,10 @@ class QWindow(QMainWindow):
         main_layout.addWidget(QCustomNullableDateEdit())
         # main_layout.addWidget(QDateOptionsFrame())
         main_layout.addWidget(QCalendarFilter())
+        dialogbtn = QPushButton("helo?")
+        dialogbtn.clicked.connect(self.fooditemstatsdialog.exec)
+        main_layout.addWidget(dialogbtn)
+        # QTimer.singleShot(0, fooditemstatsdialog.exec)
 
         floater.setParent(self.window())
         print(self.window())

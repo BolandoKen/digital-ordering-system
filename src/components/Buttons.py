@@ -141,17 +141,6 @@ class QAddFoodButton(QMenuCard) :
         if event.button() == Qt.MouseButton.LeftButton:
             self.callback()
 
-class QImageButton(QLabel) :
-    def __init__(self, text) :
-        super().__init__(text)
-
-    def connectTo(self, callback) :
-        self.callback = callback
-
-    def mousePressEvent(self, event):
-        if event.button() == Qt.MouseButton.LeftButton:
-            self.callback()
-
 class QPrimaryButton(QPushButton) :
     def __init__(self, text, width=None, height=None, fontSize=None, extra_style=""): 
         super().__init__(text)

@@ -23,7 +23,7 @@ class QPopupButton(QPushButton) :
     def __init__(self, parent=None):
         super().__init__(parent)
         
-        self.setFixedSize(40, 40)
+        self.setFixedSize(24, 24)
         
 
         self.setStyleSheet("""

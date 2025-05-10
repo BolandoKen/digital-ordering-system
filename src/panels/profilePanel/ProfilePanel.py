@@ -21,7 +21,7 @@ from src.components.Table import QOrderHTable
 from src.panels.profilePanel.ProfileEditSection import QProfile, QProfileViewState
 from src.utils.PubSub import pubsub
 from PyQt6.QtCore import Qt
-from src.components.Calendar import QCalendarFilter
+from src.components.Calendar import QCalendarFilterFrame
 
 class QProfilePanel(QFrame) :
     def __init__(self):
@@ -32,11 +32,13 @@ class QProfilePanel(QFrame) :
         history_label = QLabel("Order History")
         contentsVLayout = QVBoxLayout()
         contentsVLayout.setContentsMargins(10,10,0,10)
-        self.calendarfilter = QCalendarFilter("orders")
+        self.calendarfilter = QCalendarFilterFrame("orders") # pass in {orders}_applyDateClicked
+
         self.label_filter_hbox = QHBoxLayout()
         self.label_filter_hbox.addWidget(history_label)
         self.label_filter_hbox.addStretch()
         self.label_filter_hbox.addWidget(self.calendarfilter)
+        self.label_filter_hbox.addSpacing(10)
 
         self.orderHTable = QOrderHTable()
         contentsVLayout.addLayout(self.label_filter_hbox)

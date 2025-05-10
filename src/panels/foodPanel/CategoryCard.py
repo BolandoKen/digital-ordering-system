@@ -21,7 +21,7 @@ from src.utils.PixMap import setPixMapOf
 from src.components.MenuCards import QMenuCard
 from src.database.queries import fetchCategoryAvailableItemCount, fetchCategoryUnavailableItemCount
 from src.components.CatStatus import QCatStatusEditLayout, QStatusIndicator
-from src.components.ImageCard import QCatLabelImageLayout
+from src.components.ImageCard import QCatLabelImageFrame
 from src.components.Buttons import QDeleteButton, QEditButton
 class QCategoryCard(QMenuCard) :
     def __init__(self, catTuple, pageName, stackedLists) :
@@ -46,8 +46,10 @@ class QCategoryCard(QMenuCard) :
 
     def init_customerCategoryCard(self) :
         # no edit/del btns
-        self.catLabelImg = QCatLabelImageLayout(self.catname, self.imgfile, "category")
-        self.catCard_layout.addLayout(self.catLabelImg)
+        self.catLabelImg = QCatLabelImageFrame(self.catname, self.imgfile, "category")
+        self.catCard_layout.addStretch()
+        self.catCard_layout.addWidget(self.catLabelImg, alignment=Qt.AlignmentFlag.AlignVCenter)
+        self.catCard_layout.addStretch()
 
     def init_adminCategoryCard(self) :
         # has edit/del btns , edit/trash icons in the card

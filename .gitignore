@@ -2,7 +2,6 @@ env
 venv
 __pycache__
 notes.txt
-requirements.txt
 
 styles.css
 .DS_Store
@@ -10,3 +9,4 @@ assets/categoryimg/*.png
 assets/foodimg/*.png
 assets/temp/*.png
 assets/profileimg/*.png
+*.prof
