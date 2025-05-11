@@ -29,7 +29,8 @@ from src.components.Buttons import (QDeleteButton,
                                     QPrimaryButton,
                                     QSecondaryButton,
                                     QPreviousButton,
-                                    QBongoBtn)
+                                    QBongoBtn,
+                                    QMostOrderedWidgetButton,)
 from src.components.SpinBox import QCartItemSpinBox
 from src.components.Calendar import QCalendarFilter, QCustomNullableDateEdit, QDateOptionsFrame
 from PyQt6.QtCore import QDate, QTimer
@@ -100,12 +101,14 @@ class QWindow(QMainWindow):
         takeOut_button = QTakeOutButton()
         plus_button = QPlusButton()
         minus_button = QMinusButton()
-
+        mostOrderedBUtton = QMostOrderedWidgetButton()
+        
         # main_layout.addWidget(delete_button)
         # main_layout.addWidget(back_button)
         # main_layout.addWidget(dineIn_button)
         # main_layout.addWidget(plus_button)
         # main_layout.addWidget(minus_button)
+        main_layout.addWidget(mostOrderedBUtton)
         main_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         testframe = TestFrame()
@@ -124,10 +127,10 @@ class QWindow(QMainWindow):
         floater.setFixedSize(100,30)
         floater.setWindowFlags(Qt.WindowType.Popup | Qt.WindowType.FramelessWindowHint)
 
-        main_layout.addWidget(bongoBtn)    
-        main_layout.addWidget(QCustomNullableDateEdit())
+        #main_layout.addWidget(bongoBtn)    
+        #main_layout.addWidget(QCustomNullableDateEdit())
         # main_layout.addWidget(QDateOptionsFrame())
-        main_layout.addWidget(QCalendarFilter())
+        #main_layout.addWidget(QCalendarFilter())
         dialogbtn = QPushButton("helo?")
         dialogbtn.clicked.connect(self.fooditemstatsdialog.exec)
         main_layout.addWidget(dialogbtn)
@@ -141,7 +144,6 @@ class QWindow(QMainWindow):
         pos = floater.mapToGlobal(QPoint(0,0))
         print("asdf",pos)
         # main_layout.addWidget(floater)
-
 
         
         main_centralwidget = QWidget()
