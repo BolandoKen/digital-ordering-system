@@ -454,7 +454,56 @@ class QBongoBtn(QPushButton):
         elif state == "loading" :
             self.label.setMovie(self.movie)
             self.movie.start()
-            
 
-    
+class QMostOrderedWidgetButton(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.ascending = True
 
+        self.text_label = QLabel("Most Ordered")
+        self.icon_label = QLabel()
+        #self.icon_label.setFixedSize(QSize(29, 29))
+
+        self.asc_pixmap = QPixmap("assets/icons/Ascending_Icon.svg").scaled(
+            29, 29,
+            Qt.AspectRatioMode.KeepAspectRatio,
+            Qt.TransformationMode.SmoothTransformation
+        )
+
+        self.desc_pixmap = QPixmap("assets/icons/Descending_Icon.svg").scaled(
+            29, 29,
+            Qt.AspectRatioMode.KeepAspectRatio,
+            Qt.TransformationMode.SmoothTransformation
+        )
+
+        self.icon_label.setPixmap(self.asc_pixmap)
+        self.icon_label.setStyleSheet("padding: 10px")
+
+        layout = QHBoxLayout()
+        layout.addWidget(self.text_label)
+        layout.addWidget(self.icon_label)
+        layout.setContentsMargins(8, 4, 8, 4)
+        layout.setSpacing(0)
+        self.setLayout(layout)
+
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.setStyleSheet("""
+            QWidget {
+                font-family: "Helvetica";
+                font-size: 30px;
+                background: transparent; 
+                padding: 5px;
+            }
+            QWidget:hover {
+                background-color: #D9D9D9;
+                border-radius: 10px;
+            }
+        """)
+
+    def mousePressEvent(self, event):
+        self.toggle_icon()
+
+    def toggle_icon(self):
+        self.ascending = not self.ascending
+        new_icon = self.asc_pixmap if self.ascending else self.desc_pixmap
+        self.icon_label.setPixmap(new_icon)
