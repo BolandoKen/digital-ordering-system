@@ -455,29 +455,23 @@ class QBongoBtn(QPushButton):
             self.label.setMovie(self.movie)
             self.movie.start()
 
-class QMostOrderedWidgetButton(QWidget):
+class QMostOrderedWidgetButton(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.ascending = True
-
+        self.setFixedWidth(280)
         self.text_label = QLabel("Most Ordered")
-        self.icon_label = QLabel()
+        self.icon_label = QPushButton()
+        self.icon_label.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+        self.icon_label.setStyleSheet("border: none; background: transparent;")
         #self.icon_label.setFixedSize(QSize(29, 29))
+        self.asc_icon = QIcon("assets/icons/Ascending_Icon.svg")
 
-        self.asc_pixmap = QPixmap("assets/icons/Ascending_Icon.svg").scaled(
-            29, 29,
-            Qt.AspectRatioMode.KeepAspectRatio,
-            Qt.TransformationMode.SmoothTransformation
-        )
+        self.desc_icon = QIcon("assets/icons/Descending_Icon.svg")
+        self.icon_label.setIconSize(QSize(29,29))
 
-        self.desc_pixmap = QPixmap("assets/icons/Descending_Icon.svg").scaled(
-            29, 29,
-            Qt.AspectRatioMode.KeepAspectRatio,
-            Qt.TransformationMode.SmoothTransformation
-        )
-
-        self.icon_label.setPixmap(self.asc_pixmap)
-        self.icon_label.setStyleSheet("padding: 10px")
+        self.icon_label.setIcon(self.asc_icon)
+        # self.icon_label.setStyleSheet("padding: 10px")
 
         layout = QHBoxLayout()
         layout.addWidget(self.text_label)
@@ -488,22 +482,30 @@ class QMostOrderedWidgetButton(QWidget):
 
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setStyleSheet("""
-            QWidget {
+            QFrame {
                 font-family: "Helvetica";
                 font-size: 30px;
                 background: transparent; 
                 padding: 5px;
             }
-            QWidget:hover {
+            QFrame:hover {
                 background-color: #D9D9D9;
                 border-radius: 10px;
             }
         """)
+        self.cb = None
 
     def mousePressEvent(self, event):
         self.toggle_icon()
+        if self.cb is not None :
+            self.cb()
+
+    def clicked_connect(self, cb) :
+        self.cb = cb
 
     def toggle_icon(self):
         self.ascending = not self.ascending
-        new_icon = self.asc_pixmap if self.ascending else self.desc_pixmap
-        self.icon_label.setPixmap(new_icon)
+        new_icon = self.asc_icon if self.ascending else self.desc_icon
+        new_text = "Most Ordered" if self.ascending else "Least Ordered"
+        self.text_label.setText(new_text)
+        self.icon_label.setIcon(new_icon)

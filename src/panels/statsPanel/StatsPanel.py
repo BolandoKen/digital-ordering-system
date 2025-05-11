@@ -22,6 +22,7 @@ from src.components.Table import QStatsTable
 from src.components.ComboBox import QCatComboBox, QFilterButton
 from src.components.LineEdit import QSearchArea
 from src.components.Calendar import QCalendarFilterFrame
+from src.components.Buttons import QMostOrderedWidgetButton
 from src.utils.PubSub import pubsub
 
 class QStatsPanel(QFrame) :
@@ -40,8 +41,8 @@ class QStatsPanel(QFrame) :
         self.stats_layout.addWidget(self.search_area)
         self.search_area.searchbar.textChanged.connect(self.update_table)
         queryBarHLayout = QHBoxLayout()
-        self.sort_btn = QPushButton("Show Least Ordered")
-        self.sort_btn.clicked.connect(self.changeorder)
+        self.sort_btn = QMostOrderedWidgetButton()
+        self.sort_btn.clicked_connect(self.changeorder)
 
 
         self.catFilter = QFilterButton()
@@ -79,10 +80,6 @@ class QStatsPanel(QFrame) :
     
     def changeorder(self):
         self.mostordered = not self.mostordered
-        if self.mostordered:
-            self.sort_btn.setText("Show Least Ordered")
-        else:
-            self.sort_btn.setText("Show Most Ordered")
         self.search_term = self.search_area.searchbar.text().strip()
         self.update_table(self.search_term)
 
