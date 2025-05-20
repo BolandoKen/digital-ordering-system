@@ -13,7 +13,7 @@ from PyQt6.QtWidgets import (
     QComboBox
 )
 from src.database.queries import fetchCatList
-
+from src.utils.PubSub import pubsub
 import sys
 from PyQt6.QtWidgets import QPushButton, QComboBox, QWidget, QVBoxLayout, QLabel
 from PyQt6.QtCore import Qt, QPoint, QSize
@@ -155,11 +155,21 @@ class QCatComboBox(QStyledComboBox) :
     def __init__(self, typeOf = None):
         super().__init__()
         self.catList = fetchCatList("admin") 
-        if typeOf == "stat" :
+        self.typeOf = typeOf
+        if self.typeOf == "stat" :
             self.addItem("All", -1)
         for cat in self.catList : 
             self.addItem(cat[1], cat[0])
-        # this should listen to any category updates (not yet implemented)
+        pubsub.subscribe("updateCategory", self.updateCatComboBox)
+        # this should listen to any category updates (not yet implemented), done
+
+    def updateCatComboBox(self, e = None) :
+        self.clear()
+        self.catList = fetchCatList("admin") 
+        if self.typeOf == "stat" :
+            self.addItem("All", -1)
+        for cat in self.catList : 
+            self.addItem(cat[1], cat[0])
 
     def setDefaultOption(self, cat_id) :
         for i in range(self.count()) :
