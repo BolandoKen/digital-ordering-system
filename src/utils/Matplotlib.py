@@ -18,8 +18,6 @@ class lineGraphCanvas(FigureCanvasQTAgg) :
         super().__init__(self.fig)
         self.typeOf = None
         self.peak = None
-        self.binding_id = self.mpl_connect('motion_notify_event', self.on_move)
-        self.mpl_connect('button_press_event', self.on_click)
 
     def setContents(self, fooditem_id, DateRange) :
         # self.DateRange = (QDate(2025, 4, 1), QDate(2025, 5, 6))
@@ -192,4 +190,3 @@ class lineGraphCanvas(FigureCanvasQTAgg) :
         syear = mydate_converted.strftime('%Y')
         abbrevmonth = mydate_converted.strftime('%b')
         return (smonth, sday, syear, abbrevmonth)
-        
