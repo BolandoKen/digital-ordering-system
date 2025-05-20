@@ -34,6 +34,7 @@ class QDeleteButton(QPushButton):
        
         self.setStyleSheet("""
             background: transparent;
+            background-color: white;
             border: none;
             padding: 0px;      
         """)
