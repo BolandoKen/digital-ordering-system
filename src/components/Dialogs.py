@@ -105,12 +105,21 @@ class QaddDialog(QStyledDialog) :
         self.submitBtn = QPrimaryButton("Add", 70, 30 )
         self.submitBtn.clicked.connect(self.handleSubmitBtn)
         self.cancelBtn = QSecondaryButton("Cancel", 70, 30) 
-        self.cancelBtn.clicked.connect(self.close)
+        self.cancelBtn.clicked.connect(self.handleCancelBtn_cat)
         self.dialog_layout.addWidget(self.selectImgCard, 0,0,5,2)
         self.dialog_layout.addWidget(self.catnameLabel, 1,2,1,2)
         self.dialog_layout.addWidget(self.catnameLineEdit,2,2,1,3)
         self.dialog_layout.addWidget(self.cancelBtn, 4,3,1,1,)
         self.dialog_layout.addWidget(self.submitBtn, 4,4,1,1)
+
+    def reset_category(self):
+        self.catnameLineEdit.clear()
+        if hasattr(self.selectImgCard, 'clearImg'):
+            self.selectImgCard.clearImg()
+
+    def handleCancelBtn_cat(self):
+        self.reset_category()
+        self.close()
 
     def init_addFood(self) :
         self.category_id = None
@@ -130,7 +139,7 @@ class QaddDialog(QStyledDialog) :
         self.submitBtn = QPrimaryButton("Add", 70, 30 )
         self.submitBtn.clicked.connect(self.handleSubmitBtn)
         self.cancelBtn = QSecondaryButton("Cancel", 70, 30) 
-        self.cancelBtn.clicked.connect(self.close)
+        self.cancelBtn.clicked.connect(self.handleCancelBtn_food)
         self.dialog_layout.addWidget(self.selectImgCard,0,0,7,2)
         self.dialog_layout.addWidget(self.foodnameLabel,0,2,1,1)
         self.dialog_layout.addWidget(self.foodnameLineEdit,1,2,1,3)
@@ -141,6 +150,17 @@ class QaddDialog(QStyledDialog) :
         self.dialog_layout.addWidget(self.cancelBtn, 6,3,1,1)
         self.dialog_layout.addWidget(self.submitBtn,6,4,1,1)
         
+    def reset_food(self):
+        self.foodnameLineEdit.clear()
+        self.foodpriceLineEdit.clear()
+        #self.categoryidComboBox.setCurrentIndex(0)
+        if hasattr(self.selectImgCard, 'clearImg'):
+            self.selectImgCard.clearImg()
+
+    def handleCancelBtn_food(self):
+        self.reset_food()
+        self.close()
+
     def open_file(self):
         home_dir = os.path.expanduser("~")
         file_path, _ = QFileDialog.getOpenFileName(self, "Open File", home_dir, "Images (*.png *.jpg *.jpeg *.bmp);;All Files (*)")
