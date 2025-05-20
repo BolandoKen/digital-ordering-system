@@ -165,6 +165,10 @@ class QOtherPanelHeader(QFrame) :
         self.header_layout.addWidget(self.editBtn)
         self.header_layout.addWidget(self.saveBtn)
         self.header_layout.addWidget(self.cancelBtn)
+        self.editBtn.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.cancelBtn.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.saveBtn.setCursor(Qt.CursorShape.PointingHandCursor)
+
         pubsub.subscribe("logout_Event", self.handleSaveEdit)
         pubsub.subscribe("updateProfile", self.handleBackToDefaultState)
         pubsub.subscribe("adminPanelSwitched",self.handleDiscardEdit)

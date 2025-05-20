@@ -12,11 +12,11 @@ from PyQt6.QtWidgets import (
     QSpinBox,
     QHBoxLayout,
     QSpacerItem,
-    QLayout
+    QLayout,
 )
 from src.utils.PubSub import pubsub
 from src.database.Orders import addOrder
-from PyQt6.QtCore import Qt, QSize
+from PyQt6.QtCore import Qt, QSize, QTimer
 from PyQt6.QtGui import QPixmap, QFont, QIcon
 from src.components.ScrollArea import QScrollAreaLayout
 from src.components.Buttons import QPrimaryButton, QDeleteButton, QAdminButton, QCloseButton
@@ -188,7 +188,7 @@ class QCustomerSideBar(QSideBar) :
 
         self.recalculate_total()
         self.submitBtn.setEnabled(len(self.cartItems) > 0)
-
+        QTimer.singleShot(0, lambda: self.sidebar_layout.ensureWidgetVisible(new_cartItem))
         print(fooditem_id,foodname,price, " added to cart")
     
     def removeItemFromCart(self, foodid) :

@@ -41,6 +41,7 @@ class QDeleteButton(QPushButton):
         self.setIcon(QIcon("assets/icons/delete_icon.svg"))
         self.setIconSize(QSize(20, 20))
         self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.setToolTip("delete")
         if state == "confirm" :
             self.setIcon(QIcon("assets/icons/delete_icon2.svg"))
 
@@ -48,10 +49,13 @@ class QDeleteButton(QPushButton):
     def setState(self, state) :
         if state == "delete" :
             self.setIcon(QIcon("assets/icons/delete_icon.svg"))
+            self.setToolTip("delete")
         elif state == "unavailable" :
             self.setIcon(QIcon("assets/icons/unavailable_icon.svg"))
+            self.setToolTip("set unavailable")
         elif state == "revive" :
             self.setIcon(QIcon("assets/icons/revive_icon.svg"))
+            self.setToolTip("revive")
 
 class QBackButton(QPushButton):
     def __init__(self):
@@ -85,6 +89,7 @@ class QEditButton(QPushButton):
         self.setIcon(QIcon("assets/icons/edit_icon.svg"))
         self.setIconSize(QSize(25, 25))
         self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.setToolTip("edit")
 
 class QEyeButton(QPushButton) :
     def __init__(self):
@@ -411,7 +416,8 @@ class QProfileRadioButton(QRadioButton) :
         super().__init__(text, parent)
         self.init_checked()
         pubsub.subscribe("updateProfile", self.init_checked)
-        
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+
     def init_checked(self, e=None) :
         self.is_displayname69 = ProfileQueries.fetchDisplayName()
         self.setChecked(self.is_displayname69)
@@ -435,6 +441,7 @@ class QBongoBtn(QPushButton):
         self.label.setMovie(self.movie)
         self.movie.start()
         
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
 
         layout.addWidget(self.label)
     

@@ -40,10 +40,18 @@ class QStatusIndicator(QWidget):
 
         green_dot = CatStatus("green", 10)  
         available_Count = QLabel(str(available_items)) 
-        available_Count.setStyleSheet("""
+        available_Count.setStyleSheet("""QLabel{
                                       font: 'Helvetica';
                                       font-size: 20px;
                                       font-weight: 650;
+                                      }
+                                      QToolTip {
+                                        font: "Helvetica" ;
+                                        font-size: 15px;
+                                        font-weight: 400;
+                                        border: none;
+                                        color: black;
+                                      }
                                       """)
         layout.addSpacerItem(QSpacerItem(10, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum))
         layout.addWidget(green_dot)
@@ -52,9 +60,18 @@ class QStatusIndicator(QWidget):
         red_dot = CatStatus("red", 10) 
         unavailable_Count = QLabel(str(unavailable_items)) 
         unavailable_Count.setStyleSheet("""
+                                        QLabel{
                                         font: 'Helvetica';
                                         font-size: 20px;
                                         font-weight: 650;
+                                        }
+                                    QToolTip {
+                                        font: "Helvetica" ;
+                                        font-size: 15px;
+                                        font-weight: 400;
+                                        border: none;
+                                        color: black;
+                                      }
                                         """)
         layout.addWidget(red_dot)
         layout.addWidget(unavailable_Count)
@@ -77,6 +94,9 @@ class QStatusIndicator(QWidget):
         if (available_items == 0 and unavailable_items == 0) :
             emptyCategoryLabel.show()
         # add logic here, if label is 0, hide that label and status
+
+        available_Count.setToolTip("available food items")
+        unavailable_Count.setToolTip("unavailable food items")
 
 
 class QCatStatusEditLayout(QHBoxLayout) :

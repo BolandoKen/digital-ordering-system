@@ -536,7 +536,10 @@ class QChangePfpDialog(QStyledDialog) :
         self.cancelBtn = QPushButton("cancel")
         self.cancelBtn.setStyleSheet(pushbtn_style + "border-bottom-left-radius: 10px; border-bottom-right-radius:10px;")
         self.cancelBtn.clicked.connect(self.close)
-        
+        self.changePhotoBtn.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.removeCurrentBtn.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.cancelBtn.setCursor(Qt.CursorShape.PointingHandCursor)
+
         self.contents_layout.addWidget(self.mylabel)
         self.contents_layout.addWidget(self.changePhotoBtn)
         self.contents_layout.addWidget(self.removeCurrentBtn)

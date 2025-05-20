@@ -3,11 +3,13 @@ from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.backend_bases import MouseButton    
 from PyQt6.QtCore import QDate
 from datetime import date, timedelta, datetime, time
 from src.database.queries import fetchStatsOfFoodItem
 from matplotlib import dates as mpl_dates
 from matplotlib.ticker import MaxNLocator
+
 
 
 class lineGraphCanvas(FigureCanvasQTAgg) :
@@ -16,6 +18,8 @@ class lineGraphCanvas(FigureCanvasQTAgg) :
         super().__init__(self.fig)
         self.typeOf = None
         self.peak = None
+        self.binding_id = self.mpl_connect('motion_notify_event', self.on_move)
+        self.mpl_connect('button_press_event', self.on_click)
 
     def setContents(self, fooditem_id, DateRange) :
         # self.DateRange = (QDate(2025, 4, 1), QDate(2025, 5, 6))

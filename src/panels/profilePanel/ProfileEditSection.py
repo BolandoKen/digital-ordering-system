@@ -74,7 +74,8 @@ class QProfileEditState(QFrame) :
         self.displayname_radbtn = QProfileRadioButton("Display Name", self)
         self.resetBtn = QPushButton("reset pin")
         self.resetBtn.clicked.connect(self.handle_resetPin)
-        
+        self.resetBtn.setCursor(Qt.CursorShape.PointingHandCursor)
+
         checkbox_resetFrame = QFrame()
         checkbox_resetFrame.setFixedSize(250, 30)
         checkbox_reset_hbox = QHBoxLayout(checkbox_resetFrame)
