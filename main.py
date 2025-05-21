@@ -81,6 +81,7 @@ class QWindow(QMainWindow) :
 
 
 async def main() :
+    init_db()
     app = QApplication([])
     app.setStyle(QStyleFactory.create("Fusion"))
 
