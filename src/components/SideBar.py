@@ -77,6 +77,8 @@ class QAdminSideBar(QSideBar) :
     
     def setCurrIndexToZero(self, e= None) :
         self.currindex = 0 
+        self.AccPanelBtn.setClickedState(False)
+        self.StatsPanelBtn.setClickedState(False)
 
     def handleLogoutClicked(self) :
         dialog = QConfirmDialog("Log Out", "Are you sure you want to log out?", self)
