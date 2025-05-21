@@ -112,14 +112,6 @@ class QaddDialog(QStyledDialog) :
         self.dialog_layout.addWidget(self.cancelBtn, 4,3,1,1,)
         self.dialog_layout.addWidget(self.submitBtn, 4,4,1,1)
 
-    def reset_category(self):
-        self.catnameLineEdit.clear()
-        if hasattr(self.selectImgCard, 'clearImg'):
-            self.selectImgCard.clearImg()
-
-    def handleCancelBtn_cat(self):
-        self.reset_category()
-        self.close()
 
     def init_addFood(self) :
         self.category_id = None
@@ -150,6 +142,15 @@ class QaddDialog(QStyledDialog) :
         self.dialog_layout.addWidget(self.cancelBtn, 6,3,1,1)
         self.dialog_layout.addWidget(self.submitBtn,6,4,1,1)
         
+    def reset_category(self):
+        self.catnameLineEdit.clear()
+        if hasattr(self.selectImgCard, 'clearImg'):
+            self.selectImgCard.clearImg()
+
+    def handleCancelBtn_cat(self):
+        self.reset_category()
+        self.close()
+
     def reset_food(self):
         self.foodnameLineEdit.clear()
         self.foodpriceLineEdit.clear()
@@ -187,6 +188,7 @@ class QaddDialog(QStyledDialog) :
                 pubsub.publish("updateCategory")
                 print("added category : ", catTupleToAdd)
                 validated = True
+                self.reset_category()
             else : 
                 self.catnameLineEdit.setStateInvalid(error_dict["category_name"])
 
@@ -202,6 +204,7 @@ class QaddDialog(QStyledDialog) :
                 pubsub.publish("updateCategory")
                 print("added food item : ", foodTupleToAdd)
                 validated = True
+                self.reset_food()
             else : 
                 self.foodnameLineEdit.setStateInvalid(error_dict["food_name"])
                 self.foodpriceLineEdit.setStateInvalid(error_dict["food_price"])
