@@ -40,7 +40,6 @@ def deleteFoodItem(foodid) :
         deleteImageOfFood(foodid)
         cursor.execute(f"DELETE FROM FoodItems WHERE fooditem_id = {foodid}")
         
-    # to do: listing for unavailable items
 
 def reviveFoodItem(foodid) :
     cursor.execute("UPDATE FoodItems SET is_available = %s WHERE fooditem_id = %s", (True, foodid))

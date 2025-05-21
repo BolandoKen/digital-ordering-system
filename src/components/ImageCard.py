@@ -54,8 +54,6 @@ class QSelectImageCard(QFrame) :
         self.imageCard_layout.addWidget(self.clearButton, alignment=Qt.AlignmentFlag.AlignRight)
         self.imageCard_layout.addWidget(self.imageButton)
         setPixMapOf(self.imageButton, "addCircle.svg", "icon")
-        # self.imageButton.setFixedSize(150,150)
-        # self.imageButton.setScaledContents(True)
         shadow = QGraphicsDropShadowEffect(self)
         shadow.setBlurRadius(5)
         shadow.setXOffset(1)

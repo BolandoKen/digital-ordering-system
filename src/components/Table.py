@@ -1,14 +1,6 @@
 
 from PyQt6.QtWidgets import (
-    QApplication,
-    QVBoxLayout,
-    QHBoxLayout,
-    QMainWindow,
-    QWidget,
-    QPushButton,
-    QStackedWidget,
     QLabel,
-    QFrame,
     QTableWidget,
     QTableWidgetItem,
     QHeaderView,
@@ -17,10 +9,11 @@ import math
 from PyQt6.QtCore import Qt
 from src.database.queries import fetchStatistics, fetchOrderHistory
 from src.components.Dialogs import QviewOrderDialog, QFoodItemStatsDialog
-from src.utils.PubSub import pubsub
-from src.utils.listOrganizer import organizeByDate, getPage
 from src.components.PageNav import QPageNav
 from src.components.Buttons import QOrderDetailsButton
+from src.utils.PubSub import pubsub
+from src.utils.listOrganizer import organizeByDate, getPage
+
 
 
 class QStyledTable(QTableWidget) :

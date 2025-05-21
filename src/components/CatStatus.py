@@ -1,17 +1,13 @@
-import sys
 from PyQt6.QtWidgets import (
-   QApplication,
    QWidget,
    QLabel,
    QHBoxLayout,
-   QVBoxLayout,
-   QPushButton
+   QSpacerItem,
+   QSizePolicy
 )
 from PyQt6.QtGui import QPixmap, QColor, QPainter
 from PyQt6.QtCore import QSize, Qt
 from src.components.Buttons import QEditButton
-from PyQt6.QtWidgets import QSpacerItem, QSizePolicy
-
 
 class CatStatus(QLabel):
     def __init__(self, color, size=10):

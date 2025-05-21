@@ -1,29 +1,20 @@
 import os
-import sys
 from PyQt6.QtWidgets import (
-    QApplication,
     QVBoxLayout,
     QHBoxLayout,
-    QMainWindow,
-    QWidget,
     QPushButton,
-    QStackedWidget,
     QLabel,
     QFrame,
-    QDialog,
-    QLineEdit,
-    QFileDialog,
     QSizePolicy,
-    QRadioButton
+    QRadioButton,
+    QSpacerItem,
+    QSizePolicy
 )
-from PyQt6.QtWidgets import QPushButton, QSpacerItem, QSizePolicy
-from PyQt6.QtGui import QIcon, QMovie
+from PyQt6.QtGui import QIcon, QMovie, QFont
 from PyQt6.QtCore import Qt, QSize
-from PyQt6.QtGui import QPixmap, QMouseEvent, QFont
-from PyQt6.QtCore import Qt
 from src.components.MenuCards import QMenuCard
-from src.utils.PixMap import setPixMapOf
 from src.database.queries import ProfileQueries
+from src.utils.PixMap import setPixMapOf
 from src.utils.PubSub import pubsub
 
 class QDeleteButton(QPushButton):
@@ -479,14 +470,12 @@ class QMostOrderedWidgetButton(QFrame):
         self.icon_label = QPushButton()
         self.icon_label.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         self.icon_label.setStyleSheet("border: none; background: transparent;")
-        #self.icon_label.setFixedSize(QSize(29, 29))
         self.asc_icon = QIcon("assets/icons/Ascending_Icon.svg")
 
         self.desc_icon = QIcon("assets/icons/Descending_Icon.svg")
         self.icon_label.setIconSize(QSize(29,29))
 
         self.icon_label.setIcon(self.asc_icon)
-        # self.icon_label.setStyleSheet("padding: 10px")
 
         layout = QHBoxLayout()
         layout.addWidget(self.text_label)

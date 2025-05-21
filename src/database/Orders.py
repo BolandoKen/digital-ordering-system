@@ -2,7 +2,6 @@ from src.database.init_db import get_dbCursor
 
 cursor = get_dbCursor()
 
-
 def addOrder(orderItemTupleArr) :
     cursor.execute("INSERT INTO Orders () VALUES ()")
 

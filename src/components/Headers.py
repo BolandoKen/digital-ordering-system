@@ -1,22 +1,16 @@
 from PyQt6.QtWidgets import (
-    QApplication,
-    QVBoxLayout,
     QHBoxLayout,
-    QMainWindow,
-    QWidget,
     QPushButton,
-    QStackedWidget,
     QLabel,
     QFrame,
 )
-
-from src.utils.PubSub import pubsub
-from src.components.Buttons import QBackButton, QEyeButton, QBongoBtn
-from src.components.Dialogs import QSetupPinDialog, QPinDialog
-from src.database.queries import ProfileQueries
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt, QEvent
+from src.components.Buttons import QBackButton, QEyeButton, QBongoBtn
+from src.components.Dialogs import QSetupPinDialog, QPinDialog
 from src.components.ImageCard import QProfileImage
+from src.database.queries import ProfileQueries
+from src.utils.PubSub import pubsub
 
 
 class QPrinterButton(QBongoBtn) :
@@ -61,7 +55,6 @@ class QLogoButton(QFrame):
     def __init__(self, pageName):
         super().__init__()
         self.pageName = pageName
-        # self.setFixedSize(400, 70)
         self.setStyleSheet("""
             background: transparent;
             padding: 0px;
@@ -86,7 +79,6 @@ class QLogoButton(QFrame):
 
     def connectTo(self, callback) :
         self.callback = callback
-
     
     def eventFilter(self, watched, event) :
         if self.pageName == "admin" or self.pageName == "nocb": return super().eventFilter(watched, event)
@@ -96,8 +88,6 @@ class QLogoButton(QFrame):
                     self.callback()
         return super().eventFilter(watched, event)
 
-            
-    
     def handleDisplayName(self, e = None) :
         self.is_displayname = ProfileQueries.fetchDisplayName() 
         if self.is_displayname :
@@ -123,22 +113,16 @@ class QLogoHeader(QFrame) :
             self.printerBtn.clicked.connect(lambda: pubsub.publish("printerBtn_clicked"))
             self.main_layout.addWidget(self.printerBtn)
 
-
-
     def handleLogoClicked(self) :
         dialogToExec = self.setuppin_dialog if ProfileQueries.fetchPin() is None else self.pin_dialog
         if dialogToExec.exec() :
             pubsub.publish("login_Event", None)
-    
-    def updateHeader(self) :
-        # update the QLogoButton name or logo/pfp
-        pass
+
     
 class QOtherPanelHeader(QFrame) :
     def __init__(self, panelName):
         super().__init__()
         self.panelName = panelName
-        # self.main_layout.setContentsMargins(30,10,10,10)
         self.header_layout = QHBoxLayout(self)
         self.headerLabel = QLabel(panelName)
         self.headerLabel.setFont(QFont("Helvetica", 60, QFont.Weight.Bold))

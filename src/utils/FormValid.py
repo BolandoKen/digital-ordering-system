@@ -50,11 +50,6 @@ def formValidated(dataTuple, panelName):
             error_messages.append("profile name is too long (max 128 chars)")       
             
     if error_messages:
-        #QMessageBox.warning(
-        #     None,
-        #     "invalid input",
-        #     "\n".join(error_messages) 
-        #)
         error_dict["final"] = False
         return error_dict
     return error_dict

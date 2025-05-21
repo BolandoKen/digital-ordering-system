@@ -27,9 +27,6 @@ class PixmapRepo() :
                                     Qt.TransformationMode.SmoothTransformation
                                     )
 
-    
-    
-
 pixmapRepo = PixmapRepo()
 
 def getImgPath(imgFileName, assetFolder) :
@@ -44,8 +41,6 @@ def setPixMapOf(label, imgFileName, folder) : # folder :  temp | icon | food | c
 
         pixmap = pixmapRepo.get_pixmap(path)
         label.setPixmap(pixmap)
-        # label.setFixedSize(125,125)
-        # label.setScaledContents(True)
         obj = {
             "path" : None,
             "pixmap" : pixmap, # unnecessary after memoization, refactor later, no ty im lazy
@@ -53,15 +48,10 @@ def setPixMapOf(label, imgFileName, folder) : # folder :  temp | icon | food | c
         return obj
     if folder == "temp" :
         destFolder = "temp"
-        # label.setFixedSize(150,150) # preferably remove these setfixsizes please!
-        # label.setScaledContents(True)
     elif folder == "icon" :
         destFolder = "icons"
     else :
         destFolder = folder + "img" #folder is either 'category' or 'food'
-        # label.setMaximumHeight(125)
-        # label.setFixedSize(125,125) 
-        # label.setScaledContents(True)
 
     path = os.path.join(os.path.abspath(f"assets/{destFolder}"), imgFileName) 
     if folder == "temp" :
@@ -126,9 +116,3 @@ def deleteImageOfFood(foodid) :
     if os.path.exists(filePathToDelete) :
         print(filePathToDelete)
         os.remove(filePathToDelete)
-
-
-# path = os.path.join(os.path.abspath("assets/foodimg"), "test.png")
-# print(path)
-
-# moveImageToAssets(path, "category")

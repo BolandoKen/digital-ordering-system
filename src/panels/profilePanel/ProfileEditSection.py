@@ -1,36 +1,20 @@
-import sys
-import os
-from src.panels.orderHPanel.OrderHPanel import QOrderHPanel
-from src.components.Dialogs import QConfirmDialog
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import (
-    QApplication,
     QVBoxLayout,
     QHBoxLayout,
-    QMainWindow,
-    QWidget,
     QPushButton,
     QStackedWidget,
-    QLabel,
     QFrame,
     QVBoxLayout,
-    QScrollArea,
-    QLineEdit,
-    QFileDialog,
 )
-from src.utils.PixMap import setPixMapOf
-from src.utils.PubSub import pubsub
 from PyQt6.QtCore import Qt
-from src.database.Profile import reset_pin
-from src.components.ImageCard import QProfileImage
-from src.utils.PixMap import checkImgSize, saveImageToLocalTemp, setPixMapOf, moveImageToAssets
-from src.database.queries import ProfileQueries
-from src.components.LineEdit import QProfileLineEdit
+from src.utils.PubSub import pubsub
+from src.database.Profile import update_name, update_pfp, update_displayname, reset_pin
+from src.utils.PixMap import moveImageToAssets
 from src.utils.FormValid import formValidated
-from src.database.Profile import update_name, update_pfp, update_displayname
+from src.components.ImageCard import QProfileImage
+from src.components.LineEdit import QProfileLineEdit
 from src.components.Headers import QProfileNameLabel
-from src.components.Dialogs import QChangePfpDialog
+from src.components.Dialogs import QChangePfpDialog, QConfirmDialog
 from src.components.Buttons import QProfileRadioButton
 
 class QProfileViewState(QFrame) :

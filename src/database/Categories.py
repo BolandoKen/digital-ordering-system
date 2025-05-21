@@ -40,6 +40,4 @@ def deleteCategory(catid) :
 
     # category listing note: if categories has at least one available item it is considered not empty, otherwise empty  
 
-    # to do : listing for inactive/empty categories, 
-    # on update check item deletion/transfer if category in question is empty
 

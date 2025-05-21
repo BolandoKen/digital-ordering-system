@@ -1,33 +1,19 @@
-import sys
 from PyQt6.QtWidgets import (
-    QApplication,
     QVBoxLayout,
     QHBoxLayout,
     QGridLayout,
-    QMainWindow,
-    QWidget,
     QPushButton,
-    QStackedWidget,
     QLabel,
     QFrame,
-    QDialog,
-    QLineEdit,
-    QFileDialog,
-    QSizePolicy,
     QCalendarWidget,
     QDateEdit,
 )
-from PyQt6.QtWidgets import QPushButton, QSpacerItem, QSizePolicy
 from PyQt6.QtGui import QIcon
-from PyQt6.QtCore import Qt, QSize
-from PyQt6.QtGui import QPixmap, QMouseEvent, QFont
-from PyQt6.QtCore import Qt, pyqtSignal, QRect, QPoint
-from src.components.MenuCards import QMenuCard
-from src.utils.PixMap import setPixMapOf
-from src.components.ComboBox import QPopupButton, QStyledComboBox
+from PyQt6.QtCore import Qt, QSize,  QRect
+from src.components.ComboBox import QPopupButton
 from PyQt6.QtCore import QDate
 from src.utils.PubSub import pubsub
-from datetime import date, timedelta, datetime, time
+from datetime import date
 
 class QMyDateEdit(QDateEdit) :
     def __init__(self) :
@@ -219,7 +205,6 @@ class QDateOptionsFrame(QFrame) :
 class QCustomNullableDateEdit(QDateEdit) : 
     def __init__(self) :
         super().__init__()
-        # self.setStyleSheet("border:none;")
         self.setStyleSheet(
             """
             * {
@@ -239,8 +224,6 @@ class QCustomNullableDateEdit(QDateEdit) :
         self.nullable_floater = QNullableFloater(self) 
         self.nullable_floater.move(0,0)
         self.nullable_floater.show()
-
-        # self.nullable_floater.hide()
 
         self.dateChanged.connect(self.setFloaterText)
        
@@ -283,7 +266,6 @@ class QNullableFloater(QFrame) :
         main_layout.setSpacing(0)
 
         self.label = QLabel("-")
-        # self.label.setFixedSize(100, 20)
 
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label.setStyleSheet("border:none; background: transparent;")

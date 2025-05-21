@@ -1,28 +1,22 @@
 from src.panels.foodPanel.FoodPanel import QFoodPanel
 from PyQt6.QtWidgets import (
-    QApplication,
     QVBoxLayout,
     QHBoxLayout,
-    QMainWindow,
-    QWidget,
-    QPushButton,
     QStackedWidget,
     QLabel,
     QFrame,
     QGridLayout,
     QSpacerItem,
-    QSizePolicy
 )
-from src.components.SideBar import QCustomerSideBar
-from src.components.Headers import QLogoHeader, QLogoButton
-from src.utils.PubSub import pubsub
-from src.components.Buttons import QDineInButton, QTakeOutButton, QTertiaryButton, QQuaternaryButton
-from src.components.ScrollArea import QScrollAreaLayout
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt, QTimer
+from src.components.SideBar import QCustomerSideBar
+from src.components.Headers import QLogoHeader, QLogoButton
+from src.components.Buttons import QDineInButton, QTakeOutButton, QTertiaryButton, QQuaternaryButton
+from src.components.ScrollArea import QScrollAreaLayout
+from src.utils.PubSub import pubsub
 from src.database.queries import fetchLatest_orderid, fetchOrderItemsSubtotalList, fetchOrderItemsTotal, fetchOrderDateTime, ProfileQueries
 from src.components.Dialogs import QConfirmDialog
-import threading
 
 
 class QCustomerPage(QFrame) :
@@ -46,10 +40,6 @@ class QCustomerPage(QFrame) :
         self.main_layout.addWidget(self.customerPage_stackedWidgets)
         self.customerPage_stackedWidgets.setCurrentIndex(1)
         pubsub.subscribe("backBtn_clicked", self.customerPage_stackedWidgets.setCurrentIndex)
-    
-
-
-        
         
 class QCustomerFoodMenuPanel(QFrame) :
     def __init__(self, parent_stackedWidgets):
@@ -160,8 +150,6 @@ class QCustomerConfirmOrderPanel(QFrame) :
         self.main_layout.addWidget(self.choice_label)
         self.scroll_arealayout = QScrollAreaLayout(QVBoxLayout, self.main_layout, "confirm")
         self.scroll_arealayout.getLayout().setContentsMargins(0,0,15,0)
-        # self.scroll_arealayout.setStyleSheet("background: transparent;")
-
 
         self.main_layout.addLayout(self.footer_layout)
 
@@ -192,11 +180,9 @@ class QCustomerConfirmOrderPanel(QFrame) :
             item.transitionState()
             self.scroll_arealayout.getLayout().addWidget(item, alignment = Qt.AlignmentFlag.AlignTop)
             self.scroll_arealayout.getLayout().setAlignment(Qt.AlignmentFlag.AlignTop)
-            # self.scroll_layout.addWidget(label)
 
         # confirm order, set contents function
     def handleCancel_clicked(self) :
-        # self.clear_layout(self.scroll_layout.getLayout())
         print(len(self.cartItemsArr))
 
         for item in self.cartItemsArr :

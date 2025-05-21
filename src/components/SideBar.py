@@ -1,28 +1,18 @@
-import sys
-import os
 from PyQt6.QtWidgets import (
-    QApplication,
     QVBoxLayout,
-    QMainWindow,
-    QWidget,
-    QPushButton,
-    QStackedWidget,
     QLabel,
     QFrame,
-    QSpinBox,
     QHBoxLayout,
     QSpacerItem,
-    QLayout,
 )
 from src.utils.PubSub import pubsub
 from src.database.Orders import addOrder
-from PyQt6.QtCore import Qt, QSize, QTimer
-from PyQt6.QtGui import QPixmap, QFont, QIcon
+from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtGui import  QFont
 from src.components.ScrollArea import QScrollAreaLayout
 from src.components.Buttons import QPrimaryButton, QDeleteButton, QAdminButton, QCloseButton
 from src.components.SpinBox import QCartItemSpinBox
 from src.components.Dialogs import QConfirmDialog
-import traceback
 
 class QSideBar(QFrame) :
     def __init__(self) :
@@ -34,8 +24,6 @@ class QSideBar(QFrame) :
         self.scroll_layout.setContentsMargins(0,0,0,10)
         self.scroll_layout.setSpacing(0)
         self.setStyleSheet("background-color: white; color: black;border-left: 2px solid #CFCFCF")
-
-
 
 class QAdminSideBar(QSideBar) : 
     def __init__(self, switchPage=None):
@@ -88,11 +76,9 @@ class QAdminSideBar(QSideBar) :
             pubsub.publish("logout_Event", None)
 
             
-
 class QCustomerSideBar(QSideBar) :
     def __init__(self) :
         super().__init__()
-        # self.scroll_layout.addItem(QSpacerItem(50,100))
         title = QLabel("My\nOrders")
         self.scroll_layout.addWidget(title)
         title.setFont(QFont("Helvetica", 40, QFont.Weight.Bold))
@@ -142,8 +128,6 @@ class QCustomerSideBar(QSideBar) :
         self.cartItems = []
         self.total = 0
         self.recalculate_total()
-        # self.renderCartItems()
-        # self.sidebar_layout.addStretch()
         self.submitBtn.setEnabled(len(self.cartItems) > 0)
     
     def setChoice(self, choice) :
@@ -272,12 +256,8 @@ class QSimpleCartItem(QFrame) : # refactor this later
         self.main_layout = QVBoxLayout(self)
         self.main_layout.setContentsMargins(0,0,0,0)
     
-        # self.img_label = QLabel()
         self.pixmap = imgfile 
-        # # imgfile is reused pixmap passed by food card, should just setpixmapof since memoized
-        # self.img_label.setPixmap(self.pixmap)
-        # self.img_label.setFixedSize(100,100)
-        # self.img_label.setScaledContents(True)
+        # # imgfile is reused pixmap passed by food card, should just setpixmapof since memoized, but im lazy to refactor
         
         self.closeBtn_cartState = QCloseButton()
         self.closeBtn_cartState.setFixedWidth(52)

@@ -1,9 +1,6 @@
 
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
-import numpy as np
-from matplotlib.backend_bases import MouseButton    
 from PyQt6.QtCore import QDate
 from datetime import date, timedelta, datetime, time
 from src.database.queries import fetchStatsOfFoodItem
@@ -20,7 +17,6 @@ class lineGraphCanvas(FigureCanvasQTAgg) :
         self.peak = None
 
     def setContents(self, fooditem_id, DateRange) :
-        # self.DateRange = (QDate(2025, 4, 1), QDate(2025, 5, 6))
         self.decidePlotType(fooditem_id, DateRange)
         self.setAnnotates()
     

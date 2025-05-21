@@ -38,10 +38,7 @@ class CatPrinter(object) :
         if not self.client.is_connected :
             print("not connected to printer!")
             return
-        # try : 
-        #     await self.client.stop_notify(self.notify_uuid)
-        # except Exception as e:
-        #     print("error stopping notify", e)
+
         myImg_inBytes = getImage_textBytes(myOrder)
         try :
             await self.client.start_notify(self.notify_uuid, self.notification_handler)

@@ -4,7 +4,7 @@ db = mysql.connector.connect(
     host="localhost",
     user="root",
     password="root",
-    database="orderoo_db" # delete this pls, will have to refactor later
+    database="orderoo_db" 
 )
 db.autocommit = True
 

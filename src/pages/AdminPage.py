@@ -1,24 +1,15 @@
-import sys
-
-from src.panels.foodPanel.FoodPanel import QFoodPanel
-from src.panels.statsPanel.StatsPanel import QStatsPanel
-from src.panels.profilePanel.ProfilePanel import QProfilePanel
-from src.utils.PubSub import pubsub
-
 from PyQt6.QtWidgets import (
-    QApplication,
-    QVBoxLayout,
-    QMainWindow,
-    QWidget,
-    QPushButton,
     QStackedWidget,
-    QLabel,
     QFrame,
     QGridLayout,
 )
 
 from src.components.SideBar import QAdminSideBar
 from src.components.Headers import QLogoHeader
+from src.panels.foodPanel.FoodPanel import QFoodPanel
+from src.panels.statsPanel.StatsPanel import QStatsPanel
+from src.panels.profilePanel.ProfilePanel import QProfilePanel
+from src.utils.PubSub import pubsub
 
 class QAdminPage(QFrame) :
     def __init__(self):

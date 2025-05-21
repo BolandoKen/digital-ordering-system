@@ -231,8 +231,6 @@ def fetchOrderDateTime(orderid) :
     cursor.fetchall()
     return latestorder
 
-# should have contained these queries into a class...
-
 def fetchSubStrNames(substr) :
     cursor.execute(f"""SELECT f.fooditem_id, f.name, f.is_available, c.category_id, c.name 
                    FROM FoodItems AS f 

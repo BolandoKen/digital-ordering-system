@@ -1,24 +1,11 @@
 from PyQt6.QtWidgets import (
-    QApplication,
-    QVBoxLayout,
     QHBoxLayout,
-    QGridLayout,
-    QMainWindow,
-    QWidget,
-    QPushButton,
-    QStackedWidget,
-    QLabel,
     QFrame,
-    QDialog,
     QLineEdit,
-    QFileDialog
 )
 from src.components.Buttons import QPlusButton, QMinusButton
-from PyQt6.QtGui import QPixmap, QMouseEvent, QFont, QIntValidator
+from PyQt6.QtGui import QFont, QIntValidator,  QIcon
 from PyQt6.QtCore import Qt
-from src.utils.PubSub import pubsub
-from PyQt6.QtGui import QIcon
-
 
 # spinbox for pagenav
 # spinbox for fooditem cart incrementer

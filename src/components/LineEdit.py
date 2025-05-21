@@ -2,43 +2,22 @@ import sys
 import os
 sys.path.append(os.path.abspath("."))
 from PyQt6.QtWidgets import (
-    QApplication,
     QVBoxLayout,
-    QMainWindow,
-    QWidget,
     QHBoxLayout,
     QFrame,
-    QDialog,
     QGraphicsDropShadowEffect,
     QPushButton,
-    QCalendarWidget,
-    QDateEdit,
     QLabel,
-    QListView,
     QLineEdit,
     QGraphicsDropShadowEffect,
-    QSpacerItem
 
 )
-from PyQt6.QtCore import Qt, QPoint, QSize
-from PyQt6.QtGui import QShortcut, QKeySequence, QColor, QIcon, QKeyEvent
-from src.components.ComboBox import QFilterButton  
-from src.components.Buttons import (QDeleteButton,
-                                    QBackButton,
-                                    QDineInButton,
-                                    QTakeOutButton,
-                                    QPlusButton,
-                                    QMinusButton,
-                                    QPrimaryButton,
-                                    QSecondaryButton,)
-from src.components.SpinBox import QCartItemSpinBox
-from src.components.Calendar import QCalendarFilter
-from PyQt6.QtCore import QDate, QTimer
-from PyQt6.QtCore import QEvent
+from PyQt6.QtCore import Qt, QPoint, QSize, QTimer, QEvent
+from PyQt6.QtGui import  QColor, QIcon
+from src.components.ScrollArea import QScrollAreaLayout
+from src.database.queries import fetchSubStrNames, ProfileQueries
 from src.utils.PubSub import pubsub
 from src.utils.PixMap import setPixMapOf
-from src.database.queries import fetchSubStrNames, ProfileQueries
-from src.components.ScrollArea import QScrollAreaLayout
 
 class QSearchArea(QFrame) :
     def __init__(self, parent = None, typeOf = None):
@@ -110,7 +89,6 @@ class QFloatArea(QFrame) :
                            padding:3px;}""")
         self.setFixedSize(450,100)
 
-        # self.setFixedWidth(300)
         self.setMaximumHeight(0)
         self.mainmain_layout = QVBoxLayout(self)
         self.main_layout = QScrollAreaLayout(QVBoxLayout, self.mainmain_layout) # make layout to be scrollarea
@@ -229,10 +207,7 @@ class QFormLineEdit(QLineEdit) :
             """
         self.setStyleSheet(self.styleStr)
         self.mypopup = QLineEditPopup()
-        # QTimer.singleShot(100, self.setState)
-        # self.setStateInvalid("necessary field!")
-        # self.installEventFilter(self)
-        # self.setStateInvalid()
+
         self.textChanged.connect(self.setStateInit)
 
     def eventFilter(self, watched, event):
@@ -266,13 +241,11 @@ class QFormLineEdit(QLineEdit) :
     def setStateInit(self) :
         self.setStyleSheet(self.styleStr)
         QTimer.singleShot(0, self.mypopup.hide) # idk why, but when logout - normal hide would still show
-        # self.mypopup.hide()
 
 
 class QLineEditPopup (QLabel) :
     def __init__(self) :
         super().__init__()
-        # self.setFixedSize(150,30)
         self.setFixedHeight(30)
         self.setText("Warning, invalid")
         self.setStyleSheet("background-color:red; border-top-left-radius: 10px; border-top-right-radius: 10px; padding:3px; color:white")
@@ -315,7 +288,6 @@ class QPinInputBox(QFrame) :
                 text = event.text()
                 if text.isdigit() :
                     if self.curr == len(self.charBoxArr):
-                        # print(self.curr)
                         return super().eventFilter(watched, event)
                     self.charBoxArr[self.curr].setChar(text)
                     self.curr += 1
@@ -327,7 +299,6 @@ class QPinInputBox(QFrame) :
                     self.charBoxArr[self.curr].setChar("")
                     self.updateChildrenStates()
                 self.onTextChange()
-                    # print('backspace')
 
         return super().eventFilter(watched, event)
 
@@ -362,7 +333,6 @@ class QCharacterBox(QLabel) :
         self.character = ''
         self.updateState()
 
-    
     def setChar(self, char) :
         self.character = char
     

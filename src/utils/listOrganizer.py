@@ -1,5 +1,4 @@
 import dateutil.parser as dparser
-import os
 import sys
 sys.path.append(".")
 from datetime import *;
@@ -65,14 +64,3 @@ def dateParser(datestr) :
         return f"{note} - {weekday}, {month} {day}, {year}"
     else :
         return f"{weekday}, {month} {day}, {year}"
-
-
-# print(dateParser("2025-04-07 04:19:37"))
-
-
-# orders = fetchOrderHistory()
-# organizedOrders = organizeByDate(orders)
-
-# for item in organizedOrders :
-#     print(len(item["content"]))
-#     # print(item["content"])

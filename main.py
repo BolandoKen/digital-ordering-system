@@ -1,7 +1,3 @@
-import sys
-import atexit
-# import os
-# sys.path.append(os.path.abspath("src"))
 from PyQt6.QtWidgets import (
     QApplication,
     QVBoxLayout,
@@ -9,19 +5,16 @@ from PyQt6.QtWidgets import (
     QWidget,
     QPushButton,
     QStackedWidget,
-    QLabel,
-    QFrame,
+    QStyleFactory
 )
-import asyncio
 from PyQt6.QtGui import QShortcut, QKeySequence
+import asyncio
 from qasync import QEventLoop, asyncSlot
+from src.database.init_db import init_db
 from src.pages.AdminPage import QAdminPage
 from src.pages.CustomerPage import QCustomerPage
-from src.database.init_db import init_db
 from src.utils.PubSub import pubsub
 from src.utils.CatPrinter.CatPrinter import CatPrinter
-from PyQt6.QtWidgets import QStyleFactory
-
 
 class QWindow(QMainWindow) :
     def __init__(self):
@@ -75,10 +68,6 @@ class QWindow(QMainWindow) :
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
-
-
-
-
 
 async def main() :
     init_db()

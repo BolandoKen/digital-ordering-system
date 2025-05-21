@@ -4,38 +4,29 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QHBoxLayout,
     QGridLayout,
-    QMainWindow,
     QWidget,
     QPushButton,
-    QStackedWidget,
     QLabel,
     QFrame,
     QDialog,
-    QLineEdit,
     QFileDialog,
     QGraphicsDropShadowEffect
 )
-from src.utils.PubSub import pubsub
-from src.utils.FormValid import formValidated
+from PyQt6.QtCore import Qt, QPoint
+from PyQt6.QtGui import QFont, QColor, QDoubleValidator
+from src.database.queries import fetchOrderItemsSubtotalList, fetchOrderItemsTotal, ProfileQueries
+from src.database.Profile import setup_pin
 from src.database.Categories import addCategory, editCategory
 from src.database.FoodItems import addFoodItem, editFoodItem
-from src.utils.PixMap import checkImgSize, saveImageToLocalTemp, setPixMapOf, moveImageToAssets
-from src.components.Buttons import  QCloseButton
 from src.components.ImageCard import QSelectImageCard
 from src.components.ComboBox import QCatComboBox
-from PyQt6.QtGui import QPixmap
-from PyQt6.QtGui import QDoubleValidator
 from src.components.Buttons import QPrimaryButton, QSecondaryButton, QCloseButton
-from src.database.queries import fetchOrderItemsSubtotalList, fetchOrderItemsTotal, ProfileQueries
-from PyQt6.QtCore import Qt, QPoint, QTimer
-from PyQt6.QtGui import QFont, QColor
 from src.components.ScrollArea import QScrollAreaLayout
 from src.components.LineEdit import QFormLineEdit, QPinInputBox
-from src.database.Profile import setup_pin
-import traceback
-from PyQt6 import QtWidgets
 from src.utils.Matplotlib import lineGraphCanvas
-
+from src.utils.PubSub import pubsub
+from src.utils.FormValid import formValidated
+from src.utils.PixMap import checkImgSize, saveImageToLocalTemp, setPixMapOf, moveImageToAssets
 
 class QDialogShadowFrame(QFrame) :
     def __init__(self, child_main_layout) :
@@ -52,8 +43,6 @@ class QDialogShadowFrame(QFrame) :
         shadow.setEnabled(True)
         self.raise_()
 
-
-
 class QStyledDialog(QDialog) :
     def __init__(self, parent = None):
         super().__init__(parent)
@@ -63,8 +52,6 @@ class QStyledDialog(QDialog) :
 
     def showEvent(self, event):
         super().showEvent(event)
-        # self.center_screen()
-
 
     def center_screen(self):
         if self.parent():
@@ -154,7 +141,6 @@ class QaddDialog(QStyledDialog) :
     def reset_food(self):
         self.foodnameLineEdit.clear()
         self.foodpriceLineEdit.clear()
-        #self.categoryidComboBox.setCurrentIndex(0)
         if hasattr(self.selectImgCard, 'clearImg'):
             self.selectImgCard.clearImg()
 
@@ -216,10 +202,6 @@ class QaddDialog(QStyledDialog) :
 class QeditDialog(QaddDialog) :
     def __init__(self, panelName, parent, Tuple = None):
         super().__init__(panelName, parent)
-
-        # if self.panelName == "category" :
-        #     self.category_id, self.catname, self.imgfile = Tuple                
-        #     self.init_editCategory()
 
         self.submitBtn.setText(f"Save")
         self.selectImgCard.getLabel().setFixedSize(200,200)
@@ -300,7 +282,6 @@ class QviewOrderDialog(QStyledDialog) :
         self.main_layout = QVBoxLayout()
         self.mainmain_layout.addWidget(QDialogShadowFrame(self.main_layout))
         self.setFixedHeight(400)
-        # self.setFixedWidth(325)
 
         close_btn = QCloseButton()
         close_btn.clicked.connect(self.close)
@@ -642,7 +623,6 @@ class QFoodItemStatsDialog(QStyledDialog) :
         contentshbox.addWidget(self.canvas)
 
         self.contents_layout.addWidget(closebtn, alignment=Qt.AlignmentFlag.AlignRight)
-        # self.contents_layout.addWidget(self.canvas)
         self.contents_layout.addLayout(contentshbox)
     
     def setContents(self, fooditem_id, foodname, cat, imgfile, times, DateRange = None) :
