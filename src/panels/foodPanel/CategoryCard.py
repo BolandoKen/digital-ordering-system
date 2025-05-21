@@ -29,10 +29,10 @@ class QCategoryCard(QMenuCard) :
         self.setFixedHeight(267)
         self.setFixedWidth(458)
         self.pageName = pageName
+        self.catTuple = catTuple
         self.category_id, self.catname, self.imgfile = catTuple
         self.availableItemCount = fetchCategoryAvailableItemCount(self.category_id) # will show only in admin
         self.unavailableItemCount = fetchCategoryUnavailableItemCount(self.category_id)
-        self.editCatDialog = QeditDialog("category", self.window(), catTuple)
         self.stackedLists = stackedLists
         self.catCard_layout = QVBoxLayout(self)
         self.catCard_layout.setSpacing(0)
@@ -62,7 +62,7 @@ class QCategoryCard(QMenuCard) :
         delHBoxLayout.setContentsMargins(0,0,0,0)
         delHBoxLayout.addStretch()
         self.editBtn = QEditButton() 
-        self.editBtn.clicked.connect(self.editCatDialog.exec)
+        self.editBtn.clicked.connect(lambda: pubsub.publish("catedit_clicked", self.catTuple))
         self.delBtn = QDeleteButton()
         self.delBtn.clicked.connect(self.handleCatDelete)
         delhbox_policy  = self.delhboxframe.sizePolicy()

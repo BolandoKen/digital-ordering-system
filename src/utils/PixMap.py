@@ -48,7 +48,7 @@ def setPixMapOf(label, imgFileName, folder) : # folder :  temp | icon | food | c
         # label.setScaledContents(True)
         obj = {
             "path" : None,
-            "pixmap" : pixmap, # unnecessary after memoization, refactor later
+            "pixmap" : pixmap, # unnecessary after memoization, refactor later, no ty im lazy
         }
         return obj
     if folder == "temp" :

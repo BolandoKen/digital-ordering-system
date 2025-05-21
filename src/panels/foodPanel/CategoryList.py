@@ -14,7 +14,7 @@ from PyQt6.QtWidgets import (
 from src.utils.PubSub import pubsub
 from src.panels.foodPanel.CategoryCard import QCategoryCard
 from src.database.queries import fetchCatList
-from src.components.Dialogs import QaddDialog
+from src.components.Dialogs import QaddDialog, QeditDialog
 from PyQt6.QtCore import Qt
 from src.components.ScrollArea import QScrollAreaLayout
 from src.components.FlowLayout import QFlowLayout
@@ -31,13 +31,19 @@ class QCategoryList(QFrame) :
         self.catList_Layout = QScrollAreaLayout(QFlowLayout, self.scroll_layout)
     
         self.addCatDialog = QaddDialog("category", self.window())
+        self.editCatDialog = QeditDialog("category", self.window())
         pubsub.subscribe("updateCategory", self.update_categoryList)
+        if pageName == "admin" : 
+            pubsub.subscribe("catedit_clicked", self.initEditDialog)
         self.init_catList()
 
         # will listen to search , subscribe category searched
         # cat id will be passed down, using catCardMap, we ensure visible the card
         # redirect (setindex) -> ensure visible
 
+    def initEditDialog(self, Tuple) :
+        self.editCatDialog.init_editCategory(Tuple)
+        self.editCatDialog.exec()
 
     def init_catList(self) :
         if self.pageName == "admin" :

@@ -217,15 +217,16 @@ class QeditDialog(QaddDialog) :
     def __init__(self, panelName, parent, Tuple = None):
         super().__init__(panelName, parent)
 
-        if self.panelName == "category" :
-            self.category_id, self.catname, self.imgfile = Tuple                
-            self.init_editCategory()
+        # if self.panelName == "category" :
+        #     self.category_id, self.catname, self.imgfile = Tuple                
+        #     self.init_editCategory()
 
         self.submitBtn.setText(f"Save")
         self.selectImgCard.getLabel().setFixedSize(200,200)
 
 
-    def init_editCategory(self) :
+    def init_editCategory(self, Tuple) :
+        self.category_id, self.catname, self.imgfile = Tuple                
         self.catnameLineEdit.setText(self.catname)
         if self.imgfile is not None:
             self.tempImagePath = setPixMapOf(self.selectImgCard.getLabel(), self.imgfile, "category")["path"]

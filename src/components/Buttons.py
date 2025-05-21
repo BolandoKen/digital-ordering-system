@@ -33,10 +33,17 @@ class QDeleteButton(QPushButton):
         self.setFixedSize(25, 25)
        
         self.setStyleSheet("""
+            QPushButton {
             background: transparent;
+            border: none;
+            padding: 0px;          
+                           }
+            QToolTip {
             background-color: white;
             border: none;
-            padding: 0px;      
+            color: black;
+            }
+    
         """)
         
         self.setIcon(QIcon("assets/icons/delete_icon.svg"))
