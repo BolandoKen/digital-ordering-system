@@ -88,7 +88,7 @@ class QProfileEditState(QFrame) :
 
     # handle here saved state
     def discardEditProfile(self, e =None) :
-        self.profileIcon.init_profileImg()
+        self.changePfp_dialog.resetProfileIcon()
         self.nameLineEdit.init_text()
         self.nameLineEdit.setStateInit()
         self.displayname_radbtn.init_checked()

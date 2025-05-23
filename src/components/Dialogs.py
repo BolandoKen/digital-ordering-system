@@ -561,6 +561,9 @@ class QChangePfpDialog(QStyledDialog) :
     def setTempImgPath(self, e= None) :
         self.tempImagePath = self.profileIcon.init_profileImg()
 
+    def resetProfileIcon(self) :
+        self.tempImagePath = self.profileIcon.init_profileImg()
+
 
     def open_file(self):
         home_dir = os.path.expanduser("~")

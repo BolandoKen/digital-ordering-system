@@ -75,7 +75,7 @@ def checkImgSize(imgFilePath) :
 def saveImageToLocalTemp(imgFilePath, fileName) :
     img = Image.open(imgFilePath)
     pathToSave = os.path.join(os.path.abspath("assets/temp"), fileName)
-    img.save(pathToSave)
+    img.save(pathToSave, icc_profile=None)
     return pathToSave
 
 def moveImageToAssets(imgFilePath, panelName, ImgRename) :
