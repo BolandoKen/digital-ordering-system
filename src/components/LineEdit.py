@@ -203,7 +203,10 @@ class QFormLineEdit(QLineEdit) :
                 border: 2px solid #D9D9D9; 
                 border-radius: 10px;
                 outline: none;
-                padding: 2px;                
+                padding: 2px;   
+                font-size: 30px;  
+                font-family: 'Helvetica';
+                font-weight: bold;           
             """
         self.setStyleSheet(self.styleStr)
         self.mypopup = QLineEditPopup()

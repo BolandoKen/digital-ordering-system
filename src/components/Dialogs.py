@@ -70,6 +70,7 @@ class QaddDialog(QStyledDialog) :
     def __init__(self, panelName, parent):
         super().__init__(parent)
         self.panelName = panelName
+        self.setFixedSize(990, 565) 
         self.main_layout = QVBoxLayout(self)
 
         self.dialog_layout = QGridLayout()
@@ -85,16 +86,19 @@ class QaddDialog(QStyledDialog) :
             self.init_addFood()
     
     def init_addCategory(self) :
-        self.catnameLabel = QLabel("category name : ")
+        self.catnameLabel = QLabel("Category Name")
+        self.catnameLabel.setStyleSheet("font-family: Helvetica; font: 30px; color: #A1A1A1; font-weight: bold;")
         self.catnameLineEdit = QFormLineEdit()
+        self.catnameLineEdit.setFixedSize(529,70)
         self.selectImgCard = QSelectImageCard(self.handleClearBtn)
+        self.selectImgCard.setFixedSize(346,467)
         self.selectImgCard.connectTo(self.open_file)
-        self.submitBtn = QPrimaryButton("Add", 70, 30 )
+        self.submitBtn = QPrimaryButton("Add", 140, 60, 30)
         self.submitBtn.clicked.connect(self.handleSubmitBtn)
-        self.cancelBtn = QSecondaryButton("Cancel", 70, 30) 
+        self.cancelBtn = QSecondaryButton("Cancel", 140, 60, 30) 
         self.cancelBtn.clicked.connect(self.handleCancelBtn_cat)
         self.dialog_layout.addWidget(self.selectImgCard, 0,0,5,2)
-        self.dialog_layout.addWidget(self.catnameLabel, 1,2,1,2)
+        self.dialog_layout.addWidget(self.catnameLabel, 1,2,1,2, Qt.AlignmentFlag.AlignBottom)
         self.dialog_layout.addWidget(self.catnameLineEdit,2,2,1,3)
         self.dialog_layout.addWidget(self.cancelBtn, 4,3,1,1,)
         self.dialog_layout.addWidget(self.submitBtn, 4,4,1,1)

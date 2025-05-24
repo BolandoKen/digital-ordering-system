@@ -52,7 +52,7 @@ class QSelectImageCard(QFrame) :
         self.clearButton.clicked.connect(self.clearImg)
         self.imageButton = QImageButton("+")
         self.imageCard_layout.addWidget(self.clearButton, alignment=Qt.AlignmentFlag.AlignRight)
-        self.imageCard_layout.addWidget(self.imageButton)
+        self.imageCard_layout.addWidget(self.imageButton, 1, Qt.AlignmentFlag.AlignCenter)  # Add stretch factor and center alignment
         setPixMapOf(self.imageButton, "addCircle.svg", "icon")
         shadow = QGraphicsDropShadowEffect(self)
         shadow.setBlurRadius(5)
