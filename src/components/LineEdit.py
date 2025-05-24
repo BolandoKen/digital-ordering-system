@@ -37,11 +37,11 @@ class QSearchArea(QFrame) :
         self.searchbar.setStyleSheet(self.styleStr)
         self.setFixedHeight(50)
         self.searchbar.textChanged.connect(self.floatArea.renderArea)
-        self.searchbar.setFixedSize(450,30)
+        self.searchbar.setFixedSize(956,40)
         self.temp = [0]
         searchIcon = QPushButton() 
         searchIcon.setIcon(QIcon("assets/icons/Search.svg"))
-        searchIcon.setFixedSize(32,32)
+        searchIcon.setFixedSize(40,40)
         searchIcon.setStyleSheet("background:transparent; border: none;")
         searchIcon.setIconSize(QSize(30,30))
         self.main_layout.addWidget(searchIcon, alignment=Qt.AlignmentFlag.AlignVCenter)
