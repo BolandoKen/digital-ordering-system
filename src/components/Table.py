@@ -21,7 +21,9 @@ class QStyledTable(QTableWidget) :
         super().__init__() 
         self.setStyleSheet("""
                 QTableWidget {
-                    border: none;     
+                    border: none;   
+                    font-size: 18px;
+                    font-family: 'Helvetica';
                 }
                 QHeaderView::section {
                     background-color: white;
@@ -29,8 +31,8 @@ class QStyledTable(QTableWidget) :
                     padding: 4px;
                     border: none;
                     font-size: 20px;
-                    font-weight: bold;
-                    font-family: 'Helvetica";
+                    font-weight: 700;
+                    font-family: "Helvetica";
                     border-bottom: 1px solid black;
                     border-top: 1px solid black;
                 }
@@ -210,6 +212,7 @@ class QOrderHTable(QStyledTable) :
             else :
                 #add header
                 headerDateLabel = QLabel(item["content"])
+                headerDateLabel.setStyleSheet("font-family: Helvetica; font-weight: bold;font-size: 20px;")
                 self.setCellWidget(row, 0, headerDateLabel)
                 self.setSpan(row, 0,1,3)
                 pass

@@ -30,7 +30,9 @@ class QSearchArea(QFrame) :
                 border: 2px solid #D9D9D9; 
                 border-radius: 10px;
                 outline: none;
-                padding: 2px;                
+                padding: 2px;        
+                font-family: Helvetica;
+                font-size: 20px;        
             """
         self.setObjectName("searcharea")
         self.setStyleSheet("#searcharea{margin-bottom:5px; }")
@@ -87,7 +89,7 @@ class QFloatArea(QFrame) :
                             border: 1px solid #D9D9D9; 
                             border-radius: 10px;
                            padding:3px;}""")
-        self.setFixedSize(450,100)
+        self.setFixedSize(956,100)
 
         self.setMaximumHeight(0)
         self.mainmain_layout = QVBoxLayout(self)
@@ -152,11 +154,17 @@ class QSearchRowItem(QFrame) :
         super().__init__()
         self.rowTuple =rowTuple
         self.foodid , self.foodname, self.isavailable, self.catid, self.catname = rowTuple
-        self.setFixedSize(400,30)
-        self.setStyleSheet("background-color:white; border-radius:2px; ")
+        self.setFixedSize(956,30)
+        self.setStyleSheet("background-color:white; border-radius:2px;font-family: Helvetica; font-size: 20px;")
         self.main_layout = QHBoxLayout(self)
         self.main_layout.setContentsMargins(0,0,0,0)
-        self.main_layout.addWidget(QLabel(f"{self.foodname} - {self.catname}"))
+        searchIcon = QPushButton() 
+        searchIcon.setIcon(QIcon("assets/icons/Search.svg"))
+        searchIcon.setFixedSize(30,30)
+        searchIcon.setStyleSheet("background:transparent; border: none;")
+        searchIcon.setIconSize(QSize(30,30))
+        self.main_layout.addWidget(searchIcon)
+        self.main_layout.addWidget(QLabel(f"<font color='black'>{self.foodname} -   </font><font color='#72CEFF'>{self.catname}</font>"))
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
