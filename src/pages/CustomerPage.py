@@ -8,8 +8,8 @@ from PyQt6.QtWidgets import (
     QGridLayout,
     QSpacerItem,
 )
-from PyQt6.QtGui import QFont
-from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtGui import QFont, QMovie
+from PyQt6.QtCore import Qt, QTimer, QSize
 from src.components.SideBar import QCustomerSideBar
 from src.components.Headers import QLogoHeader, QLogoButton
 from src.components.Buttons import QDineInButton, QTakeOutButton, QTertiaryButton, QQuaternaryButton
@@ -300,11 +300,18 @@ class QCustomerPrintingPanel(QFrame) :
         btn_timer_vbox.addWidget(self.newOrderBtn, alignment=Qt.AlignmentFlag.AlignCenter)
         btn_timer_vbox.addWidget(self.msg3_label, alignment=Qt.AlignmentFlag.AlignCenter)
 
+        self.loadinggif_label = QLabel()
+        self.loading_movie = QMovie("assets/icons/loading_animation.gif")
+        self.loading_movie.setScaledSize(QSize(100,100))
+        self.loadinggif_label.setMovie(self.loading_movie)
+        self.loading_movie.start()
+
         self.main_layout.addStretch()
         self.main_layout.addWidget(QLogoButton("nocb"), alignment=Qt.AlignmentFlag.AlignCenter)
         self.main_layout.addWidget(self.msg_label, alignment=Qt.AlignmentFlag.AlignCenter)
         self.main_layout.addWidget(self.msg2_label, alignment=Qt.AlignmentFlag.AlignCenter)
         self.main_layout.addLayout(orderno_vbox)
+        self.main_layout.addWidget(self.loadinggif_label, alignment=Qt.AlignmentFlag.AlignCenter)
         self.main_layout.addLayout(btn_timer_vbox)
        
         self.main_layout.addStretch()
@@ -326,11 +333,16 @@ class QCustomerPrintingPanel(QFrame) :
         self.orderno_label.setText(self.orderno)
         self.msg3_label.hide()
         self.newOrderBtn.hide() # ??
+        self.loadinggif_label.show()
+        self.loading_movie.start()
     
     def startTimer(self, e=None) :
         self.newOrderBtn.setEnabled(True)
         self.msg3_label.show()
         self.newOrderBtn.show()
+        self.loadinggif_label.hide()
+        self.loading_movie.stop()
+
         self.mytimer = QTimer()
         self.mytimer.setSingleShot(True)
         self.mytimer.timeout.connect(lambda: self.timeRecurse) # init set up to disconnect in recursion
