@@ -86,9 +86,46 @@ class QFilterButton(QPopupButton):
                                      border-radius: 0px;
                                      """)
         self.popup_layout.addWidget(category_label)
+      
         
         self.catComboBox = QCatComboBox("stat")
- 
+        self.catComboBox.setStyleSheet("""
+            /* Override main combobox appearance */
+            QComboBox {
+                background-color: white; 
+                color: black;
+                border: 2px solid #D9D9D9;
+                border-radius: 10px;
+                padding-left: 5px;  
+                font-family: Helvetica;
+            }
+            QComboBox::drop-down {
+                width: 20px;
+                background-color: transparent;
+            }                   
+            QComboBox::down-arrow {
+                image: url(assets/icons/dropdown_icon.svg);
+                background-color: transparent;
+                border: none;
+            }
+            QComboBox QAbstractItemView {
+                background-color: white;
+                outline: 0px;
+                margin: 0px;
+                padding: 0px;
+                padding-top: 5px;
+                padding-bottom: 5px;
+                border: 2px solid #D9D9D9; 
+                border-radius: 10px;
+
+            }                
+            QComboBox QAbstractItemView::item {
+            background-color: transparent;
+            color: black;
+            padding: 5px;
+            border: none;
+    }
+            """)
         self.catComboBox.currentIndexChanged.connect(self.update_icon)
         self.popup_layout.addWidget(self.catComboBox)
         
@@ -119,6 +156,9 @@ class QStyledComboBox(QComboBox) :
                 border: 2px solid #D9D9D9;
                 border-radius: 10px;
                 padding-left: 5px;  
+                font-family: Helvetica;
+                font-size: 30px;
+                font-weight: bold;
             }
             QComboBox::drop-down {
                 width: 20px;
@@ -141,11 +181,13 @@ class QStyledComboBox(QComboBox) :
 
             }                
             QComboBox QAbstractItemView::item {
-            background-color: transparent;
-            color: black;
-            padding: 5px;
-            border: none;
-    }
+                height: 30px;  
+                padding-left: 10px; 
+                font-family: Helvetica; 
+                font-size: 14px;
+                font-weight: regular; 
+                background-color: white; 
+            }          
         """)
         view = self.view()
         view.parent().setObjectName("viewpare")

@@ -138,7 +138,7 @@ class QOtherPanelHeader(QFrame) :
     def init_ProfilePanel(self) :
         self.header_layout.addStretch()
         self.editBtn = QPushButton("Edit")
-        self.editBtn.setStyleSheet("background-color: white; color: #72CEFF; border-radius: 5px; padding: 5px; font-size: 30x;")
+        self.editBtn.setStyleSheet("font-size: 30px; color: #72CEFF; background-color: white; border-radius: 5px; padding: 5px;")
         self.editBtn.clicked.connect(self.handleEditProfile)
         self.cancelBtn = QPushButton("Discard")
         self.cancelBtn.setStyleSheet("background-color: white; color: #C8161D; border-radius: 5px; padding: 5px; font-size: 30px;")
