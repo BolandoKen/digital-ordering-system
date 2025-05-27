@@ -284,7 +284,6 @@ class QeditDialog(QaddDialog) :
             self.selectImgCard.clearImg()
             self.tempImagePath = None
 
-
 class QviewOrderDialog(QStyledDialog) :
     def __init__(self, parent):
         super().__init__(parent)
@@ -292,8 +291,8 @@ class QviewOrderDialog(QStyledDialog) :
 
         self.main_layout = QVBoxLayout()
         self.mainmain_layout.addWidget(QDialogShadowFrame(self.main_layout))
-        self.setFixedHeight(400)
-
+        self.setFixedSize(370, 565)
+        
         close_btn = QCloseButton()
         close_btn.clicked.connect(self.close)
 
@@ -303,8 +302,8 @@ class QviewOrderDialog(QStyledDialog) :
         self.scrollcontainer_widget = QWidget()
 
         self.o_idLabel = QLabel()
-        self.o_idLabel.setFont(QFont("Helvitica", 15, QFont.Weight.Bold))
-        self.o_idLabel.setStyleSheet("border-top: 1px solid black; border-bottom: 1px solid black;")
+        self.o_idLabel.setFont(QFont("Helvetica", 30, QFont.Weight.Bold))
+        self.o_idLabel.setStyleSheet("padding: 10px; border-top: 1px solid black; border-bottom: 1px solid black;")
         self.o_idLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.foot_frame = QFrame()
@@ -312,13 +311,12 @@ class QviewOrderDialog(QStyledDialog) :
         self.foot_frame.setStyleSheet("#footframe {border-top: 1px solid black; border-bottom: 1px solid black;}")
         self.foot_hbox = QHBoxLayout(self.foot_frame)
         totlam = QLabel("Total amount")
-        totlam.setFont(QFont("Helvitica", 15, QFont.Weight.Bold))
+        totlam.setFont(QFont("Helvetica", 20, QFont.Weight.Bold))
         self.foot_hbox.addWidget(totlam)
-
 
         self.foot_hbox.addStretch()
         self.totalamt_label = QLabel()
-        self.totalamt_label.setFont(QFont("Helvitica", 15, QFont.Weight.Bold))
+        self.totalamt_label.setFont(QFont("Helvetica", 20, QFont.Weight.Bold))
         self.foot_hbox.addWidget(self.totalamt_label)
 
         self.main_layout.addLayout(self.close_hbox)
@@ -347,8 +345,8 @@ class QviewOrderDialog(QStyledDialog) :
 
             orderitemLabel = QLabel(f"{oiquan}x {fname}")
             orderpricelabel = QLabel(f"₱{subtotal}")
-            orderitemLabel.setFont(QFont("Helvitica", 13, QFont.Weight.Normal))
-            orderpricelabel.setFont(QFont("Helvitica", 13, QFont.Weight.Normal))
+            orderitemLabel.setFont(QFont("Helvetica", 20, QFont.Weight.Normal))
+            orderpricelabel.setFont(QFont("Helvetica", 20, QFont.Weight.Normal))
 
             labelh.addWidget(orderitemLabel)
             labelh.addStretch()
@@ -370,7 +368,6 @@ class QviewOrderDialog(QStyledDialog) :
                     layout.removeItem(item)   
                 elif item.layout() :
                     item.layout().deleteLater()
-
 
 class QConfirmDialog(QStyledDialog):
     def __init__(self, title, message, parent=None, single_button=False):
