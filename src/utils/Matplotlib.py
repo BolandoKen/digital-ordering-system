@@ -90,7 +90,7 @@ class lineGraphCanvas(FigureCanvasQTAgg) :
 
         idx_foodstatsHour = 0 
         loop_idx = 0
-        while currenthour < end :
+        while currenthour <= end :
             if idx_foodstatsHour < len(foodstats) and int(foodstats[idx_foodstatsHour][0]) == currenthour :
                 y_count.append(int(foodstats[idx_foodstatsHour][1]))
                 idx_foodstatsHour +=1 
