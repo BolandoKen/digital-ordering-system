@@ -39,7 +39,7 @@ class QAdminSideBar(QSideBar) :
     def init_adminSideBar(self) :
         self.currindex = 0 
         pubsub.subscribe("backToFoodPanel_clicked", self.handlePanelBtnClicked)
-        self.AccPanelBtn = QAdminButton("Account", "border-bottom: none;")
+        self.AccPanelBtn = QAdminButton("Profile", "border-bottom: none;")
         self.StatsPanelBtn = QAdminButton("Statistics", )
         self.AccPanelBtn.clicked.connect(lambda: self.handlePanelBtnClicked(2))
         self.StatsPanelBtn.clicked.connect(lambda: self.handlePanelBtnClicked(1))
@@ -307,7 +307,7 @@ class QSimpleCartItem(QFrame) : # refactor this later
         self.itemDict_confirm["img_label_confirm"].setFixedSize(100,100)
         self.itemDict_confirm["img_label_confirm"].setScaledContents(True)
         self.itemDict_confirm["foodname_label"].setStyleSheet("font-family: Helvetica; font: 30px; color: #FFFFFF; font-weight: bold;")
-        self.itemDict_confirm["foodprice_label"].setStyleSheet("font-family: Helvetica; font: 20px; color: #FFFFFF; font-weigh: regular;")
+        self.itemDict_confirm["foodprice_label"].setStyleSheet("font-family: Helvetica; font: 20px; color: #FFFFFF; font-weight: regular;")
 
 
         self.cart_cartState_widget = QCart_cartState(self.itemDict_cart)

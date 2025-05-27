@@ -291,7 +291,7 @@ class QviewOrderDialog(QStyledDialog) :
 
         self.main_layout = QVBoxLayout()
         self.mainmain_layout.addWidget(QDialogShadowFrame(self.main_layout))
-        self.setFixedSize(370, 565)
+        self.setFixedSize(500, 650)
         
         close_btn = QCloseButton()
         close_btn.clicked.connect(self.close)

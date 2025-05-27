@@ -15,10 +15,9 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QScrollArea,
 )
-from src.utils.PixMap import setPixMapOf
 from src.components.Headers import QOtherPanelHeader
 from src.components.Table import QOrderHTable
-from src.panels.profilePanel.ProfileEditSection import QProfile, QProfileViewState
+from src.panels.profilePanel.ProfileEditSection import QProfile
 from src.utils.PubSub import pubsub
 from PyQt6.QtCore import Qt
 from src.components.Calendar import QCalendarFilterFrame
@@ -46,7 +45,7 @@ class QProfilePanel(QFrame) :
         contentsVLayout.addWidget(self.orderHTable)
         contentsVLayout.addWidget(self.orderHTable.pageNav, alignment=Qt.AlignmentFlag.AlignCenter )
 
-        self.order_layout.addWidget(QOtherPanelHeader("Account"))
+        self.order_layout.addWidget(QOtherPanelHeader("Profile"))
         self.order_layout.addWidget(QProfile(), alignment=Qt.AlignmentFlag.AlignTop)
         self.order_layout.addLayout(contentsVLayout)
 
