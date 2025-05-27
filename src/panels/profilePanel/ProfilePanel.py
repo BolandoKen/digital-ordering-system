@@ -46,7 +46,7 @@ class QProfilePanel(QFrame) :
         contentsVLayout.addWidget(self.orderHTable)
         contentsVLayout.addWidget(self.orderHTable.pageNav, alignment=Qt.AlignmentFlag.AlignCenter )
 
-        self.order_layout.addWidget(QOtherPanelHeader("Profile"))
+        self.order_layout.addWidget(QOtherPanelHeader("Account"))
         self.order_layout.addWidget(QProfile(), alignment=Qt.AlignmentFlag.AlignTop)
         self.order_layout.addLayout(contentsVLayout)
 

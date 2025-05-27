@@ -106,7 +106,7 @@ class QCustomerSideBar(QSideBar) :
         self.totalText_label.setFont(QFont("Helvetica", 20))
         self.totalText_label.setStyleSheet("border:none;margin:0px;padding:0px;color: #A1A1A1;")
         self.total_label = QLabel("₱0.00")
-        self.total_label.setFont(QFont("Helvetica", 35, QFont.Weight.Bold))
+        self.total_label.setFont(QFont("Helvetica", 40, QFont.Weight.Bold))
         self.total_label.setStyleSheet("border:none;margin-bottom: 0px;padding:0px;")
 
         self.submitBtn = QPrimaryButton("Done", 180, 60, 30)
@@ -272,6 +272,12 @@ class QSimpleCartItem(QFrame) : # refactor this later
 
         self.foodname_label = QLabel(foodname)
         self.foodprice_label = QLabel(f"₱{str(price)}")
+        self.foodprice_label.setStyleSheet("""
+        font-size: 30px;
+        font-weight: bold;
+        color: #A1A1A1;
+        qproperty-alignment: AlignCenter;
+        """)
         self.customQuanBox = QCartItemSpinBox()
 
         self.itemDict_cart = {
@@ -294,10 +300,15 @@ class QSimpleCartItem(QFrame) : # refactor this later
         self.itemDict_cart["img_label_cart"].setPixmap(self.pixmap)
         self.itemDict_cart["img_label_cart"].setFixedSize(100,100)
         self.itemDict_cart["img_label_cart"].setScaledContents(True)
+        self.itemDict_cart["foodname_label"].setStyleSheet("font-family: Helvetica; font: 15px; color: #000000; font-weight: bold;")
+        self.itemDict_cart["foodprice_label"].setStyleSheet("font-family: Helvetica; font: 20px; color: #A1A1A1; font-weight: bold;")
 
         self.itemDict_confirm["img_label_confirm"].setPixmap(self.pixmap)
         self.itemDict_confirm["img_label_confirm"].setFixedSize(100,100)
         self.itemDict_confirm["img_label_confirm"].setScaledContents(True)
+        self.itemDict_confirm["foodname_label"].setStyleSheet("font-family: Helvetica; font: 30px; color: #FFFFFF; font-weight: bold;")
+        self.itemDict_confirm["foodprice_label"].setStyleSheet("font-family: Helvetica; font: 20px; color: #FFFFFF; font-weigh: regular;")
+
 
         self.cart_cartState_widget = QCart_cartState(self.itemDict_cart)
         self.cart_cartState_widget.addSpinBox()
